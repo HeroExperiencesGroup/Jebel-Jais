@@ -177,6 +177,63 @@ html, body { width:100%; height:100%; overflow:hidden; background:#10150D; }
 .acard-body { padding:6px 9px 7px; flex:1; display:flex; flex-direction:column; gap:2px; }
 .acard-title { font:400 10px/1.25 'Playfair Display',serif; color:rgba(242,235,217,.9); }
 .acard-sub   { font:300 7px/1 'Inter',sans-serif; letter-spacing:.11em; color:rgba(196,149,64,.58); text-transform:uppercase; }
+
+/* ── EDIT MODE PANEL ── */
+.edit-toggle-btn {
+  position:fixed; top:14px; right:14px; z-index:9998;
+  background:rgba(10,8,4,.88); border:1px solid rgba(196,149,64,.4); border-radius:3px;
+  color:rgba(196,149,64,.8); cursor:pointer;
+  font:500 9px/1 'Inter',sans-serif; letter-spacing:.14em; text-transform:uppercase;
+  padding:8px 13px; backdrop-filter:blur(6px); transition:all .2s;
+}
+.edit-toggle-btn:hover { background:rgba(196,149,64,.15); color:rgba(196,149,64,1); }
+.edit-toggle-btn.active { background:rgba(196,149,64,.22); border-color:rgba(196,149,64,.85); color:rgba(232,194,116,.95); }
+
+.edit-panel {
+  position:fixed; bottom:16px; right:16px; z-index:9999;
+  width:268px; display:none; flex-direction:column;
+  background:rgba(10,7,3,.96); border:1px solid rgba(196,149,64,.3); border-radius:4px;
+  box-shadow:0 10px 48px rgba(0,0,0,.75); font-family:'Inter',sans-serif; overflow:hidden;
+}
+.edit-panel.open { display:flex; }
+.ep-head {
+  background:rgba(196,149,64,.1); border-bottom:1px solid rgba(196,149,64,.18);
+  padding:9px 12px; display:flex; align-items:center; justify-content:space-between;
+}
+.ep-title { font:500 10px/1 'Inter',sans-serif; letter-spacing:.15em; text-transform:uppercase; color:rgba(196,149,64,.9); }
+.ep-close  { background:none; border:none; color:rgba(196,149,64,.5); cursor:pointer; font-size:17px; line-height:1; padding:0; }
+.ep-close:hover { color:rgba(196,149,64,1); }
+.ep-tabs { display:flex; gap:3px; padding:7px 9px; border-bottom:1px solid rgba(196,149,64,.1); flex-wrap:wrap; }
+.ep-tab {
+  background:rgba(196,149,64,.07); border:1px solid rgba(196,149,64,.18); border-radius:2px;
+  color:rgba(196,149,64,.6); cursor:pointer;
+  font:500 8px/1 'Inter',sans-serif; letter-spacing:.1em; text-transform:uppercase;
+  padding:5px 8px; transition:all .18s;
+}
+.ep-tab:hover  { background:rgba(196,149,64,.18); color:rgba(196,149,64,1); }
+.ep-tab.active { background:rgba(196,149,64,.22); border-color:rgba(196,149,64,.65); color:rgba(232,194,116,.95); }
+.ep-help { padding:5px 12px 0; font:300 8px/1.5 'Inter',sans-serif; color:rgba(196,149,64,.4); }
+.ep-list { padding:6px 10px; max-height:210px; overflow-y:auto; display:flex; flex-direction:column; gap:2px; }
+.ep-row {
+  display:flex; align-items:center; gap:8px; padding:4px 3px;
+  border-radius:2px; cursor:grab; transition:background .15s;
+}
+.ep-row:hover { background:rgba(196,149,64,.07); }
+.ep-row.dragging { background:rgba(196,149,64,.14); cursor:grabbing; outline:1px solid rgba(196,149,64,.5); }
+.ep-label { font:300 9px/1 'Inter',sans-serif; color:rgba(242,235,217,.65); flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.ep-xy { font:500 9px/1 'Inter',monospace; color:rgba(232,194,116,.9); background:rgba(196,149,64,.1); border-radius:2px; padding:3px 6px; flex-shrink:0; min-width:90px; text-align:right; }
+.ep-row.dragging .ep-xy { color:#FFF6D8; background:rgba(196,149,64,.25); }
+.ep-actions { padding:7px 9px; border-top:1px solid rgba(196,149,64,.1); display:flex; gap:5px; }
+.ep-btn {
+  flex:1; padding:6px; background:rgba(196,149,64,.1); border:1px solid rgba(196,149,64,.28);
+  border-radius:2px; color:rgba(196,149,64,.8); cursor:pointer;
+  font:500 8px/1 'Inter',sans-serif; letter-spacing:.12em; text-transform:uppercase; transition:all .2s;
+}
+.ep-btn:hover { background:rgba(196,149,64,.22); color:rgba(196,149,64,1); }
+.ep-btn.ok { background:rgba(60,140,60,.18); border-color:rgba(80,200,80,.35); color:rgba(130,220,130,.9); }
+/* Show dashed outline on cards in edit mode */
+#mapSvg[data-edit="true"] .card-wrap,
+#mapSvg[data-edit="true"] .acard-wrap { outline:1px dashed rgba(196,149,64,.35) !important; }
 </style>
 </head>
 <body>
@@ -435,133 +492,93 @@ html, body { width:100%; height:100%; overflow:hidden; background:#10150D; }
        2×2 grid per location — all cleared of non-parent nodes.
        ═══════════════════════════════════════════════════ -->
 
-  <!-- COASTAL 2×2: (4,208),(152,208),(4,400),(152,400) — all x<298(Desert) ✓ -->
+  <!-- COASTAL 2×2 -->
   <g id="scards-coastal">
-    <foreignObject class="act-card" x="4"   y="208" width="140" height="186">
+    <foreignObject class="act-card" id="sc-c1" x="4"   y="208" width="140" height="186">
       <div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#0D2535;--img-b:#06181E;">
         <div class="acard-img" style="height:96px;"></div>
-        <div class="acard-body">
-          <p class="acard-title">Coastal Events</p>
-          <p class="acard-sub">Signature experiences</p>
-        </div>
+        <div class="acard-body"><p class="acard-title">Coastal Events</p><p class="acard-sub">Signature experiences</p></div>
       </div>
     </foreignObject>
-    <foreignObject class="act-card" x="152" y="208" width="140" height="186">
+    <foreignObject class="act-card" id="sc-c2" x="152" y="208" width="140" height="186">
       <div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#0A2030;--img-b:#061820;">
         <div class="acard-img" style="height:96px;"></div>
-        <div class="acard-body">
-          <p class="acard-title">Island Exploration</p>
-          <p class="acard-sub">Off-shore discovery</p>
-        </div>
+        <div class="acard-body"><p class="acard-title">Island Exploration</p><p class="acard-sub">Off-shore discovery</p></div>
       </div>
     </foreignObject>
-    <foreignObject class="act-card" x="4"   y="400" width="140" height="186">
+    <foreignObject class="act-card" id="sc-c3" x="4"   y="400" width="140" height="186">
       <div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#061A28;--img-b:#041220;">
         <div class="acard-img" style="height:96px;"></div>
-        <div class="acard-body">
-          <p class="acard-title">Marine Adventure</p>
-          <p class="acard-sub">Water-based activities</p>
-        </div>
+        <div class="acard-body"><p class="acard-title">Marine Adventure</p><p class="acard-sub">Water-based activities</p></div>
       </div>
     </foreignObject>
-    <foreignObject class="act-card" x="152" y="400" width="140" height="186">
+    <foreignObject class="act-card" id="sc-c4" x="152" y="400" width="140" height="186">
       <div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#0A2030;--img-b:#081828;">
         <div class="acard-img" style="height:96px;"></div>
-        <div class="acard-body">
-          <p class="acard-title">Coastal Discovery</p>
-          <p class="acard-sub">Guided exploration</p>
-        </div>
+        <div class="acard-body"><p class="acard-title">Coastal Discovery</p><p class="acard-sub">Guided exploration</p></div>
       </div>
     </foreignObject>
   </g>
 
-  <!-- DESERT 2×2: d1(4,182) d2(152,182) d3(152,376) d4(4,480)
-       d3 x=152>168(Coastal excl.) ✓  d4 y=480>478(Coastal excl.) ✓ -->
+  <!-- DESERT 2×2 -->
   <g id="scards-desert">
-    <foreignObject class="act-card" x="4"   y="182" width="140" height="186">
+    <foreignObject class="act-card" id="sc-d1" x="4"   y="182" width="140" height="186">
       <div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#2A1A08;--img-b:#1A1004;">
         <div class="acard-img" style="height:96px;"></div>
-        <div class="acard-body">
-          <p class="acard-title">Heritage Experiences</p>
-          <p class="acard-sub">Cultural immersion</p>
-        </div>
+        <div class="acard-body"><p class="acard-title">Heritage Experiences</p><p class="acard-sub">Cultural immersion</p></div>
       </div>
     </foreignObject>
-    <foreignObject class="act-card" x="152" y="182" width="140" height="186">
+    <foreignObject class="act-card" id="sc-d2" x="152" y="182" width="140" height="186">
       <div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#281606;--img-b:#180E04;">
         <div class="acard-img" style="height:96px;"></div>
-        <div class="acard-body">
-          <p class="acard-title">Desert Exploration</p>
-          <p class="acard-sub">Guided off-road</p>
-        </div>
+        <div class="acard-body"><p class="acard-title">Desert Exploration</p><p class="acard-sub">Guided off-road</p></div>
       </div>
     </foreignObject>
-    <foreignObject class="act-card" x="152" y="376" width="140" height="186">
+    <foreignObject class="act-card" id="sc-d3" x="152" y="376" width="140" height="186">
       <div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#101020;--img-b:#080812;">
         <div class="acard-img" style="height:96px;"></div>
-        <div class="acard-body">
-          <p class="acard-title">Stargazing Programmes</p>
-          <p class="acard-sub">Dark sky experiences</p>
-        </div>
+        <div class="acard-body"><p class="acard-title">Stargazing Programmes</p><p class="acard-sub">Dark sky experiences</p></div>
       </div>
     </foreignObject>
-    <foreignObject class="act-card" x="4" y="480" width="140" height="138">
+    <foreignObject class="act-card" id="sc-d4" x="4" y="480" width="140" height="138">
       <div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#1A2210;--img-b:#0E1A08;">
         <div class="acard-img" style="height:72px;"></div>
-        <div class="acard-body">
-          <p class="acard-title">Conservation Tourism</p>
-          <p class="acard-sub">Protected landscapes</p>
-        </div>
+        <div class="acard-body"><p class="acard-title">Conservation Tourism</p><p class="acard-sub">Protected landscapes</p></div>
       </div>
     </foreignObject>
   </g>
 
-  <!-- DEFENDER 2×2: df1(148,88) df2(296,88) df3(148,282) df4(444,282)
-       df3 Coastal node x=118<148 ✓  df4 Desert x=348<444 ✓  df4 Wadi x=626>584 ✓ -->
+  <!-- DEFENDER 2×2 -->
   <g id="scards-defender">
-    <foreignObject class="act-card" x="148" y="88" width="140" height="186">
+    <foreignObject class="act-card" id="sc-df1" x="148" y="88" width="140" height="186">
       <div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#201408;--img-b:#140E04;">
         <div class="acard-img" style="height:96px;"></div>
-        <div class="acard-body">
-          <p class="acard-title">Defender Driving</p>
-          <p class="acard-sub">Official experience</p>
-        </div>
+        <div class="acard-body"><p class="acard-title">Defender Driving</p><p class="acard-sub">Official experience</p></div>
       </div>
     </foreignObject>
-    <foreignObject class="act-card" x="296" y="88" width="140" height="186">
+    <foreignObject class="act-card" id="sc-df2" x="296" y="88" width="140" height="186">
       <div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#221810;--img-b:#16100A;">
         <div class="acard-img" style="height:96px;"></div>
-        <div class="acard-body">
-          <p class="acard-title">Corporate Experiences</p>
-          <p class="acard-sub">Team adventures</p>
-        </div>
+        <div class="acard-body"><p class="acard-title">Corporate Experiences</p><p class="acard-sub">Team adventures</p></div>
       </div>
     </foreignObject>
-    <foreignObject class="act-card" x="148" y="282" width="140" height="186">
+    <foreignObject class="act-card" id="sc-df3" x="148" y="282" width="140" height="186">
       <div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#1E1206;--img-b:#120C04;">
         <div class="acard-img" style="height:96px;"></div>
-        <div class="acard-body">
-          <p class="acard-title">Training & Certification</p>
-          <p class="acard-sub">Professional courses</p>
-        </div>
+        <div class="acard-body"><p class="acard-title">Training & Certification</p><p class="acard-sub">Professional courses</p></div>
       </div>
     </foreignObject>
-    <foreignObject class="act-card" x="444" y="282" width="130" height="186">
+    <foreignObject class="act-card" id="sc-df4" x="444" y="282" width="130" height="186">
       <div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#1C1408;--img-b:#100E06;">
         <div class="acard-img" style="height:96px;"></div>
-        <div class="acard-body">
-          <p class="acard-title">Vehicle Launch Events</p>
-          <p class="acard-sub">Automotive tourism</p>
-        </div>
+        <div class="acard-body"><p class="acard-title">Vehicle Launch Events</p><p class="acard-sub">Automotive tourism</p></div>
       </div>
     </foreignObject>
   </g>
 
-  <!-- WADI 2×2: w1(660,260) w2(808,260) w3(660,454) w4(808,454)
-       All y=260 > JJ exclusion y=238 ✓  All x=660 > Defender excl. x=580 ✓
-       w3/w4 height=162 to stay within SVG bottom (454+162=616<620) ✓ -->
+  <!-- WADI 2×2 -->
   <g id="scards-wadi">
-    <foreignObject class="act-card" x="660" y="260" width="140" height="186">
+    <foreignObject class="act-card" id="sc-w1" x="660" y="260" width="140" height="186">
       <div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#0E2010;--img-b:#081408;">
         <div class="acard-img" style="height:96px;"></div>
         <div class="acard-body">
@@ -570,16 +587,13 @@ html, body { width:100%; height:100%; overflow:hidden; background:#10150D; }
         </div>
       </div>
     </foreignObject>
-    <foreignObject class="act-card" x="808" y="260" width="140" height="186">
+    <foreignObject class="act-card" id="sc-w2" x="808" y="260" width="140" height="186">
       <div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#0C1E0E;--img-b:#071208;">
         <div class="acard-img" style="height:96px;"></div>
-        <div class="acard-body">
-          <p class="acard-title">Hiking & Trail Networks</p>
-          <p class="acard-sub">Guided treks</p>
-        </div>
+        <div class="acard-body"><p class="acard-title">Hiking & Trail Networks</p><p class="acard-sub">Guided treks</p></div>
       </div>
     </foreignObject>
-    <foreignObject class="act-card" x="660" y="454" width="140" height="162">
+    <foreignObject class="act-card" id="sc-w3" x="660" y="454" width="140" height="162">
       <div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#121E10;--img-b:#0A1608;">
         <div class="acard-img" style="height:80px;"></div>
         <div class="acard-body">
@@ -588,7 +602,7 @@ html, body { width:100%; height:100%; overflow:hidden; background:#10150D; }
         </div>
       </div>
     </foreignObject>
-    <foreignObject class="act-card" x="808" y="454" width="140" height="162">
+    <foreignObject class="act-card" id="sc-w4" x="808" y="454" width="140" height="162">
       <div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#0E1E12;--img-b:#08140A;">
         <div class="acard-img" style="height:80px;"></div>
         <div class="acard-body">
@@ -692,6 +706,29 @@ html, body { width:100%; height:100%; overflow:hidden; background:#10150D; }
   </div>
 </div>
 
+<!-- ── EDIT POSITION PANEL ── -->
+<button class="edit-toggle-btn" id="editToggle">⟳ Edit positions</button>
+
+<div class="edit-panel" id="editPanel">
+  <div class="ep-head">
+    <span class="ep-title">Card Editor</span>
+    <button class="ep-close" id="editClose" title="Close">×</button>
+  </div>
+  <div class="ep-tabs" id="epTabs">
+    <button class="ep-tab active" data-group="L1">Level 1</button>
+    <button class="ep-tab" data-group="coastal">Coastal</button>
+    <button class="ep-tab" data-group="desert">Desert</button>
+    <button class="ep-tab" data-group="defender">Defender</button>
+    <button class="ep-tab" data-group="wadi">Wadi</button>
+  </div>
+  <p class="ep-help">Click &amp; drag a card on the map to reposition it.</p>
+  <div class="ep-list" id="epList"></div>
+  <div class="ep-actions">
+    <button class="ep-btn" id="epCopy">Copy positions</button>
+    <button class="ep-btn" id="epReset">Reset group</button>
+  </div>
+</div>
+
 <script>
 (function () {
   const svg     = document.getElementById('mapSvg');
@@ -780,11 +817,185 @@ html, body { width:100%; height:100%; overflow:hidden; background:#10150D; }
   /* Keyboard */
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape') {
+      if (editMode) { exitEdit(); return; }
       if (state.startsWith('sub-')) setState('main');
       else if (state === 'main')    setState('resting');
     }
-    if ((e.key === 'Enter' || e.key === ' ') && state === 'resting') setState('main');
+    if ((e.key === 'Enter' || e.key === ' ') && state === 'resting' && !editMode) setState('main');
   });
+
+  // ── EDIT MODE ─────────────────────────────────────────────────────────
+  const GROUPS = {
+    'L1':       [ {id:'lcard-coastal',label:'Coastal card'}, {id:'lcard-desert',label:'Desert card'},
+                  {id:'lcard-defender',label:'Defender card'}, {id:'lcard-wadi',label:'Wadi card'} ],
+    'coastal':  [ {id:'sc-c1',label:'Coastal Events'}, {id:'sc-c2',label:'Island Exploration'},
+                  {id:'sc-c3',label:'Marine Adventure'}, {id:'sc-c4',label:'Coastal Discovery'} ],
+    'desert':   [ {id:'sc-d1',label:'Heritage Exp.'}, {id:'sc-d2',label:'Desert Exploration'},
+                  {id:'sc-d3',label:'Stargazing'}, {id:'sc-d4',label:'Conservation Tourism'} ],
+    'defender': [ {id:'sc-df1',label:'Defender Driving'}, {id:'sc-df2',label:'Corporate Exp.'},
+                  {id:'sc-df3',label:'Training & Cert.'}, {id:'sc-df4',label:'Vehicle Launch'} ],
+    'wadi':     [ {id:'sc-w1',label:'Heritage Camp'}, {id:'sc-w2',label:'Hiking & Trails'},
+                  {id:'sc-w3',label:'School Progs.'}, {id:'sc-w4',label:'Wellness Retreats'} ],
+  };
+
+  // Snapshot originals for reset
+  const origPos = {};
+  document.querySelectorAll('.loc-card, .act-card').forEach(el => {
+    if (el.id) origPos[el.id] = { x: el.getAttribute('x'), y: el.getAttribute('y') };
+  });
+
+  let editMode   = false;
+  let editGroup  = 'L1';
+  let dragging   = null;
+  let dragId     = null;
+  let dragOffset = { x:0, y:0 };
+
+  const editToggle = document.getElementById('editToggle');
+  const editPanel  = document.getElementById('editPanel');
+  const epList     = document.getElementById('epList');
+
+  function svgPt(e) {
+    const r = svg.getBoundingClientRect();
+    return { x: (e.clientX - r.left) / r.width * 1000,
+             y: (e.clientY - r.top)  / r.height * 620 };
+  }
+
+  function buildPanel() {
+    epList.innerHTML = '';
+    GROUPS[editGroup].forEach(item => {
+      const el = document.getElementById(item.id);
+      if (!el) return;
+      const row = document.createElement('div');
+      row.className = 'ep-row';
+      row.dataset.id = item.id;
+      const x = Math.round(parseFloat(el.getAttribute('x')));
+      const y = Math.round(parseFloat(el.getAttribute('y')));
+      row.innerHTML = `<span class="ep-label">${item.label}</span>
+                       <span class="ep-xy" id="xy-${item.id}">x=${x} y=${y}</span>`;
+      epList.appendChild(row);
+    });
+  }
+
+  function refreshXY(id) {
+    const el = document.getElementById(id);
+    const xy = document.getElementById('xy-' + id);
+    if (el && xy) xy.textContent = `x=${Math.round(parseFloat(el.getAttribute('x')))} y=${Math.round(parseFloat(el.getAttribute('y')))}`;
+  }
+
+  function showGroup(group) {
+    // Show only current group's cards, hide all others
+    document.querySelectorAll('.loc-card, .act-card').forEach(el => {
+      el.style.opacity = '0';
+      el.style.pointerEvents = 'none';
+    });
+    GROUPS[group].forEach(item => {
+      const el = document.getElementById(item.id);
+      if (el) { el.style.opacity = '0.9'; el.style.pointerEvents = 'all'; }
+    });
+  }
+
+  function setGroup(group) {
+    editGroup = group;
+    document.querySelectorAll('.ep-tab').forEach(t => t.classList.toggle('active', t.dataset.group === group));
+    showGroup(group);
+    buildPanel();
+  }
+
+  function enterEdit() {
+    editMode = true;
+    editToggle.classList.add('active');
+    editToggle.textContent = '✓ Done editing';
+    editPanel.classList.add('open');
+    svg.setAttribute('data-edit', 'true');
+    setState('main'); // show branches for context
+    setGroup(editGroup);
+  }
+
+  function exitEdit() {
+    editMode = false;
+    editToggle.classList.remove('active');
+    editToggle.textContent = '⟳ Edit positions';
+    editPanel.classList.remove('open');
+    svg.removeAttribute('data-edit');
+    // Restore CSS-driven visibility
+    document.querySelectorAll('.loc-card, .act-card').forEach(el => {
+      el.style.opacity = '';
+      el.style.pointerEvents = '';
+    });
+  }
+
+  editToggle.addEventListener('click', () => editMode ? exitEdit() : enterEdit());
+  document.getElementById('editClose').addEventListener('click', exitEdit);
+
+  document.getElementById('epTabs').addEventListener('click', e => {
+    const tab = e.target.closest('.ep-tab');
+    if (tab) setGroup(tab.dataset.group);
+  });
+
+  document.getElementById('epCopy').addEventListener('click', function() {
+    const lines = ['// ' + editGroup + ' positions'];
+    GROUPS[editGroup].forEach(item => {
+      const el = document.getElementById(item.id);
+      if (!el) return;
+      lines.push(`${item.id}: x=${Math.round(parseFloat(el.getAttribute('x')))}, y=${Math.round(parseFloat(el.getAttribute('y')))}`);
+    });
+    navigator.clipboard.writeText(lines.join('\n')).then(() => {
+      this.textContent = '✓ Copied!'; this.classList.add('ok');
+      setTimeout(() => { this.textContent = 'Copy positions'; this.classList.remove('ok'); }, 1800);
+    }).catch(() => { alert(lines.join('\n')); }); // fallback
+  });
+
+  document.getElementById('epReset').addEventListener('click', () => {
+    GROUPS[editGroup].forEach(item => {
+      const el = document.getElementById(item.id);
+      const o  = origPos[item.id];
+      if (el && o) { el.setAttribute('x', o.x); el.setAttribute('y', o.y); }
+    });
+    buildPanel();
+  });
+
+  // Drag: hit-test current group cards against SVG coords
+  svg.addEventListener('mousedown', e => {
+    if (!editMode) return;
+    const pos = svgPt(e);
+    for (const item of GROUPS[editGroup]) {
+      const card = document.getElementById(item.id);
+      if (!card) continue;
+      const cx = parseFloat(card.getAttribute('x'));
+      const cy = parseFloat(card.getAttribute('y'));
+      const cw = parseFloat(card.getAttribute('width'));
+      const ch = parseFloat(card.getAttribute('height'));
+      if (pos.x >= cx && pos.x <= cx+cw && pos.y >= cy && pos.y <= cy+ch) {
+        dragging   = card;
+        dragId     = item.id;
+        dragOffset = { x: pos.x - cx, y: pos.y - cy };
+        // Highlight row
+        epList.querySelectorAll('.ep-row').forEach(r => r.classList.toggle('dragging', r.dataset.id === dragId));
+        e.stopPropagation(); e.preventDefault();
+        break;
+      }
+    }
+  });
+
+  svg.addEventListener('mousemove', e => {
+    if (!dragging) return;
+    const pos = svgPt(e);
+    const nx = Math.round(pos.x - dragOffset.x);
+    const ny = Math.round(pos.y - dragOffset.y);
+    dragging.setAttribute('x', nx);
+    dragging.setAttribute('y', ny);
+    refreshXY(dragId);
+  });
+
+  function stopDrag() {
+    if (dragging) {
+      epList.querySelectorAll('.ep-row').forEach(r => r.classList.remove('dragging'));
+      dragging = null; dragId = null;
+    }
+  }
+  svg.addEventListener('mouseup',    stopDrag);
+  svg.addEventListener('mouseleave', stopDrag);
+
 })();
 </script>
 </body>
