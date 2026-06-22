@@ -13,24 +13,23 @@
   --bone:    #F2EBD9;
   --gold:    #C49540;
   --gold-hi: #E8C274;
-  --dim:     rgba(0,0,0,0);
 }
 
 html, body { width: 100%; height: 100%; overflow: hidden; background: #10150D; }
 
-/* ── SLIDE SHELL ───────────────────────────────────── */
+/* ── SLIDE SHELL ─────────────────────────────────── */
 .slide {
   position: relative;
   width: 100vw; height: 100vh;
   display: grid;
-  grid-template-columns: 26% 1fr;
+  grid-template-columns: 22% 1fr;   /* wider map */
   overflow: hidden;
 }
 .slide-bg {
   position: absolute; inset: 0;
   background:
-    radial-gradient(ellipse at 72% 28%, rgba(70,40,10,.55) 0%, transparent 52%),
-    radial-gradient(ellipse at 12% 85%, rgba(6,18,28,.5)   0%, transparent 45%),
+    radial-gradient(ellipse at 78% 26%, rgba(70,40,10,.55) 0%, transparent 50%),
+    radial-gradient(ellipse at 10% 85%, rgba(6,18,28,.5)   0%, transparent 45%),
     linear-gradient(155deg, #0F1410 0%, #1B2118 45%, #0D1318 100%);
 }
 .slide-vignette {
@@ -39,206 +38,174 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #10150D; }
   pointer-events: none;
 }
 
-/* ── LEFT PANEL ────────────────────────────────────── */
+/* ── LEFT PANEL ──────────────────────────────────── */
 .panel-left {
   position: relative; z-index: 3;
   display: flex; flex-direction: column; justify-content: flex-end;
-  padding: 0 6% 8vh 8%;
+  padding: 0 5% 8vh 7%;
   border-right: 1px solid rgba(196,149,64,.1);
 }
 .slide-eyebrow {
-  font: 500 clamp(8px,.58vw,10.5px)/1 'Inter',sans-serif;
+  font: 500 clamp(7px,.55vw,10px)/1 'Inter',sans-serif;
   letter-spacing: .32em; text-transform: uppercase;
-  color: rgba(196,149,64,.65);
-  margin-bottom: clamp(14px,2vh,24px);
+  color: rgba(196,149,64,.65); margin-bottom: clamp(12px,1.8vh,22px);
 }
-.rule { width: 24px; height: 1px; background: rgba(196,149,64,.38); margin-bottom: clamp(16px,2.2vh,28px); }
+.rule { width: 22px; height: 1px; background: rgba(196,149,64,.35); margin-bottom: clamp(14px,2vh,26px); }
 .panel-headline {
-  font: 400 clamp(20px,2.4vw,44px)/1.18 'Playfair Display',serif;
+  font: 400 clamp(18px,2.2vw,40px)/1.18 'Playfair Display',serif;
   letter-spacing: -.01em; color: var(--bone);
-  margin-bottom: clamp(12px,1.5vh,20px);
+  margin-bottom: clamp(10px,1.4vh,18px);
 }
 .panel-body {
-  font: 300 clamp(9px,.78vw,13.5px)/1.72 'Inter',sans-serif;
-  color: rgba(242,235,217,.55); max-width: 240px;
-  margin-bottom: clamp(20px,3vh,40px);
+  font: 300 clamp(8.5px,.72vw,12.5px)/1.72 'Inter',sans-serif;
+  color: rgba(242,235,217,.52); max-width: 220px;
+  margin-bottom: clamp(16px,2.4vh,34px);
 }
-/* Hint text — fades away after first click */
 .hint {
-  font: 400 clamp(8px,.6vw,11px)/1.5 'Inter',sans-serif;
-  letter-spacing: .06em;
-  color: rgba(196,149,64,.5);
-  margin-bottom: clamp(20px,3vh,38px);
+  font: 400 clamp(7.5px,.56vw,10.5px)/1.5 'Inter',sans-serif;
+  letter-spacing: .06em; color: rgba(196,149,64,.48);
+  margin-bottom: clamp(16px,2.4vh,32px);
   transition: opacity .6s;
 }
 .hint.hidden { opacity: 0; pointer-events: none; }
-
-.legend { border-top: 1px solid rgba(196,149,64,.18); padding-top: clamp(16px,2.2vh,28px); display: flex; flex-direction: column; gap: clamp(9px,1.3vh,15px); }
-.legend-item { display: flex; align-items: center; gap: 11px; }
+.legend { border-top: 1px solid rgba(196,149,64,.18); padding-top: clamp(14px,2vh,26px); display: flex; flex-direction: column; gap: clamp(8px,1.2vh,14px); }
+.legend-item { display: flex; align-items: center; gap: 10px; }
 .legend-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; background: var(--gold); opacity: .75; }
 .legend-dot.anchor { width: 8px; height: 8px; background: var(--gold-hi); box-shadow: 0 0 7px rgba(232,194,116,.55); opacity: 1; }
-.legend-name { font: 400 clamp(9.5px,.72vw,12.5px)/1.2 'Playfair Display',serif; color: rgba(242,235,217,.82); display: block; }
-.legend-sub  { font: 400 clamp(7px,.52vw,9px)/1 'Inter',sans-serif; letter-spacing: .14em; text-transform: uppercase; color: rgba(196,149,64,.55); display: block; margin-top: 2px; }
+.legend-name { font: 400 clamp(9px,.68vw,12px)/1.2 'Playfair Display',serif; color: rgba(242,235,217,.82); display: block; }
+.legend-sub  { font: 400 clamp(6.5px,.48vw,8.5px)/1 'Inter',sans-serif; letter-spacing: .14em; text-transform: uppercase; color: rgba(196,149,64,.55); display: block; margin-top: 2px; }
 .legend-item.anchor .legend-name { color: var(--bone); }
 
-/* ── MAP PANEL ─────────────────────────────────────── */
+/* ── MAP PANEL ───────────────────────────────────── */
 .panel-map {
   position: relative; z-index: 3;
   display: flex; flex-direction: column;
   align-items: center; justify-content: center;
-  padding: 3vh 4vw 5vh 2vw; gap: 1.8vh;
+  padding: 2.5vh 3vw 4vh 1.5vw; gap: 1.5vh;
 }
-.map-svg { height: 87vh; width: auto; max-width: 62vw; flex-shrink: 0; }
+/* SVG fills panel width, height scales to maintain aspect ratio */
+.map-svg { width: 100%; height: auto; max-height: 86vh; }
+
 .map-caption {
-  font: italic 400 clamp(9px,.72vw,13px)/1 'Playfair Display',serif;
-  color: rgba(242,235,217,.38); text-align: center; letter-spacing: .02em;
-  transition: opacity .6s;
+  font: italic 400 clamp(8.5px,.65vw,12px)/1 'Playfair Display',serif;
+  color: rgba(242,235,217,.35); text-align: center; letter-spacing: .02em;
+  transition: opacity .5s;
 }
 .map-caption.dim { opacity: 0; }
 
-/* ── FOOTER ────────────────────────────────────────── */
-.slide-footer { position: absolute; bottom: 4vh; left: 8%; right: 4.5%; display: flex; justify-content: space-between; z-index: 5; }
-.footer-meta { font: 400 clamp(7px,.5vw,9.5px)/1 'Inter',sans-serif; letter-spacing: .24em; text-transform: uppercase; color: rgba(196,149,64,.32); }
+/* ── FOOTER ──────────────────────────────────────── */
+.slide-footer { position: absolute; bottom: 3.5vh; left: 7%; right: 4%; display: flex; justify-content: space-between; z-index: 5; }
+.footer-meta { font: 400 clamp(6.5px,.48vw,9px)/1 'Inter',sans-serif; letter-spacing: .24em; text-transform: uppercase; color: rgba(196,149,64,.3); }
 
-/* ── SVG STATE SYSTEM ──────────────────────────────── */
+/* ── SVG STATE SYSTEM ────────────────────────────── */
 
 /* Main branch lines */
 .main-line {
   fill: none; stroke-width: 1.4; stroke-dasharray: 6 9;
-  transition: opacity .5s ease, stroke .3s;
-  opacity: 0;
-  pointer-events: none;
+  transition: opacity .5s ease;
+  opacity: 0; pointer-events: none;
 }
-#mapSvg[data-state="main"] .main-line { opacity: 1; }
-#mapSvg[data-state^="sub"] .main-line { opacity: .3; }
+#mapSvg[data-state="main"] .main-line      { opacity: 1; }
+#mapSvg[data-state^="sub"] .main-line      { opacity: .28; }
 
-/* Sub branch lines */
+/* Sub-branch lines */
 .sub-line {
   fill: none; stroke: var(--gold); stroke-width: 1.2; stroke-dasharray: 4 7;
-  transition: opacity .4s;
-  opacity: 0; pointer-events: none;
+  transition: opacity .4s; opacity: 0; pointer-events: none;
 }
+#mapSvg[data-state="sub-coastal"]  #subg-coastal  .sub-line { opacity: .72; }
+#mapSvg[data-state="sub-desert"]   #subg-desert   .sub-line { opacity: .72; }
+#mapSvg[data-state="sub-defender"] #subg-defender .sub-line { opacity: .72; }
+#mapSvg[data-state="sub-wadi"]     #subg-wadi     .sub-line { opacity: .72; }
 
-/* Show sub-lines for the active group */
-#mapSvg[data-state="sub-coastal"]  #subg-coastal  .sub-line,
-#mapSvg[data-state="sub-desert"]   #subg-desert   .sub-line,
-#mapSvg[data-state="sub-defender"] #subg-defender .sub-line,
-#mapSvg[data-state="sub-wadi"]     #subg-wadi     .sub-line  { opacity: .75; }
-
-/* Sub-nodes */
+/* Sub-node dots */
 .sub-node { opacity: 0; transition: opacity .4s; }
-#mapSvg[data-state="sub-coastal"]  #snodes-coastal  .sub-node,
-#mapSvg[data-state="sub-desert"]   #snodes-desert   .sub-node,
-#mapSvg[data-state="sub-defender"] #snodes-defender .sub-node,
-#mapSvg[data-state="sub-wadi"]     #snodes-wadi     .sub-node  { opacity: 1; }
+#mapSvg[data-state="sub-coastal"]  #snodes-coastal  .sub-node { opacity: 1; }
+#mapSvg[data-state="sub-desert"]   #snodes-desert   .sub-node { opacity: 1; }
+#mapSvg[data-state="sub-defender"] #snodes-defender .sub-node { opacity: 1; }
+#mapSvg[data-state="sub-wadi"]     #snodes-wadi     .sub-node { opacity: 1; }
 
 /* Location cards (level-1) */
-.loc-card {
-  opacity: 0; pointer-events: none;
-  transition: opacity .4s .1s;
-  overflow: visible;
-}
+.loc-card { opacity: 0; pointer-events: none; transition: opacity .4s .1s; overflow: visible; }
 #mapSvg[data-state="main"] .loc-card { opacity: 1; pointer-events: all; }
 
 /* Activity cards (level-2) */
-.act-card {
-  opacity: 0; pointer-events: none;
-  transition: opacity .4s .15s;
-  overflow: visible;
-}
-#mapSvg[data-state="sub-coastal"]  #scards-coastal  .act-card,
-#mapSvg[data-state="sub-desert"]   #scards-desert   .act-card,
-#mapSvg[data-state="sub-defender"] #scards-defender .act-card,
-#mapSvg[data-state="sub-wadi"]     #scards-wadi     .act-card  { opacity: 1; pointer-events: all; }
+.act-card { opacity: 0; pointer-events: none; transition: opacity .4s .15s; overflow: visible; }
+#mapSvg[data-state="sub-coastal"]  #scards-coastal  .act-card { opacity: 1; pointer-events: all; }
+#mapSvg[data-state="sub-desert"]   #scards-desert   .act-card { opacity: 1; pointer-events: all; }
+#mapSvg[data-state="sub-defender"] #scards-defender .act-card { opacity: 1; pointer-events: all; }
+#mapSvg[data-state="sub-wadi"]     #scards-wadi     .act-card { opacity: 1; pointer-events: all; }
 
-/* Nodes: cursor + hover */
+/* Nodes */
 .node { cursor: pointer; }
-.node:hover .node-core { filter: brightness(1.25); }
+.node:hover .node-core { filter: brightness(1.3); }
 
-/* JJ pulse animation */
-@keyframes pulse-ring {
-  0%   { r: 46; opacity: .09; }
-  50%  { r: 54; opacity: .04; }
-  100% { r: 46; opacity: .09; }
-}
-@keyframes pulse-mid {
-  0%   { r: 31; opacity: .18; }
-  50%  { r: 36; opacity: .10; }
-  100% { r: 31; opacity: .18; }
-}
-#mapSvg[data-state="resting"] .jj-pulse-outer { animation: pulse-ring 2.4s ease-in-out infinite; }
-#mapSvg[data-state="resting"] .jj-pulse-mid   { animation: pulse-mid  2.4s ease-in-out infinite .3s; }
-#mapSvg:not([data-state="resting"]) .jj-pulse-outer { animation: none; }
+/* JJ pulse */
+@keyframes pulse-outer { 0%,100%{ r:50; opacity:.08; } 50%{ r:60; opacity:.03; } }
+@keyframes pulse-mid   { 0%,100%{ r:33; opacity:.17; } 50%{ r:40; opacity:.09; } }
+#mapSvg[data-state="resting"] .jj-pulse-outer { animation: pulse-outer 2.4s ease-in-out infinite; }
+#mapSvg[data-state="resting"] .jj-pulse-mid   { animation: pulse-mid   2.4s ease-in-out infinite .35s; }
+#mapSvg:not([data-state="resting"]) .jj-pulse-outer,
 #mapSvg:not([data-state="resting"]) .jj-pulse-mid   { animation: none; }
 
-/* Backdrop-dim overlay (level-2 shows a subtle dim) */
-.map-dim {
-  fill: rgba(0,0,0,0);
-  transition: fill .5s;
-  pointer-events: none;
-}
-#mapSvg[data-state^="sub"] .map-dim { fill: rgba(0,0,0,.18); }
+/* Dim overlay */
+.map-dim { fill: rgba(0,0,0,0); transition: fill .5s; pointer-events: none; }
+#mapSvg[data-state^="sub"] .map-dim { fill: rgba(0,0,0,.16); }
 
-/* ── CARD STYLES (inline in foreignObject) ─────────── */
+/* ── CARD STYLES ─────────────────────────────────── */
 .card-wrap {
   width: 100%; height: 100%;
-  background: rgba(18,14,8,.88);
+  background: rgba(15,11,6,.9);
   border: 1px solid rgba(196,149,64,.22);
-  border-radius: 3px;
-  overflow: hidden;
+  border-radius: 3px; overflow: hidden;
   cursor: pointer;
   display: flex; flex-direction: column;
-  backdrop-filter: blur(6px);
-  box-shadow: 0 4px 24px rgba(0,0,0,.5);
-  font-family: 'Inter', sans-serif;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 28px rgba(0,0,0,.55);
+  font-family: 'Inter',sans-serif;
 }
 .card-wrap:hover { border-color: rgba(196,149,64,.55); }
 .card-img {
-  width: 100%; height: 48px; flex-shrink: 0;
+  width: 100%; height: 46px; flex-shrink: 0;
   background: linear-gradient(135deg, var(--img-a,#1a2a1a) 0%, var(--img-b,#0a1a2a) 100%);
-  position: relative; overflow: hidden;
+  position: relative;
 }
 .card-img::after {
   content: 'IMAGE PLACEHOLDER';
   position: absolute; inset: 0;
   display: flex; align-items: center; justify-content: center;
-  font: 500 7px/1 'Inter',sans-serif;
-  letter-spacing: .2em; color: rgba(255,255,255,.18);
+  font: 500 6.5px/1 'Inter',sans-serif; letter-spacing: .2em; color: rgba(255,255,255,.15);
 }
-.card-body { padding: 7px 9px 8px; flex: 1; display: flex; flex-direction: column; gap: 3px; }
-.card-title { font: 400 11.5px/1.2 'Playfair Display',serif; color: rgba(242,235,217,.92); }
-.card-type  { font: 500 7.5px/1 'Inter',sans-serif; letter-spacing: .14em; text-transform: uppercase; color: rgba(196,149,64,.7); }
-.card-desc  { font: 300 9.5px/1.5 'Inter',sans-serif; color: rgba(242,235,217,.52); margin-top: 3px; }
+.card-body { padding: 6px 9px 7px; flex: 1; display: flex; flex-direction: column; gap: 2px; }
+.card-title { font: 400 11px/1.2 'Playfair Display',serif; color: rgba(242,235,217,.92); }
+.card-type  { font: 500 7px/1 'Inter',sans-serif; letter-spacing: .14em; text-transform: uppercase; color: rgba(196,149,64,.7); }
+.card-desc  { font: 300 9px/1.5 'Inter',sans-serif; color: rgba(242,235,217,.5); margin-top: 3px; }
 
 /* Smaller activity cards */
 .acard-wrap {
   width: 100%; height: 100%;
-  background: rgba(14,10,5,.9);
+  background: rgba(11,8,4,.92);
   border: 1px solid rgba(196,149,64,.18);
-  border-radius: 3px;
-  overflow: hidden;
+  border-radius: 3px; overflow: hidden;
   display: flex; flex-direction: column;
-  backdrop-filter: blur(6px);
-  box-shadow: 0 3px 16px rgba(0,0,0,.4);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 3px 18px rgba(0,0,0,.45);
   cursor: pointer;
 }
 .acard-wrap:hover { border-color: rgba(196,149,64,.45); }
 .acard-img {
-  width: 100%; height: 32px; flex-shrink: 0;
+  width: 100%; height: 28px; flex-shrink: 0;
   background: linear-gradient(135deg, var(--img-a,#1a1e1a) 0%, var(--img-b,#0e1820) 100%);
   position: relative;
 }
 .acard-img::after {
   content: '';
   position: absolute; inset: 0;
-  background: repeating-linear-gradient(
-    45deg, rgba(255,255,255,.03) 0px, rgba(255,255,255,.03) 2px,
-    transparent 2px, transparent 8px
-  );
+  background: repeating-linear-gradient(45deg, rgba(255,255,255,.025) 0,rgba(255,255,255,.025) 2px, transparent 2px, transparent 8px);
 }
 .acard-body { padding: 5px 8px 6px; flex: 1; display: flex; flex-direction: column; gap: 2px; }
-.acard-title { font: 400 10px/1.2 'Playfair Display',serif; color: rgba(242,235,217,.88); }
-.acard-sub   { font: 300 7.5px/1 'Inter',sans-serif; letter-spacing: .1em; color: rgba(196,149,64,.6); text-transform: uppercase; margin-top: 1px; }
+.acard-title { font: 400 9.5px/1.2 'Playfair Display',serif; color: rgba(242,235,217,.88); }
+.acard-sub   { font: 300 7px/1 'Inter',sans-serif; letter-spacing: .1em; color: rgba(196,149,64,.58); text-transform: uppercase; margin-top: 1px; }
 </style>
 </head>
 <body>
@@ -251,11 +218,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #10150D; }
     <p class="slide-eyebrow">10 &thinsp;·&thinsp; The Adventure Ecosystem</p>
     <div class="rule"></div>
     <h1 class="panel-headline">One<br>Emirate.<br>Four<br>Landscapes.</h1>
-    <p class="panel-body">
-      Jebel Jais is not an isolated attraction.
-      It is the anchor of a connected ecosystem
-      spanning every landscape of Ras Al Khaimah.
-    </p>
+    <p class="panel-body">Jebel Jais is the anchor of a connected ecosystem spanning every landscape of Ras Al Khaimah.</p>
     <p class="hint" id="hint">↗ Tap Jebel Jais to explore</p>
     <div class="legend">
       <div class="legend-item anchor">
@@ -283,9 +246,12 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #10150D; }
 
   <!-- ── MAP PANEL ── -->
   <div class="panel-map">
-  <svg id="mapSvg" class="map-svg" viewBox="0 0 600 740"
-       xmlns="http://www.w3.org/2000/svg"
-       data-state="resting">
+  <!--
+    viewBox: 0 0 1000 620  (wider landscape canvas — ready for real map image swap)
+    Nodes:  JJ(754,188) · Coastal(118,428) · Desert(348,408) · Defender(530,295) · Wadi(626,490)
+  -->
+  <svg id="mapSvg" class="map-svg" viewBox="0 0 1000 620"
+       xmlns="http://www.w3.org/2000/svg" data-state="resting">
   <defs>
     <filter id="glow-xl" x="-100%" y="-100%" width="300%" height="300%">
       <feGaussianBlur stdDeviation="18" result="b"/>
@@ -295,179 +261,192 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #10150D; }
       <feGaussianBlur stdDeviation="10" result="b"/>
       <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
     </filter>
-    <filter id="glow-sm" x="-40%" y="-40%" width="180%" height="180%">
-      <feGaussianBlur stdDeviation="5" result="b"/>
-      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-    </filter>
 
+    <!-- Terrain fills -->
     <linearGradient id="g-sea" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0%"   stop-color="#040E18"/>
-      <stop offset="100%" stop-color="#0B2030"/>
+      <stop offset="0%" stop-color="#040E18"/><stop offset="100%" stop-color="#0B2030"/>
     </linearGradient>
     <linearGradient id="g-coast" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0%"   stop-color="#0F2218"/>
-      <stop offset="100%" stop-color="#1A2E1C"/>
+      <stop offset="0%" stop-color="#0F2218"/><stop offset="100%" stop-color="#1A2E1C"/>
     </linearGradient>
     <linearGradient id="g-desert" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%"   stop-color="#2C2010"/>
-      <stop offset="100%" stop-color="#181208"/>
+      <stop offset="0%" stop-color="#2C2010"/><stop offset="100%" stop-color="#181208"/>
     </linearGradient>
-    <radialGradient id="g-mountain" cx="65%" cy="35%" r="55%">
-      <stop offset="0%"   stop-color="#281808"/>
-      <stop offset="100%" stop-color="#100C04"/>
+    <radialGradient id="g-mountain" cx="75%" cy="32%" r="55%">
+      <stop offset="0%" stop-color="#281808"/><stop offset="100%" stop-color="#100C04"/>
     </radialGradient>
-    <radialGradient id="g-jj-glow" cx="405" cy="222" r="190" gradientUnits="userSpaceOnUse">
-      <stop offset="0%"   stop-color="#3C1E04" stop-opacity=".65"/>
+    <!-- Warm glow behind Jebel Jais (754,188) -->
+    <radialGradient id="g-jj-glow" cx="754" cy="188" r="280" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#3C1E04" stop-opacity=".6"/>
       <stop offset="100%" stop-color="#1B2118" stop-opacity="0"/>
     </radialGradient>
 
-    <!-- Main line gradients (peripheral → JJ) -->
-    <linearGradient id="gl-coast"    x1="88"  y1="516" x2="405" y2="222" gradientUnits="userSpaceOnUse">
-      <stop offset="0%"   stop-color="#C49540" stop-opacity=".22"/>
-      <stop offset="100%" stop-color="#C49540" stop-opacity=".75"/>
+    <!-- Main branch line gradients (node → JJ) -->
+    <linearGradient id="gl-coast"    x1="118" y1="428" x2="754" y2="188" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#C49540" stop-opacity=".2"/>
+      <stop offset="100%" stop-color="#C49540" stop-opacity=".76"/>
     </linearGradient>
-    <linearGradient id="gl-desert"   x1="185" y1="476" x2="405" y2="222" gradientUnits="userSpaceOnUse">
-      <stop offset="0%"   stop-color="#C49540" stop-opacity=".25"/>
-      <stop offset="100%" stop-color="#C49540" stop-opacity=".75"/>
+    <linearGradient id="gl-desert"   x1="348" y1="408" x2="754" y2="188" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#C49540" stop-opacity=".24"/>
+      <stop offset="100%" stop-color="#C49540" stop-opacity=".76"/>
     </linearGradient>
-    <linearGradient id="gl-defender" x1="296" y1="336" x2="405" y2="222" gradientUnits="userSpaceOnUse">
-      <stop offset="0%"   stop-color="#C49540" stop-opacity=".32"/>
+    <linearGradient id="gl-defender" x1="530" y1="295" x2="754" y2="188" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#C49540" stop-opacity=".3"/>
       <stop offset="100%" stop-color="#C49540" stop-opacity=".78"/>
     </linearGradient>
-    <linearGradient id="gl-wadi"     x1="358" y1="596" x2="405" y2="222" gradientUnits="userSpaceOnUse">
-      <stop offset="0%"   stop-color="#C49540" stop-opacity=".28"/>
+    <linearGradient id="gl-wadi"     x1="626" y1="490" x2="754" y2="188" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#C49540" stop-opacity=".26"/>
       <stop offset="100%" stop-color="#C49540" stop-opacity=".78"/>
     </linearGradient>
   </defs>
 
-  <!-- ── TERRAIN ── -->
-  <path d="M 0,0 L 90,0 L 90,48 L 74,170 L 62,300 L 56,420 L 54,520 L 58,632 L 62,740 L 0,740 Z" fill="url(#g-sea)"/>
+  <!-- ── TERRAIN ────────────────────────────────────── -->
+
+  <!-- Arabian Gulf (sea) — western strip -->
+  <path d="M 0,0 L 148,0 L 148,58 L 122,228 L 102,385 L 94,502 L 98,574 L 102,620 L 0,620 Z"
+        fill="url(#g-sea)"/>
+  <!-- Sea shimmer lines -->
   <g opacity=".1" stroke="#2A6A90" stroke-width=".6" fill="none">
-    <path d="M 10,90  Q 30,86  56,90"/><path d="M  8,170 Q 28,166 52,170"/>
-    <path d="M  6,250 Q 26,246 50,250"/><path d="M  7,330 Q 27,326 50,330"/>
-    <path d="M  8,410 Q 28,406 50,410"/><path d="M  8,490 Q 28,486 50,490"/>
-    <path d="M 10,570 Q 30,566 52,570"/><path d="M 10,650 Q 30,646 54,650"/>
+    <path d="M 12,90  Q 38,85  60,90"/><path d="M  9,170 Q 35,165 56,170"/>
+    <path d="M  7,250 Q 32,245 53,250"/><path d="M  8,330 Q 33,325 52,330"/>
+    <path d="M  8,410 Q 33,405 50,410"/><path d="M  9,490 Q 34,485 50,490"/>
+    <path d="M 11,570 Q 36,565 54,570"/>
   </g>
-  <path d="M 90,48 L 190,0 L 210,0 L 202,48 L 168,165 L 142,290 L 122,420 L 112,520 L 122,632 L 148,740 L 62,740 L 58,632 L 54,520 L 56,420 L 62,300 L 74,170 L 90,48 Z" fill="url(#g-coast)"/>
-  <path d="M 202,48 L 358,0 L 448,0 L 460,48 L 450,158 L 434,298 L 422,430 L 396,592 L 356,654 L 302,714 L 220,740 L 148,740 L 122,632 L 112,520 L 122,420 L 142,290 L 168,165 L 202,48 Z" fill="url(#g-desert)"/>
-  <path d="M 448,0 L 600,0 L 600,740 L 302,714 L 356,654 L 396,592 L 422,430 L 434,298 L 450,158 L 460,48 Z" fill="url(#g-mountain)"/>
-  <g opacity=".15" fill="#3A2610">
-    <polygon points="488,136 462,194 518,194"/><polygon points="528,108 500,172 556,172"/>
-    <polygon points="562,134 534,198 594,198"/><polygon points="506,172 478,234 538,234"/>
-    <polygon points="472,198 444,260 504,260"/><polygon points="548,180 518,248 582,248"/>
-    <polygon points="590,152 560,222 600,222"/><polygon points="440,220 412,282 472,282"/>
+  <!-- Coastal lowland -->
+  <path d="M 148,58 L 302,0 L 332,0 L 322,58 L 275,202 L 232,354 L 208,484 L 198,574 L 202,620 L 102,620 L 98,574 L 94,502 L 102,385 L 122,228 Z"
+        fill="url(#g-coast)"/>
+  <!-- Inland desert -->
+  <path d="M 322,58 L 598,0 L 768,0 L 788,58 L 776,228 L 758,388 L 734,544 L 682,596 L 614,620 L 202,620 L 198,574 L 208,484 L 232,354 L 275,202 L 322,58 Z"
+        fill="url(#g-desert)"/>
+  <!-- Mountain zone (east) -->
+  <path d="M 768,0 L 1000,0 L 1000,620 L 614,620 L 682,596 L 734,544 L 758,388 L 776,228 L 788,58 Z"
+        fill="url(#g-mountain)"/>
+  <!-- Mountain ridgeline silhouettes -->
+  <g opacity=".14" fill="#3A2610">
+    <polygon points="820,98  788,170 856,170"/><polygon points="872,70  836,148 910,148"/>
+    <polygon points="912,108 876,182 950,182"/><polygon points="848,148 812,222 882,222"/>
+    <polygon points="796,170 760,246 832,246"/><polygon points="878,158 840,236 918,236"/>
+    <polygon points="948,118 910,200 990,200"/><polygon points="766,192 728,268 806,268"/>
   </g>
-  <circle cx="405" cy="222" r="200" fill="url(#g-jj-glow)"/>
-  <path d="M 202,48 L 358,0 L 460,48 L 450,158 L 434,298 L 422,430 L 396,592 L 356,654 L 302,714 L 220,740 L 148,740 L 122,632 L 112,520 L 122,420 L 142,290 L 168,165 Z"
+  <!-- Jebel Jais warm background glow -->
+  <circle cx="754" cy="188" r="280" fill="url(#g-jj-glow)"/>
+  <!-- RAK territory outline -->
+  <path d="M 148,58 L 322,58 L 598,0 L 788,58 L 776,228 L 758,388 L 734,544 L 682,596 L 614,620 L 202,620 L 198,574 L 208,484 L 232,354 L 275,202 Z"
         fill="none" stroke="rgba(196,149,64,.2)" stroke-width="1.2"/>
-  <path d="M 90,48 L 74,170 L 62,300 L 56,420 L 54,520 L 58,632 L 62,740"
-        fill="none" stroke="rgba(196,149,64,.32)" stroke-width="1"/>
+  <!-- Coastline emphasis -->
+  <path d="M 148,58 L 122,228 L 102,385 L 94,502 L 98,574 L 102,620"
+        fill="none" stroke="rgba(196,149,64,.3)" stroke-width="1"/>
 
-  <!-- ── DIM OVERLAY (level-2) ── -->
-  <rect class="map-dim" x="0" y="0" width="600" height="740"/>
+  <!-- ── DIM OVERLAY ── -->
+  <rect class="map-dim" x="0" y="0" width="1000" height="620"/>
 
-  <!-- ── MAIN BRANCH LINES ── -->
+  <!-- ── MAIN BRANCH LINES (JJ → each location) ── -->
   <g id="mainBranches">
-    <path class="main-line" id="line-coastal"  stroke="url(#gl-coast)"    d="M 405,222 C 310,252 210,348 88,516"/>
-    <path class="main-line" id="line-desert"   stroke="url(#gl-desert)"   d="M 405,222 C 374,316 298,398 185,476"/>
-    <path class="main-line" id="line-defender" stroke="url(#gl-defender)" d="M 405,222 C 374,264 338,298 296,336"/>
-    <path class="main-line" id="line-wadi"     stroke="url(#gl-wadi)"     d="M 405,222 C 414,356 400,476 358,596"/>
+    <path class="main-line" id="line-coastal"  stroke="url(#gl-coast)"
+          d="M 754,188 C 540,224 336,326 118,428"/>
+    <path class="main-line" id="line-desert"   stroke="url(#gl-desert)"
+          d="M 754,188 C 648,260 506,346 348,408"/>
+    <path class="main-line" id="line-defender" stroke="url(#gl-defender)"
+          d="M 754,188 C 688,220 614,258 530,295"/>
+    <path class="main-line" id="line-wadi"     stroke="url(#gl-wadi)"
+          d="M 754,188 C 746,316 712,408 626,490"/>
   </g>
 
-  <!-- ── SUB-BRANCH LINES ── -->
-  <!-- Coastal subs -->
+  <!-- ── SUB-BRANCH PATHS (curved beziers) ── -->
+
+  <!-- Coastal subs (from 118,428) -->
   <g id="subg-coastal">
-    <line class="sub-line" x1="88" y1="516" x2="164" y2="568"/>
-    <line class="sub-line" x1="88" y1="516" x2="170" y2="638"/>
-    <line class="sub-line" x1="88" y1="516" x2="54"  y2="635"/>
-    <line class="sub-line" x1="88" y1="516" x2="28"  y2="566"/>
+    <path class="sub-line" d="M 118,428 C 158,450 196,478 234,504"/>
+    <path class="sub-line" d="M 118,428 C 164,476 208,526 252,574"/>
+    <path class="sub-line" d="M 118,428 C  88,453  66,480  48,512"/>
+    <path class="sub-line" d="M 118,428 C  88,436  64,442  42,452"/>
   </g>
-  <!-- Desert subs -->
+  <!-- Desert subs (from 348,408) -->
   <g id="subg-desert">
-    <line class="sub-line" x1="185" y1="476" x2="80"  y2="410"/>
-    <line class="sub-line" x1="185" y1="476" x2="58"  y2="478"/>
-    <line class="sub-line" x1="185" y1="476" x2="88"  y2="554"/>
-    <line class="sub-line" x1="185" y1="476" x2="202" y2="560"/>
+    <path class="sub-line" d="M 348,408 C 302,392 258,370 218,348"/>
+    <path class="sub-line" d="M 348,408 C 282,410 232,414 186,416"/>
+    <path class="sub-line" d="M 348,408 C 298,432 250,460 202,490"/>
+    <path class="sub-line" d="M 348,408 C 352,444 362,472 376,500"/>
   </g>
-  <!-- Defender subs -->
+  <!-- Defender subs (from 530,295) -->
   <g id="subg-defender">
-    <line class="sub-line" x1="296" y1="336" x2="214" y2="268"/>
-    <line class="sub-line" x1="296" y1="336" x2="210" y2="348"/>
-    <line class="sub-line" x1="296" y1="336" x2="292" y2="246"/>
-    <line class="sub-line" x1="296" y1="336" x2="372" y2="292"/>
+    <path class="sub-line" d="M 530,295 C 498,272 464,252 428,230"/>
+    <path class="sub-line" d="M 530,295 C 492,296 454,304 412,312"/>
+    <path class="sub-line" d="M 530,295 C 512,262 520,234 532,208"/>
+    <path class="sub-line" d="M 530,295 C 566,278 602,262 642,250"/>
   </g>
-  <!-- Wadi subs -->
+  <!-- Wadi subs (from 626,490) -->
   <g id="subg-wadi">
-    <line class="sub-line" x1="358" y1="596" x2="248" y2="640"/>
-    <line class="sub-line" x1="358" y1="596" x2="224" y2="698"/>
-    <line class="sub-line" x1="358" y1="596" x2="358" y2="698"/>
-    <line class="sub-line" x1="358" y1="596" x2="452" y2="648"/>
+    <path class="sub-line" d="M 626,490 C 582,510 544,528 504,546"/>
+    <path class="sub-line" d="M 626,490 C 572,530 534,560 492,588"/>
+    <path class="sub-line" d="M 626,490 C 630,534 638,562 644,588"/>
+    <path class="sub-line" d="M 626,490 C 672,510 714,530 754,548"/>
   </g>
 
   <!-- ── SUB-NODE DOTS ── -->
   <g id="snodes-coastal">
-    <circle class="sub-node" cx="164" cy="568" r="3.5" fill="#4A9EC4"/>
-    <circle class="sub-node" cx="170" cy="638" r="3.5" fill="#4A9EC4"/>
-    <circle class="sub-node" cx="54"  cy="635" r="3.5" fill="#4A9EC4"/>
-    <circle class="sub-node" cx="28"  cy="566" r="3.5" fill="#4A9EC4"/>
+    <circle class="sub-node" cx="234" cy="504" r="4" fill="#4A9EC4"/>
+    <circle class="sub-node" cx="252" cy="574" r="4" fill="#4A9EC4"/>
+    <circle class="sub-node" cx="48"  cy="512" r="4" fill="#4A9EC4"/>
+    <circle class="sub-node" cx="42"  cy="452" r="4" fill="#4A9EC4"/>
   </g>
   <g id="snodes-desert">
-    <circle class="sub-node" cx="80"  cy="410" r="3.5" fill="#B8903E"/>
-    <circle class="sub-node" cx="58"  cy="478" r="3.5" fill="#B8903E"/>
-    <circle class="sub-node" cx="88"  cy="554" r="3.5" fill="#B8903E"/>
-    <circle class="sub-node" cx="202" cy="560" r="3.5" fill="#B8903E"/>
+    <circle class="sub-node" cx="218" cy="348" r="4" fill="#B8903E"/>
+    <circle class="sub-node" cx="186" cy="416" r="4" fill="#B8903E"/>
+    <circle class="sub-node" cx="202" cy="490" r="4" fill="#B8903E"/>
+    <circle class="sub-node" cx="376" cy="500" r="4" fill="#B8903E"/>
   </g>
   <g id="snodes-defender">
-    <circle class="sub-node" cx="214" cy="268" r="3.5" fill="#9A7038"/>
-    <circle class="sub-node" cx="210" cy="348" r="3.5" fill="#9A7038"/>
-    <circle class="sub-node" cx="292" cy="246" r="3.5" fill="#9A7038"/>
-    <circle class="sub-node" cx="372" cy="292" r="3.5" fill="#9A7038"/>
+    <circle class="sub-node" cx="428" cy="230" r="4" fill="#9A7038"/>
+    <circle class="sub-node" cx="412" cy="312" r="4" fill="#9A7038"/>
+    <circle class="sub-node" cx="532" cy="208" r="4" fill="#9A7038"/>
+    <circle class="sub-node" cx="642" cy="250" r="4" fill="#9A7038"/>
   </g>
   <g id="snodes-wadi">
-    <circle class="sub-node" cx="248" cy="640" r="3.5" fill="#529052"/>
-    <circle class="sub-node" cx="224" cy="698" r="3.5" fill="#529052"/>
-    <circle class="sub-node" cx="358" cy="698" r="3.5" fill="#529052"/>
-    <circle class="sub-node" cx="452" cy="648" r="3.5" fill="#529052"/>
+    <circle class="sub-node" cx="504" cy="546" r="4" fill="#529052"/>
+    <circle class="sub-node" cx="492" cy="588" r="4" fill="#529052"/>
+    <circle class="sub-node" cx="644" cy="588" r="4" fill="#529052"/>
+    <circle class="sub-node" cx="754" cy="548" r="4" fill="#529052"/>
   </g>
 
-  <!-- ── LEVEL-1 LOCATION CARDS ── -->
+  <!-- ── LEVEL-1 LOCATION CARDS ──
+       Cards placed to CLEAR all node labels and rings.
+       Coastal node (118,428): card below-right, starts at x=140 (clear of sea)
+       Desert  node (348,408): card above, x=168 (clear of coastal space)
+       Defender node (530,295): card upper-left, away from JJ labels
+       Wadi node (626,490): card upper-right, clear of JJ label
+  ── -->
 
-  <!-- Coastal card: node at (88,516), card below-right -->
+  <!-- Coastal card -->
   <foreignObject class="loc-card" id="lcard-coastal"
-    x="96" y="564" width="160" height="92"
-    data-loc="coastal">
-    <div xmlns="http://www.w3.org/1999/xhtml" class="card-wrap"
-         style="--img-a:#0D2535;--img-b:#06181E;">
+    x="140" y="472" width="172" height="96" data-loc="coastal">
+    <div xmlns="http://www.w3.org/1999/xhtml" class="card-wrap" style="--img-a:#0D2535;--img-b:#06181E;">
       <div class="card-img"></div>
       <div class="card-body">
         <p class="card-title">Coastal Experiences</p>
         <p class="card-type">Marine · Discovery</p>
-        <p class="card-desc">RAK's coastline — marine adventure, island exploration, and coastal discovery.</p>
+        <p class="card-desc">Marine adventure, island exploration, and coastal discovery along RAK's shoreline.</p>
       </div>
     </div>
   </foreignObject>
 
-  <!-- Desert card: node at (185,476), card above -->
+  <!-- Desert card -->
   <foreignObject class="loc-card" id="lcard-desert"
-    x="12" y="376" width="160" height="92"
-    data-loc="desert">
-    <div xmlns="http://www.w3.org/1999/xhtml" class="card-wrap"
-         style="--img-a:#2A1A08;--img-b:#1A1205;">
+    x="170" y="306" width="172" height="96" data-loc="desert">
+    <div xmlns="http://www.w3.org/1999/xhtml" class="card-wrap" style="--img-a:#2A1A08;--img-b:#1A1205;">
       <div class="card-img"></div>
       <div class="card-body">
         <p class="card-title">Desert Experiences</p>
         <p class="card-type">Heritage · Exploration</p>
-        <p class="card-desc">Ancient heritage and dramatic landscapes combining culture with adventure.</p>
+        <p class="card-desc">Ancient heritage and dramatic desert landscapes combining culture with adventure.</p>
       </div>
     </div>
   </foreignObject>
 
-  <!-- Defender card: node at (296,336), card above -->
+  <!-- Defender card -->
   <foreignObject class="loc-card" id="lcard-defender"
-    x="188" y="226" width="160" height="92"
-    data-loc="defender">
-    <div xmlns="http://www.w3.org/1999/xhtml" class="card-wrap"
-         style="--img-a:#1E1408;--img-b:#281A0A;">
+    x="344" y="192" width="172" height="96" data-loc="defender">
+    <div xmlns="http://www.w3.org/1999/xhtml" class="card-wrap" style="--img-a:#1E1408;--img-b:#281A0A;">
       <div class="card-img"></div>
       <div class="card-body">
         <p class="card-title">Defender Experience</p>
@@ -477,12 +456,10 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #10150D; }
     </div>
   </foreignObject>
 
-  <!-- Wadi card: node at (358,596), card above-right -->
+  <!-- Wadi card -->
   <foreignObject class="loc-card" id="lcard-wadi"
-    x="374" y="526" width="160" height="92"
-    data-loc="wadi">
-    <div xmlns="http://www.w3.org/1999/xhtml" class="card-wrap"
-         style="--img-a:#0E2010;--img-b:#0A1A0C;">
+    x="652" y="420" width="172" height="96" data-loc="wadi">
+    <div xmlns="http://www.w3.org/1999/xhtml" class="card-wrap" style="--img-a:#0E2010;--img-b:#0A1A0C;">
       <div class="card-img"></div>
       <div class="card-body">
         <p class="card-title">Wadi Showka</p>
@@ -492,11 +469,15 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #10150D; }
     </div>
   </foreignObject>
 
-  <!-- ── LEVEL-2 ACTIVITY CARDS ── -->
+  <!-- ── LEVEL-2 ACTIVITY CARDS ──
+       Each card is offset AWAY from the parent node.
+       Sub-nodes listed above; cards clear of all main nodes.
+  ── -->
 
   <!-- Coastal activities -->
   <g id="scards-coastal">
-    <foreignObject class="act-card" x="170" y="554" width="128" height="72">
+    <!-- c1 (234,504) → card right of sub-node -->
+    <foreignObject class="act-card" x="242" y="490" width="130" height="70">
       <div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#0D2535;--img-b:#061E2E;">
         <div class="acard-img"></div>
         <div class="acard-body">
@@ -505,16 +486,18 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #10150D; }
         </div>
       </div>
     </foreignObject>
-    <foreignObject class="act-card" x="176" y="626" width="128" height="72">
+    <!-- c2 (252,574) → card right, trimmed height near bottom -->
+    <foreignObject class="act-card" x="260" y="556" width="130" height="62">
       <div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#0A2030;--img-b:#061820;">
-        <div class="acard-img"></div>
+        <div class="acard-img" style="height:22px;"></div>
         <div class="acard-body">
           <p class="acard-title">Marine Adventure</p>
           <p class="acard-sub">Water-based activities</p>
         </div>
       </div>
     </foreignObject>
-    <foreignObject class="act-card" x="6" y="614" width="128" height="72">
+    <!-- c3 (48,512) → card left, anchored near west edge -->
+    <foreignObject class="act-card" x="2" y="498" width="130" height="70">
       <div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#061A28;--img-b:#041220;">
         <div class="acard-img"></div>
         <div class="acard-body">
@@ -523,7 +506,8 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #10150D; }
         </div>
       </div>
     </foreignObject>
-    <foreignObject class="act-card" x="6" y="542" width="128" height="72">
+    <!-- c4 (42,452) → card left, above c3 -->
+    <foreignObject class="act-card" x="2" y="426" width="130" height="70">
       <div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#0A2030;--img-b:#081828;">
         <div class="acard-img"></div>
         <div class="acard-body">
@@ -536,7 +520,8 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #10150D; }
 
   <!-- Desert activities -->
   <g id="scards-desert">
-    <foreignObject class="act-card" x="8" y="394" width="128" height="72">
+    <!-- d1 (218,348) → card left-above -->
+    <foreignObject class="act-card" x="86" y="326" width="130" height="70">
       <div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#2A1A08;--img-b:#1A1004;">
         <div class="acard-img"></div>
         <div class="acard-body">
@@ -545,7 +530,8 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #10150D; }
         </div>
       </div>
     </foreignObject>
-    <foreignObject class="act-card" x="8" y="466" width="128" height="72">
+    <!-- d2 (186,416) → card left -->
+    <foreignObject class="act-card" x="54" y="400" width="130" height="70">
       <div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#281606;--img-b:#180E04;">
         <div class="acard-img"></div>
         <div class="acard-body">
@@ -554,7 +540,8 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #10150D; }
         </div>
       </div>
     </foreignObject>
-    <foreignObject class="act-card" x="8" y="542" width="128" height="72">
+    <!-- d3 (202,490) → card left-below -->
+    <foreignObject class="act-card" x="68" y="476" width="130" height="70">
       <div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#101020;--img-b:#080812;">
         <div class="acard-img"></div>
         <div class="acard-body">
@@ -563,7 +550,8 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #10150D; }
         </div>
       </div>
     </foreignObject>
-    <foreignObject class="act-card" x="204" y="548" width="128" height="72">
+    <!-- d4 (376,500) → card below-right of desert node -->
+    <foreignObject class="act-card" x="382" y="486" width="130" height="70">
       <div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#1A2210;--img-b:#0E1A08;">
         <div class="acard-img"></div>
         <div class="acard-body">
@@ -576,7 +564,8 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #10150D; }
 
   <!-- Defender activities -->
   <g id="scards-defender">
-    <foreignObject class="act-card" x="106" y="252" width="128" height="72">
+    <!-- df1 (428,230) → card left -->
+    <foreignObject class="act-card" x="296" y="214" width="130" height="70">
       <div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#201408;--img-b:#140E04;">
         <div class="acard-img"></div>
         <div class="acard-body">
@@ -585,7 +574,8 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #10150D; }
         </div>
       </div>
     </foreignObject>
-    <foreignObject class="act-card" x="104" y="334" width="128" height="72">
+    <!-- df2 (412,312) → card left -->
+    <foreignObject class="act-card" x="280" y="296" width="130" height="70">
       <div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#1E1206;--img-b:#120C04;">
         <div class="acard-img"></div>
         <div class="acard-body">
@@ -594,7 +584,8 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #10150D; }
         </div>
       </div>
     </foreignObject>
-    <foreignObject class="act-card" x="252" y="178" width="128" height="72">
+    <!-- df3 (532,208) → card above, clear of JJ label (JJ label is around y=148-165) -->
+    <foreignObject class="act-card" x="470" y="126" width="130" height="70">
       <div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#221810;--img-b:#16100A;">
         <div class="acard-img"></div>
         <div class="acard-body">
@@ -603,7 +594,8 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #10150D; }
         </div>
       </div>
     </foreignObject>
-    <foreignObject class="act-card" x="372" y="270" width="128" height="72">
+    <!-- df4 (642,250) → card right, below JJ -->
+    <foreignObject class="act-card" x="648" y="226" width="130" height="70">
       <div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#1C1408;--img-b:#100E06;">
         <div class="acard-img"></div>
         <div class="acard-body">
@@ -616,7 +608,8 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #10150D; }
 
   <!-- Wadi activities -->
   <g id="scards-wadi">
-    <foreignObject class="act-card" x="128" y="626" width="116" height="68">
+    <!-- w1 (504,546) → card left of sub-node -->
+    <foreignObject class="act-card" x="372" y="528" width="130" height="70">
       <div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#0E2010;--img-b:#081408;">
         <div class="acard-img"></div>
         <div class="acard-body">
@@ -625,25 +618,28 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #10150D; }
         </div>
       </div>
     </foreignObject>
-    <foreignObject class="act-card" x="88" y="700" width="116" height="38">
+    <!-- w2 (492,588) → card left, small (near bottom) -->
+    <foreignObject class="act-card" x="360" y="572" width="130" height="46">
       <div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#0C1E0E;--img-b:#071208;">
         <div class="acard-img" style="height:0;"></div>
-        <div class="acard-body" style="padding:5px 8px;">
+        <div class="acard-body" style="padding:6px 8px;">
           <p class="acard-title">Hiking & Trail Networks</p>
           <p class="acard-sub">Guided treks</p>
         </div>
       </div>
     </foreignObject>
-    <foreignObject class="act-card" x="360" y="700" width="116" height="38">
+    <!-- w3 (644,588) → card right, small (near bottom) -->
+    <foreignObject class="act-card" x="650" y="572" width="130" height="46">
       <div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#121E10;--img-b:#0A1608;">
         <div class="acard-img" style="height:0;"></div>
-        <div class="acard-body" style="padding:5px 8px;">
+        <div class="acard-body" style="padding:6px 8px;">
           <p class="acard-title">School Programmes</p>
           <p class="acard-sub">Youth adventure</p>
         </div>
       </div>
     </foreignObject>
-    <foreignObject class="act-card" x="456" y="634" width="116" height="68">
+    <!-- w4 (754,548) → card right of sub-node -->
+    <foreignObject class="act-card" x="762" y="528" width="130" height="70">
       <div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#0E1E12;--img-b:#08140A;">
         <div class="acard-img"></div>
         <div class="acard-body">
@@ -656,88 +652,103 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #10150D; }
 
   <!-- ── INTERACTIVE NODES ── -->
 
-  <!-- Jebel Jais (405, 222) -->
+  <!-- Jebel Jais (754, 188) — anchor -->
   <g class="node" id="node-jj" data-node="jj">
-    <circle class="jj-pulse-outer" cx="405" cy="222" r="46" fill="none" stroke="rgba(196,149,64,.09)" stroke-width="1"/>
-    <circle class="jj-pulse-mid"   cx="405" cy="222" r="31" fill="none" stroke="rgba(196,149,64,.18)" stroke-width=".8"/>
-    <circle cx="405" cy="222" r="20"  fill="none" stroke="rgba(196,149,64,.38)" stroke-width="1"/>
-    <circle cx="405" cy="222" r="12"  fill="#C49540" opacity=".12" filter="url(#glow-lg)"/>
-    <circle class="node-core" cx="405" cy="222" r="8"   fill="#D4A848"/>
-    <circle cx="405" cy="222" r="4.5" fill="#F0D280"/>
-    <circle cx="405" cy="222" r="2"   fill="#FFF6D8"/>
-    <line x1="405" y1="202" x2="405" y2="180" stroke="#C49540" stroke-width=".8" opacity=".65"/>
-    <circle cx="405" cy="176" r="1.8" fill="rgba(196,149,64,.65)"/>
-    <text text-anchor="middle" x="405" y="162" font-family="'Playfair Display',serif" font-size="16" font-weight="600" fill="#F2EBD9">Jebel Jais</text>
-    <text text-anchor="middle" x="405" y="149" font-family="'Inter',sans-serif" font-size="8.5" fill="rgba(196,149,64,.82)" letter-spacing=".17em">MOUNTAIN · 1,934M</text>
+    <circle class="jj-pulse-outer" cx="754" cy="188" r="50" fill="none" stroke="rgba(196,149,64,.08)" stroke-width="1"/>
+    <circle class="jj-pulse-mid"   cx="754" cy="188" r="33" fill="none" stroke="rgba(196,149,64,.17)" stroke-width=".8"/>
+    <circle cx="754" cy="188" r="21"  fill="none" stroke="rgba(196,149,64,.36)" stroke-width="1"/>
+    <circle cx="754" cy="188" r="12"  fill="#C49540" opacity=".12" filter="url(#glow-lg)"/>
+    <circle class="node-core" cx="754" cy="188" r="8"   fill="#D4A848"/>
+    <circle cx="754" cy="188" r="4.5" fill="#F0D280"/>
+    <circle cx="754" cy="188" r="2"   fill="#FFF6D8"/>
+    <!-- Elevation stem going UP -->
+    <line x1="754" y1="167" x2="754" y2="142" stroke="#C49540" stroke-width=".8" opacity=".62"/>
+    <circle cx="754" cy="138" r="1.8" fill="rgba(196,149,64,.62)"/>
+    <!-- Labels: BELOW elevation tick, above node ring -->
+    <text text-anchor="middle" x="754" y="125"
+          font-family="'Playfair Display',serif" font-size="17" font-weight="600"
+          fill="#F2EBD9">Jebel Jais</text>
+    <text text-anchor="middle" x="754" y="111"
+          font-family="'Inter',sans-serif" font-size="8.5"
+          fill="rgba(196,149,64,.82)" letter-spacing=".17em">MOUNTAIN · 1,934M</text>
   </g>
 
-  <!-- Coastal (88, 516) -->
+  <!-- Coastal (118, 428) -->
   <g class="node" id="node-coastal" data-node="coastal">
-    <circle cx="88" cy="516" r="22" fill="none" stroke="rgba(58,136,180,.15)" stroke-width="1"/>
-    <circle cx="88" cy="516" r="14" fill="none" stroke="rgba(58,136,180,.28)" stroke-width=".8"/>
-    <circle cx="88" cy="516" r="8"  fill="none" stroke="rgba(58,136,180,.45)" stroke-width=".8"/>
-    <circle class="node-core" cx="88" cy="516" r="5"  fill="#2A6882"/>
-    <circle cx="88" cy="516" r="2.5" fill="#4A9EC4"/>
-    <line x1="100" y1="516" x2="118" y2="516" stroke="rgba(196,149,64,.22)" stroke-width=".6"/>
-    <text x="122" y="510" font-family="'Playfair Display',serif" font-size="12.5" fill="rgba(242,235,217,.85)">Coastal</text>
-    <text x="122" y="523" font-family="'Inter',sans-serif" font-size="7.5" fill="rgba(196,149,64,.6)" letter-spacing=".14em">MARINE</text>
+    <circle cx="118" cy="428" r="24" fill="none" stroke="rgba(58,136,180,.13)" stroke-width="1"/>
+    <circle cx="118" cy="428" r="15" fill="none" stroke="rgba(58,136,180,.26)" stroke-width=".8"/>
+    <circle cx="118" cy="428" r="9"  fill="none" stroke="rgba(58,136,180,.44)" stroke-width=".8"/>
+    <circle class="node-core" cx="118" cy="428" r="5.5" fill="#2A6882"/>
+    <circle cx="118" cy="428" r="2.5" fill="#4A9EC4"/>
+    <!-- Label: RIGHT of node (space available in coastal zone) -->
+    <line x1="128" y1="428" x2="145" y2="428" stroke="rgba(196,149,64,.2)" stroke-width=".6"/>
+    <text x="149" y="422" font-family="'Playfair Display',serif" font-size="13" fill="rgba(242,235,217,.85)">Coastal</text>
+    <text x="149" y="435" font-family="'Inter',sans-serif" font-size="7.5" fill="rgba(196,149,64,.58)" letter-spacing=".14em">MARINE</text>
   </g>
 
-  <!-- Desert (185, 476) -->
+  <!-- Desert (348, 408) -->
   <g class="node" id="node-desert" data-node="desert">
-    <circle cx="185" cy="476" r="22" fill="none" stroke="rgba(180,128,58,.15)" stroke-width="1"/>
-    <circle cx="185" cy="476" r="14" fill="none" stroke="rgba(180,128,58,.28)" stroke-width=".8"/>
-    <circle cx="185" cy="476" r="8"  fill="none" stroke="rgba(180,128,58,.45)" stroke-width=".8"/>
-    <circle class="node-core" cx="185" cy="476" r="5"  fill="#7A5A28"/>
-    <circle cx="185" cy="476" r="2.5" fill="#B8903E"/>
-    <line x1="185" y1="464" x2="185" y2="452" stroke="rgba(196,149,64,.22)" stroke-width=".6"/>
-    <text text-anchor="middle" x="185" y="440" font-family="'Playfair Display',serif" font-size="12.5" fill="rgba(242,235,217,.85)">Desert</text>
-    <text text-anchor="middle" x="185" y="428" font-family="'Inter',sans-serif" font-size="7.5" fill="rgba(196,149,64,.6)" letter-spacing=".14em">HERITAGE</text>
+    <circle cx="348" cy="408" r="24" fill="none" stroke="rgba(180,128,58,.13)" stroke-width="1"/>
+    <circle cx="348" cy="408" r="15" fill="none" stroke="rgba(180,128,58,.26)" stroke-width=".8"/>
+    <circle cx="348" cy="408" r="9"  fill="none" stroke="rgba(180,128,58,.44)" stroke-width=".8"/>
+    <circle class="node-core" cx="348" cy="408" r="5.5" fill="#7A5A28"/>
+    <circle cx="348" cy="408" r="2.5" fill="#B8903E"/>
+    <!-- Label: ABOVE node (card is also above, card ends at y=402, label here at y≈376-395) -->
+    <line x1="348" y1="393" x2="348" y2="378" stroke="rgba(196,149,64,.2)" stroke-width=".6"/>
+    <text text-anchor="middle" x="348" y="365" font-family="'Playfair Display',serif" font-size="13" fill="rgba(242,235,217,.85)">Desert</text>
+    <text text-anchor="middle" x="348" y="352" font-family="'Inter',sans-serif" font-size="7.5" fill="rgba(196,149,64,.58)" letter-spacing=".14em">HERITAGE</text>
   </g>
 
-  <!-- Defender (296, 336) -->
+  <!-- Defender (530, 295) -->
   <g class="node" id="node-defender" data-node="defender">
-    <circle cx="296" cy="336" r="20" fill="none" stroke="rgba(160,118,58,.15)" stroke-width="1"/>
-    <circle cx="296" cy="336" r="13" fill="none" stroke="rgba(160,118,58,.28)" stroke-width=".8"/>
-    <circle cx="296" cy="336" r="7.5" fill="none" stroke="rgba(160,118,58,.45)" stroke-width=".8"/>
-    <circle class="node-core" cx="296" cy="336" r="4.5" fill="#5C4018"/>
-    <circle cx="296" cy="336" r="2"  fill="#9A7038"/>
-    <line x1="283" y1="336" x2="268" y2="336" stroke="rgba(196,149,64,.22)" stroke-width=".6"/>
-    <text text-anchor="end" x="264" y="330" font-family="'Playfair Display',serif" font-size="12.5" fill="rgba(242,235,217,.85)">Defender</text>
-    <text text-anchor="end" x="264" y="343" font-family="'Inter',sans-serif" font-size="7.5" fill="rgba(196,149,64,.6)" letter-spacing=".14em">OFF-ROAD</text>
+    <circle cx="530" cy="295" r="22" fill="none" stroke="rgba(160,118,58,.13)" stroke-width="1"/>
+    <circle cx="530" cy="295" r="14" fill="none" stroke="rgba(160,118,58,.26)" stroke-width=".8"/>
+    <circle cx="530" cy="295" r="8"  fill="none" stroke="rgba(160,118,58,.44)" stroke-width=".8"/>
+    <circle class="node-core" cx="530" cy="295" r="5"  fill="#5C4018"/>
+    <circle cx="530" cy="295" r="2.5" fill="#9A7038"/>
+    <!-- Label: RIGHT of node (card is to the left) -->
+    <line x1="540" y1="295" x2="556" y2="295" stroke="rgba(196,149,64,.2)" stroke-width=".6"/>
+    <text x="560" y="289" font-family="'Playfair Display',serif" font-size="13" fill="rgba(242,235,217,.85)">Defender</text>
+    <text x="560" y="302" font-family="'Inter',sans-serif" font-size="7.5" fill="rgba(196,149,64,.58)" letter-spacing=".14em">OFF-ROAD</text>
   </g>
 
-  <!-- Wadi (358, 596) -->
+  <!-- Wadi Showka (626, 490) -->
   <g class="node" id="node-wadi" data-node="wadi">
-    <circle cx="358" cy="596" r="22" fill="none" stroke="rgba(78,142,78,.15)" stroke-width="1"/>
-    <circle cx="358" cy="596" r="14" fill="none" stroke="rgba(78,142,78,.28)" stroke-width=".8"/>
-    <circle cx="358" cy="596" r="8"  fill="none" stroke="rgba(78,142,78,.45)" stroke-width=".8"/>
-    <circle class="node-core" cx="358" cy="596" r="5"  fill="#325A32"/>
-    <circle cx="358" cy="596" r="2.5" fill="#529052"/>
-    <line x1="346" y1="596" x2="328" y2="596" stroke="rgba(196,149,64,.22)" stroke-width=".6"/>
-    <text text-anchor="end" x="324" y="590" font-family="'Playfair Display',serif" font-size="12.5" fill="rgba(242,235,217,.85)">Wadi Showka</text>
-    <text text-anchor="end" x="324" y="603" font-family="'Inter',sans-serif" font-size="7.5" fill="rgba(196,149,64,.6)" letter-spacing=".14em">NATURE</text>
+    <circle cx="626" cy="490" r="24" fill="none" stroke="rgba(78,142,78,.13)" stroke-width="1"/>
+    <circle cx="626" cy="490" r="15" fill="none" stroke="rgba(78,142,78,.26)" stroke-width=".8"/>
+    <circle cx="626" cy="490" r="9"  fill="none" stroke="rgba(78,142,78,.44)" stroke-width=".8"/>
+    <circle class="node-core" cx="626" cy="490" r="5.5" fill="#325A32"/>
+    <circle cx="626" cy="490" r="2.5" fill="#529052"/>
+    <!-- Label: LEFT of node (card is to the right) -->
+    <line x1="616" y1="490" x2="600" y2="490" stroke="rgba(196,149,64,.2)" stroke-width=".6"/>
+    <text text-anchor="end" x="596" y="484" font-family="'Playfair Display',serif" font-size="13" fill="rgba(242,235,217,.85)">Wadi Showka</text>
+    <text text-anchor="end" x="596" y="497" font-family="'Inter',sans-serif" font-size="7.5" fill="rgba(196,149,64,.58)" letter-spacing=".14em">NATURE</text>
   </g>
 
   <!-- ── DECORATIVE ── -->
-  <g transform="translate(556,62)" opacity=".42">
-    <circle r="19" fill="none" stroke="rgba(196,149,64,.38)" stroke-width=".6"/>
-    <circle r="2"  fill="rgba(196,149,64,.55)"/>
-    <line x1="0" y1="-19" x2="0" y2="-11" stroke="rgba(196,149,64,.7)"  stroke-width=".8"/>
-    <line x1="0" y1=" 11" x2="0" y2=" 19" stroke="rgba(196,149,64,.38)" stroke-width=".6"/>
-    <line x1="-19" y1="0" x2="-11" y2="0" stroke="rgba(196,149,64,.38)" stroke-width=".6"/>
-    <line x1=" 11" y1="0" x2=" 19" y2="0" stroke="rgba(196,149,64,.38)" stroke-width=".6"/>
-    <text text-anchor="middle" x="0" y="-24" font-family="'Inter',sans-serif" font-size="8" font-weight="500" fill="rgba(196,149,64,.72)" letter-spacing=".08em">N</text>
+  <!-- Compass rose — top right, clear of mountain silhouettes -->
+  <g transform="translate(956,52)" opacity=".4">
+    <circle r="20" fill="none" stroke="rgba(196,149,64,.36)" stroke-width=".6"/>
+    <circle r="2"  fill="rgba(196,149,64,.52)"/>
+    <line x1="0" y1="-20" x2="0" y2="-11" stroke="rgba(196,149,64,.68)" stroke-width=".8"/>
+    <line x1="0" y1=" 11" x2="0" y2=" 20" stroke="rgba(196,149,64,.34)" stroke-width=".6"/>
+    <line x1="-20" y1="0" x2="-11" y2="0" stroke="rgba(196,149,64,.34)" stroke-width=".6"/>
+    <line x1=" 11" y1="0" x2=" 20" y2="0" stroke="rgba(196,149,64,.34)" stroke-width=".6"/>
+    <text text-anchor="middle" x="0" y="-26" font-family="'Inter',sans-serif" font-size="8.5" font-weight="500" fill="rgba(196,149,64,.7)" letter-spacing=".08em">N</text>
   </g>
-  <text x="310" y="26" text-anchor="middle" font-family="'Inter',sans-serif" font-size="8.5" fill="rgba(196,149,64,.28)" letter-spacing=".32em">RAS AL KHAIMAH</text>
-  <text x="36"  y="310" text-anchor="middle" font-family="'Inter',sans-serif" font-size="7.5" fill="rgba(58,120,168,.42)" letter-spacing=".1em" transform="rotate(-90,36,310)">Arabian Gulf</text>
+  <!-- Emirate label -->
+  <text x="490" y="22" text-anchor="middle" font-family="'Inter',sans-serif" font-size="8.5"
+        fill="rgba(196,149,64,.25)" letter-spacing=".32em">RAS AL KHAIMAH</text>
+  <!-- Arabian Gulf rotated label -->
+  <text x="46" y="310" text-anchor="middle" font-family="'Inter',sans-serif" font-size="7.5"
+        fill="rgba(58,120,168,.38)" letter-spacing=".1em" transform="rotate(-90,46,310)">Arabian Gulf</text>
 
   </svg>
 
   <p class="map-caption" id="mapCaption">
     Together they create a connected tourism network spanning the entire Emirate.
   </p>
-  </div><!-- /panel-map -->
+  </div>
 
   <div class="slide-footer">
     <span class="footer-meta">Hero Experiences Group &nbsp;·&nbsp; Confidential</span>
@@ -751,112 +762,118 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #10150D; }
   const hint    = document.getElementById('hint');
   const caption = document.getElementById('mapCaption');
 
-  /* ── Init dash animation ─────────────────────────── */
-  const mainLines = svg.querySelectorAll('.main-line');
-  const subLines  = svg.querySelectorAll('.sub-line');
+  /* Init all animated paths with their measured length */
+  function initPaths(selector) {
+    svg.querySelectorAll(selector).forEach(p => {
+      const len = p.getTotalLength();
+      p.style.strokeDasharray  = len;
+      p.style.strokeDashoffset = len;
+    });
+  }
+  initPaths('.main-line');
+  initPaths('.sub-line');
 
-  mainLines.forEach(l => {
-    const len = l.getTotalLength();
-    l.style.strokeDasharray  = len;
-    l.style.strokeDashoffset = len;
-    l.style.transition = 'stroke-dashoffset .9s cubic-bezier(.4,0,.2,1), opacity .5s ease';
+  /* Apply transition timing to main lines */
+  svg.querySelectorAll('.main-line').forEach(p => {
+    p.style.transition = 'stroke-dashoffset .95s cubic-bezier(.4,0,.2,1), opacity .5s ease';
+  });
+  /* Sub-lines get per-element stagger via CSS var */
+  svg.querySelectorAll('.sub-line').forEach(p => {
+    p.style.transition = 'stroke-dashoffset .6s cubic-bezier(.4,0,.2,1) var(--del,0ms), opacity .4s ease';
   });
 
-  subLines.forEach(l => {
-    const len = l.getTotalLength();
-    l.style.strokeDasharray  = len;
-    l.style.strokeDashoffset = len;
-    l.style.transition = 'stroke-dashoffset .55s cubic-bezier(.4,0,.2,1) var(--del,0s), opacity .4s ease';
-  });
-
-  /* ── State machine ───────────────────────────────── */
-  let state = 'resting'; // 'resting' | 'main' | 'sub-{id}'
+  /* ── State machine ── */
+  let state = 'resting';
 
   function setState(next) {
-    const prev = state;
     state = next;
     svg.setAttribute('data-state', next);
 
     if (next === 'resting') {
       hint.classList.remove('hidden');
       caption.classList.remove('dim');
-      // Collapse main lines
-      mainLines.forEach(l => { l.style.strokeDashoffset = l.getTotalLength(); });
-      // Collapse sub lines
-      subLines.forEach(l => { l.style.strokeDashoffset = l.getTotalLength(); });
+      collapseAll();
     }
-
     if (next === 'main') {
       hint.classList.add('hidden');
       caption.classList.add('dim');
-      // Draw main lines with staggered delay
-      mainLines.forEach((l, i) => {
-        setTimeout(() => { l.style.strokeDashoffset = 0; }, i * 120);
-      });
-      // Collapse any open sub lines
-      subLines.forEach(l => { l.style.strokeDashoffset = l.getTotalLength(); });
+      drawMainLines();
+      collapseSubLines();
     }
-
     if (next.startsWith('sub-')) {
       caption.classList.add('dim');
-      const locId = next.replace('sub-', '');
-      // Draw sub-lines for this location
-      const group = svg.querySelector('#subg-' + locId);
-      if (group) {
-        group.querySelectorAll('.sub-line').forEach((l, i) => {
-          l.style.setProperty('--del', (i * 80) + 'ms');
-          l.style.strokeDashoffset = 0;
-        });
-      }
-      // Collapse sub-lines for other locations
-      svg.querySelectorAll('[id^="subg-"]').forEach(g => {
-        if (g.id !== 'subg-' + locId) {
-          g.querySelectorAll('.sub-line').forEach(l => {
-            l.style.strokeDashoffset = l.getTotalLength();
-          });
-        }
-      });
+      drawSubLines(next.replace('sub-', ''));
     }
   }
 
-  /* ── Node click handlers ─────────────────────────── */
+  function drawMainLines() {
+    svg.querySelectorAll('.main-line').forEach((l, i) => {
+      setTimeout(() => { l.style.strokeDashoffset = 0; }, i * 110);
+    });
+  }
+
+  function collapseAll() {
+    svg.querySelectorAll('.main-line, .sub-line').forEach(l => {
+      l.style.strokeDashoffset = l.getTotalLength ? l.getTotalLength() : l.style.strokeDasharray;
+    });
+  }
+
+  function collapseSubLines() {
+    svg.querySelectorAll('.sub-line').forEach(l => {
+      l.style.strokeDashoffset = l.getTotalLength();
+    });
+  }
+
+  function drawSubLines(locId) {
+    /* Draw only this location's sub-lines */
+    const group = svg.querySelector('#subg-' + locId);
+    if (group) {
+      group.querySelectorAll('.sub-line').forEach((l, i) => {
+        l.style.setProperty('--del', (i * 75) + 'ms');
+        l.style.strokeDashoffset = 0;
+      });
+    }
+    /* Collapse other sub-lines */
+    ['coastal','desert','defender','wadi'].forEach(id => {
+      if (id === locId) return;
+      const g = svg.querySelector('#subg-' + id);
+      if (g) g.querySelectorAll('.sub-line').forEach(l => {
+        l.style.strokeDashoffset = l.getTotalLength();
+      });
+    });
+  }
+
+  /* ── Click handlers ── */
   document.getElementById('node-jj').addEventListener('click', e => {
     e.stopPropagation();
     if (state === 'resting') setState('main');
-    else setState('main'); // from sub: back to main
+    else setState('main');        /* from any state: go/return to main */
   });
 
   ['coastal','desert','defender','wadi'].forEach(id => {
-    // Click on node OR card
-    const node = document.getElementById('node-' + id);
-    const card = document.getElementById('lcard-' + id);
     const handler = e => {
       e.stopPropagation();
-      if (state === 'main' || state === 'sub-' + id) {
-        setState('sub-' + id);
-      }
+      if (state === 'main' || state.startsWith('sub-')) setState('sub-' + id);
     };
-    node.addEventListener('click', handler);
+    document.getElementById('node-' + id).addEventListener('click', handler);
+    const card = document.getElementById('lcard-' + id);
     if (card) card.addEventListener('click', handler);
   });
 
-  /* ── Click outside: sub → main ──────────────────── */
+  /* Click SVG background */
   svg.addEventListener('click', () => {
     if (state.startsWith('sub-')) setState('main');
-    else if (state === 'main') setState('resting');
+    else if (state === 'main')    setState('resting');
   });
 
-  /* ── Keyboard navigation ─────────────────────────── */
+  /* Keyboard */
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape') {
       if (state.startsWith('sub-')) setState('main');
-      else if (state === 'main') setState('resting');
+      else if (state === 'main')    setState('resting');
     }
-    if (e.key === 'Enter' || e.key === ' ') {
-      if (state === 'resting') setState('main');
-    }
+    if ((e.key === 'Enter' || e.key === ' ') && state === 'resting') setState('main');
   });
-
 })();
 </script>
 </body>
