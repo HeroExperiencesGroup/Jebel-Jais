@@ -380,30 +380,38 @@ html, body { width:100%; height:100%; overflow:hidden; background:#10150D; }
        x="0" y="0" width="1000" height="620"
        preserveAspectRatio="none"/>
 
-  <!-- TERRAIN (drawn over the map — set opacity low or remove once real map is in) -->
-  <path d="M 0,0 L 148,0 L 148,58 L 122,228 L 102,385 L 94,502 L 98,574 L 102,620 L 0,620 Z" fill="url(#g-sea)"/>
-  <g opacity=".1" stroke="#2A6A90" stroke-width=".6" fill="none">
-    <path d="M 12,90  Q 38,85  60,90"/><path d="M  9,170 Q 35,165 56,170"/>
-    <path d="M  7,250 Q 32,245 53,250"/><path d="M  8,330 Q 33,325 52,330"/>
-    <path d="M  8,410 Q 33,405 50,410"/><path d="M  9,490 Q 34,485 50,490"/>
-    <path d="M 11,570 Q 36,565 54,570"/>
+  <!-- STYLIZED TERRAIN — hidden by default so the real map image shows.
+       Toggle display to "inline" to use the hand-drawn placeholder instead. -->
+  <g id="stylizedTerrain" style="display:none">
+    <path d="M 0,0 L 148,0 L 148,58 L 122,228 L 102,385 L 94,502 L 98,574 L 102,620 L 0,620 Z" fill="url(#g-sea)"/>
+    <g opacity=".1" stroke="#2A6A90" stroke-width=".6" fill="none">
+      <path d="M 12,90  Q 38,85  60,90"/><path d="M  9,170 Q 35,165 56,170"/>
+      <path d="M  7,250 Q 32,245 53,250"/><path d="M  8,330 Q 33,325 52,330"/>
+      <path d="M  8,410 Q 33,405 50,410"/><path d="M  9,490 Q 34,485 50,490"/>
+      <path d="M 11,570 Q 36,565 54,570"/>
+    </g>
+    <path d="M 148,58 L 302,0 L 332,0 L 322,58 L 275,202 L 232,354 L 208,484 L 198,574 L 202,620 L 102,620 L 98,574 L 94,502 L 102,385 L 122,228 Z" fill="url(#g-coast)"/>
+    <path d="M 322,58 L 598,0 L 768,0 L 788,58 L 776,228 L 758,388 L 734,544 L 682,596 L 614,620 L 202,620 L 198,574 L 208,484 L 232,354 L 275,202 L 322,58 Z" fill="url(#g-desert)"/>
+    <path d="M 768,0 L 1000,0 L 1000,620 L 614,620 L 682,596 L 734,544 L 758,388 L 776,228 L 788,58 Z" fill="url(#g-mountain)"/>
+    <g opacity=".14" fill="#3A2610">
+      <polygon points="820,98  788,170 856,170"/><polygon points="872,70  836,148 910,148"/>
+      <polygon points="912,108 876,182 950,182"/><polygon points="848,148 812,222 882,222"/>
+      <polygon points="796,170 760,246 832,246"/><polygon points="878,158 840,236 918,236"/>
+      <polygon points="948,118 910,200 990,200"/><polygon points="766,192 728,268 806,268"/>
+    </g>
+    <path d="M 148,58 L 322,58 L 598,0 L 788,58 L 776,228 L 758,388 L 734,544 L 682,596 L 614,620 L 202,620 L 198,574 L 208,484 L 232,354 L 275,202 Z"
+          fill="none" stroke="rgba(196,149,64,.2)" stroke-width="1.2"/>
+    <path d="M 148,58 L 122,228 L 102,385 L 94,502 L 98,574 L 102,620"
+          fill="none" stroke="rgba(196,149,64,.3)" stroke-width="1"/>
   </g>
-  <path d="M 148,58 L 302,0 L 332,0 L 322,58 L 275,202 L 232,354 L 208,484 L 198,574 L 202,620 L 102,620 L 98,574 L 94,502 L 102,385 L 122,228 Z" fill="url(#g-coast)"/>
-  <path d="M 322,58 L 598,0 L 768,0 L 788,58 L 776,228 L 758,388 L 734,544 L 682,596 L 614,620 L 202,620 L 198,574 L 208,484 L 232,354 L 275,202 L 322,58 Z" fill="url(#g-desert)"/>
-  <path d="M 768,0 L 1000,0 L 1000,620 L 614,620 L 682,596 L 734,544 L 758,388 L 776,228 L 788,58 Z" fill="url(#g-mountain)"/>
-  <g opacity=".14" fill="#3A2610">
-    <polygon points="820,98  788,170 856,170"/><polygon points="872,70  836,148 910,148"/>
-    <polygon points="912,108 876,182 950,182"/><polygon points="848,148 812,222 882,222"/>
-    <polygon points="796,170 760,246 832,246"/><polygon points="878,158 840,236 918,236"/>
-    <polygon points="948,118 910,200 990,200"/><polygon points="766,192 728,268 806,268"/>
-  </g>
-  <circle cx="637" cy="180" r="280" fill="url(#g-jj-glow)"/>
-  <path d="M 148,58 L 322,58 L 598,0 L 788,58 L 776,228 L 758,388 L 734,544 L 682,596 L 614,620 L 202,620 L 198,574 L 208,484 L 232,354 L 275,202 Z"
-        fill="none" stroke="rgba(196,149,64,.2)" stroke-width="1.2"/>
-  <path d="M 148,58 L 122,228 L 102,385 L 94,502 L 98,574 L 102,620"
-        fill="none" stroke="rgba(196,149,64,.3)" stroke-width="1"/>
 
-  <!-- DIM OVERLAY -->
+  <!-- Soft warm glow behind Jebel Jais (kept — adds atmosphere over the map) -->
+  <circle cx="637" cy="180" r="280" fill="url(#g-jj-glow)"/>
+
+  <!-- Readability scrim over the map so lines/labels/cards stay legible -->
+  <rect x="0" y="0" width="1000" height="620" fill="rgba(8,10,7,.32)"/>
+
+  <!-- DIM OVERLAY (deepens on drill-down) -->
   <rect class="map-dim" x="0" y="0" width="1000" height="620"/>
 
   <!-- MAIN BRANCH LINES — JJ(637,180) → each node -->
