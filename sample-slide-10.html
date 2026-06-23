@@ -719,13 +719,14 @@ html, body { width:100%; height:100%; overflow:hidden; background:#10150D; }
     <button class="ep-close" id="editClose" title="Close">×</button>
   </div>
   <div class="ep-tabs" id="epTabs">
-    <button class="ep-tab active" data-group="L1">Level 1</button>
+    <button class="ep-tab active" data-group="Nodes">Nodes</button>
+    <button class="ep-tab" data-group="L1">Level 1</button>
     <button class="ep-tab" data-group="coastal">Coastal</button>
     <button class="ep-tab" data-group="desert">Desert</button>
     <button class="ep-tab" data-group="defender">Defender</button>
     <button class="ep-tab" data-group="wadi">Wadi</button>
   </div>
-  <p class="ep-help">Click &amp; drag a card on the map to reposition it.</p>
+  <p class="ep-help" id="epHelp">Drag a node dot on the map. Branch lines update live.</p>
   <div class="ep-list" id="epList"></div>
   <div class="ep-actions">
     <button class="ep-btn" id="epCopy">Copy positions</button>
@@ -830,52 +831,128 @@ html, body { width:100%; height:100%; overflow:hidden; background:#10150D; }
 
   // ── EDIT MODE ─────────────────────────────────────────────────────────
   const GROUPS = {
-    'L1':       [ {id:'lcard-coastal',label:'Coastal card'}, {id:'lcard-desert',label:'Desert card'},
-                  {id:'lcard-defender',label:'Defender card'}, {id:'lcard-wadi',label:'Wadi card'} ],
-    'coastal':  [ {id:'sc-c1',label:'Coastal Events'}, {id:'sc-c2',label:'Island Exploration'},
-                  {id:'sc-c3',label:'Marine Adventure'}, {id:'sc-c4',label:'Coastal Discovery'} ],
-    'desert':   [ {id:'sc-d1',label:'Heritage Exp.'}, {id:'sc-d2',label:'Desert Exploration'},
-                  {id:'sc-d3',label:'Stargazing'}, {id:'sc-d4',label:'Conservation Tourism'} ],
-    'defender': [ {id:'sc-df1',label:'Defender Driving'}, {id:'sc-df2',label:'Corporate Exp.'},
-                  {id:'sc-df3',label:'Training & Cert.'}, {id:'sc-df4',label:'Vehicle Launch'} ],
-    'wadi':     [ {id:'sc-w1',label:'Heritage Camp'}, {id:'sc-w2',label:'Hiking & Trails'},
-                  {id:'sc-w3',label:'School Progs.'}, {id:'sc-w4',label:'Wellness Retreats'} ],
+    /* Node positions — base coords baked into SVG; drag uses transform offset */
+    'Nodes': [
+      {id:'node-jj',       label:'Jebel Jais',  base:{x:754, y:188}},
+      {id:'node-coastal',  label:'Coastal',     base:{x:118, y:428}},
+      {id:'node-desert',   label:'Desert',      base:{x:348, y:408}},
+      {id:'node-defender', label:'Defender',    base:{x:530, y:295}},
+      {id:'node-wadi',     label:'Wadi Showka', base:{x:626, y:490}},
+    ],
+    /* Card groups — drag updates x/y attributes */
+    'L1': [
+      {id:'lcard-coastal',  label:'Coastal card' },
+      {id:'lcard-desert',   label:'Desert card'  },
+      {id:'lcard-defender', label:'Defender card'},
+      {id:'lcard-wadi',     label:'Wadi card'    },
+    ],
+    'coastal':  [
+      {id:'sc-c1',label:'Coastal Events'   }, {id:'sc-c2',label:'Island Exploration'},
+      {id:'sc-c3',label:'Marine Adventure' }, {id:'sc-c4',label:'Coastal Discovery' },
+    ],
+    'desert': [
+      {id:'sc-d1',label:'Heritage Exp.'   }, {id:'sc-d2',label:'Desert Exploration'},
+      {id:'sc-d3',label:'Stargazing'      }, {id:'sc-d4',label:'Conservation Tour.'  },
+    ],
+    'defender': [
+      {id:'sc-df1',label:'Defender Driving'}, {id:'sc-df2',label:'Corporate Exp.'   },
+      {id:'sc-df3',label:'Training & Cert.'}, {id:'sc-df4',label:'Vehicle Launch'   },
+    ],
+    'wadi': [
+      {id:'sc-w1',label:'Heritage Camp'  }, {id:'sc-w2',label:'Hiking & Trails'},
+      {id:'sc-w3',label:'School Progs.'  }, {id:'sc-w4',label:'Wellness Retreats'},
+    ],
   };
 
-  // Snapshot originals for reset
+  // Snapshot original card positions for reset
   const origPos = {};
   document.querySelectorAll('.loc-card, .act-card').forEach(el => {
     if (el.id) origPos[el.id] = { x: el.getAttribute('x'), y: el.getAttribute('y') };
   });
 
+  // Node transform offsets (dx, dy relative to baked-in base)
+  const nodeOffsets = {};
+  GROUPS['Nodes'].forEach(item => { nodeOffsets[item.id] = {dx:0, dy:0}; });
+
   let editMode   = false;
-  let editGroup  = 'L1';
+  let editGroup  = 'Nodes';   // start on Nodes tab
   let dragging   = null;
   let dragId     = null;
-  let dragOffset = { x:0, y:0 };
+  let dragOffset = {x:0, y:0};
 
   const editToggle = document.getElementById('editToggle');
   const editPanel  = document.getElementById('editPanel');
   const epList     = document.getElementById('epList');
+  const epHelp     = document.getElementById('epHelp');
 
+  const HELP = {
+    'Nodes':    'Drag a node dot. Branch lines update live.',
+    'L1':       'Drag a Level-1 card on the map.',
+    'coastal':  'Drag a Coastal sub-card.',
+    'desert':   'Drag a Desert sub-card.',
+    'defender': 'Drag a Defender sub-card.',
+    'wadi':     'Drag a Wadi sub-card.',
+  };
+
+  /* Convert mouse event → SVG coordinate space */
   function svgPt(e) {
     const r = svg.getBoundingClientRect();
-    return { x: (e.clientX - r.left) / r.width * 1000,
-             y: (e.clientY - r.top)  / r.height * 620 };
+    return {
+      x: (e.clientX - r.left) / r.width  * 1000,
+      y: (e.clientY - r.top)  / r.height * 620,
+    };
   }
 
+  /* Actual node position (base + current offset) */
+  function getNodePos(id) {
+    const item = GROUPS['Nodes'].find(i => i.id === id);
+    const off  = nodeOffsets[id] || {dx:0, dy:0};
+    return { x: item.base.x + off.dx, y: item.base.y + off.dy };
+  }
+
+  /* Redraw main branch lines using current node positions */
+  function updateBranchLines() {
+    const jj = getNodePos('node-jj');
+    ['coastal','desert','defender','wadi'].forEach(loc => {
+      const n  = getNodePos('node-' + loc);
+      const ln = document.getElementById('line-' + loc);
+      if (!ln) return;
+      // Simple cubic bezier — keeps the organic curve feel
+      const cp1x = Math.round(jj.x + (n.x - jj.x) * 0.3);
+      const cp1y = Math.round(jj.y + (n.y - jj.y) * 0.1);
+      const cp2x = Math.round(jj.x + (n.x - jj.x) * 0.7);
+      const cp2y = Math.round(jj.y + (n.y - jj.y) * 0.9);
+      ln.setAttribute('d',
+        `M ${jj.x},${jj.y} C ${cp1x},${cp1y} ${cp2x},${cp2y} ${n.x},${n.y}`);
+      // Re-measure for dash animation
+      const len = ln.getTotalLength();
+      ln.style.strokeDasharray  = len;
+      ln.style.strokeDashoffset = 0; // keep visible in edit mode
+    });
+  }
+
+  /* Build the coordinate list in the panel */
   function buildPanel() {
     epList.innerHTML = '';
+    if (epHelp) epHelp.textContent = HELP[editGroup] || '';
+
     GROUPS[editGroup].forEach(item => {
-      const el = document.getElementById(item.id);
-      if (!el) return;
       const row = document.createElement('div');
       row.className = 'ep-row';
       row.dataset.id = item.id;
-      const x = Math.round(parseFloat(el.getAttribute('x')));
-      const y = Math.round(parseFloat(el.getAttribute('y')));
-      row.innerHTML = `<span class="ep-label">${item.label}</span>
-                       <span class="ep-xy" id="xy-${item.id}">x=${x} y=${y}</span>`;
+      let x, y;
+      if (editGroup === 'Nodes') {
+        const p = getNodePos(item.id);
+        x = p.x; y = p.y;
+      } else {
+        const el = document.getElementById(item.id);
+        if (!el) return;
+        x = Math.round(parseFloat(el.getAttribute('x')));
+        y = Math.round(parseFloat(el.getAttribute('y')));
+      }
+      row.innerHTML =
+        `<span class="ep-label">${item.label}</span>
+         <span class="ep-xy" id="xy-${item.id}">x=${x} y=${y}</span>`;
       epList.appendChild(row);
     });
   }
@@ -883,24 +960,35 @@ html, body { width:100%; height:100%; overflow:hidden; background:#10150D; }
   function refreshXY(id) {
     const el = document.getElementById(id);
     const xy = document.getElementById('xy-' + id);
-    if (el && xy) xy.textContent = `x=${Math.round(parseFloat(el.getAttribute('x')))} y=${Math.round(parseFloat(el.getAttribute('y')))}`;
+    if (el && xy)
+      xy.textContent =
+        `x=${Math.round(parseFloat(el.getAttribute('x')))} y=${Math.round(parseFloat(el.getAttribute('y')))}`;
   }
 
+  function refreshNodeXY(id) {
+    const p  = getNodePos(id);
+    const xy = document.getElementById('xy-' + id);
+    if (xy) xy.textContent = `x=${p.x} y=${p.y}`;
+  }
+
+  /* Show/hide cards for the active group */
   function showGroup(group) {
-    // Show only current group's cards, hide all others
     document.querySelectorAll('.loc-card, .act-card').forEach(el => {
-      el.style.opacity = '0';
+      el.style.opacity      = '0';
       el.style.pointerEvents = 'none';
     });
-    GROUPS[group].forEach(item => {
-      const el = document.getElementById(item.id);
-      if (el) { el.style.opacity = '0.9'; el.style.pointerEvents = 'all'; }
-    });
+    if (group !== 'Nodes') {
+      GROUPS[group].forEach(item => {
+        const el = document.getElementById(item.id);
+        if (el) { el.style.opacity = '0.9'; el.style.pointerEvents = 'all'; }
+      });
+    }
   }
 
   function setGroup(group) {
     editGroup = group;
-    document.querySelectorAll('.ep-tab').forEach(t => t.classList.toggle('active', t.dataset.group === group));
+    document.querySelectorAll('.ep-tab').forEach(t =>
+      t.classList.toggle('active', t.dataset.group === group));
     showGroup(group);
     buildPanel();
   }
@@ -911,7 +999,7 @@ html, body { width:100%; height:100%; overflow:hidden; background:#10150D; }
     editToggle.textContent = '✓ Done editing';
     editPanel.classList.add('open');
     svg.setAttribute('data-edit', 'true');
-    setState('main'); // show branches for context
+    setState('main');
     setGroup(editGroup);
   }
 
@@ -921,7 +1009,6 @@ html, body { width:100%; height:100%; overflow:hidden; background:#10150D; }
     editToggle.textContent = '⟳ Edit positions';
     editPanel.classList.remove('open');
     svg.removeAttribute('data-edit');
-    // Restore CSS-driven visibility
     document.querySelectorAll('.loc-card, .act-card').forEach(el => {
       el.style.opacity = '';
       el.style.pointerEvents = '';
@@ -936,32 +1023,69 @@ html, body { width:100%; height:100%; overflow:hidden; background:#10150D; }
     if (tab) setGroup(tab.dataset.group);
   });
 
-  document.getElementById('epCopy').addEventListener('click', function() {
+  /* Copy positions to clipboard */
+  document.getElementById('epCopy').addEventListener('click', function () {
     const lines = ['// ' + editGroup + ' positions'];
-    GROUPS[editGroup].forEach(item => {
-      const el = document.getElementById(item.id);
-      if (!el) return;
-      lines.push(`${item.id}: x=${Math.round(parseFloat(el.getAttribute('x')))}, y=${Math.round(parseFloat(el.getAttribute('y')))}`);
-    });
-    navigator.clipboard.writeText(lines.join('\n')).then(() => {
-      this.textContent = '✓ Copied!'; this.classList.add('ok');
-      setTimeout(() => { this.textContent = 'Copy positions'; this.classList.remove('ok'); }, 1800);
-    }).catch(() => { alert(lines.join('\n')); }); // fallback
+    if (editGroup === 'Nodes') {
+      GROUPS['Nodes'].forEach(item => {
+        const p = getNodePos(item.id);
+        lines.push(`${item.id}: x=${p.x}, y=${p.y}`);
+      });
+    } else {
+      GROUPS[editGroup].forEach(item => {
+        const el = document.getElementById(item.id);
+        if (!el) return;
+        lines.push(`${item.id}: x=${Math.round(parseFloat(el.getAttribute('x')))}, y=${Math.round(parseFloat(el.getAttribute('y')))}`);
+      });
+    }
+    navigator.clipboard.writeText(lines.join('\n'))
+      .then(() => {
+        this.textContent = '✓ Copied!'; this.classList.add('ok');
+        setTimeout(() => { this.textContent = 'Copy positions'; this.classList.remove('ok'); }, 1800);
+      })
+      .catch(() => alert(lines.join('\n')));
   });
 
+  /* Reset group to originals */
   document.getElementById('epReset').addEventListener('click', () => {
-    GROUPS[editGroup].forEach(item => {
-      const el = document.getElementById(item.id);
-      const o  = origPos[item.id];
-      if (el && o) { el.setAttribute('x', o.x); el.setAttribute('y', o.y); }
-    });
+    if (editGroup === 'Nodes') {
+      GROUPS['Nodes'].forEach(item => {
+        nodeOffsets[item.id] = {dx:0, dy:0};
+        document.getElementById(item.id)?.removeAttribute('transform');
+      });
+      updateBranchLines();
+    } else {
+      GROUPS[editGroup].forEach(item => {
+        const el  = document.getElementById(item.id);
+        const ori = origPos[item.id];
+        if (el && ori) { el.setAttribute('x', ori.x); el.setAttribute('y', ori.y); }
+      });
+    }
     buildPanel();
   });
 
-  // Drag: hit-test current group cards against SVG coords
+  /* DRAG — mousedown: hit-test nodes (by distance) or cards (by bbox) */
   svg.addEventListener('mousedown', e => {
     if (!editMode) return;
     const pos = svgPt(e);
+
+    if (editGroup === 'Nodes') {
+      for (const item of GROUPS['Nodes']) {
+        const np   = getNodePos(item.id);
+        const dist = Math.hypot(pos.x - np.x, pos.y - np.y);
+        if (dist < 38) {
+          dragging   = document.getElementById(item.id);
+          dragId     = item.id;
+          dragOffset = { x: pos.x - np.x, y: pos.y - np.y };
+          epList.querySelectorAll('.ep-row').forEach(r =>
+            r.classList.toggle('dragging', r.dataset.id === dragId));
+          e.stopPropagation(); e.preventDefault();
+          break;
+        }
+      }
+      return;
+    }
+
     for (const item of GROUPS[editGroup]) {
       const card = document.getElementById(item.id);
       if (!card) continue;
@@ -969,25 +1093,37 @@ html, body { width:100%; height:100%; overflow:hidden; background:#10150D; }
       const cy = parseFloat(card.getAttribute('y'));
       const cw = parseFloat(card.getAttribute('width'));
       const ch = parseFloat(card.getAttribute('height'));
-      if (pos.x >= cx && pos.x <= cx+cw && pos.y >= cy && pos.y <= cy+ch) {
+      if (pos.x >= cx && pos.x <= cx + cw && pos.y >= cy && pos.y <= cy + ch) {
         dragging   = card;
         dragId     = item.id;
         dragOffset = { x: pos.x - cx, y: pos.y - cy };
-        // Highlight row
-        epList.querySelectorAll('.ep-row').forEach(r => r.classList.toggle('dragging', r.dataset.id === dragId));
+        epList.querySelectorAll('.ep-row').forEach(r =>
+          r.classList.toggle('dragging', r.dataset.id === dragId));
         e.stopPropagation(); e.preventDefault();
         break;
       }
     }
   });
 
+  /* DRAG — mousemove */
   svg.addEventListener('mousemove', e => {
     if (!dragging) return;
     const pos = svgPt(e);
-    const nx = Math.round(pos.x - dragOffset.x);
-    const ny = Math.round(pos.y - dragOffset.y);
-    dragging.setAttribute('x', nx);
-    dragging.setAttribute('y', ny);
+
+    if (editGroup === 'Nodes') {
+      const item = GROUPS['Nodes'].find(i => i.id === dragId);
+      if (!item) return;
+      const dx = Math.round(pos.x - dragOffset.x - item.base.x);
+      const dy = Math.round(pos.y - dragOffset.y - item.base.y);
+      nodeOffsets[dragId] = {dx, dy};
+      dragging.setAttribute('transform', `translate(${dx},${dy})`);
+      updateBranchLines();
+      refreshNodeXY(dragId);
+      return;
+    }
+
+    dragging.setAttribute('x', Math.round(pos.x - dragOffset.x));
+    dragging.setAttribute('y', Math.round(pos.y - dragOffset.y));
     refreshXY(dragId);
   });
 
