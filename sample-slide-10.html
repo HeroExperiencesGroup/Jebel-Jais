@@ -235,11 +235,18 @@ html, body { width:100%; height:100%; overflow:hidden; background:#10150D; }
 #mapSvg[data-edit="true"] .card-wrap,
 #mapSvg[data-edit="true"] .acard-wrap { outline:1px dashed rgba(196,149,64,.35) !important; }
 
-/* ── ICON POPUPS (resting state) ── */
-.loc-icon { opacity:0; transition:opacity .45s, transform .45s; pointer-events:none; overflow:visible; }
-#mapSvg[data-state="resting"] .loc-icon { opacity:1; pointer-events:all; }
-#mapSvg[data-state="main"]    .loc-icon { opacity:0; }
-#mapSvg[data-state^="sub"]    .loc-icon { opacity:0; }
+/* ── ICON POPUPS (scale-pop choreography) ── */
+.loc-icon { opacity:0; pointer-events:none; overflow:visible; }
+.loc-icon .icon-pop {
+  transform:scale(0); transform-origin:50% 100%;
+  transition:transform .45s cubic-bezier(.34,1.56,.64,1);
+}
+.loc-icon.popped { opacity:1; pointer-events:all; }
+.loc-icon.popped .icon-pop { transform:scale(1); }
+/* In sub states, icons stay hidden */
+#mapSvg[data-state^="sub"] .loc-icon { opacity:0 !important; pointer-events:none; }
+/* In edit mode, force icons full-size & visible for dragging */
+#mapSvg[data-edit="true"] .loc-icon .icon-pop { transform:scale(1) !important; }
 .icon-pop {
   width:100%; height:100%;
   display:flex; flex-direction:column; align-items:center; gap:5px;
@@ -653,35 +660,35 @@ html, body { width:100%; height:100%; overflow:hidden; background:#10150D; }
        ═══════════════════════════════════════════════════ -->
   <g id="iconLayer">
     <!-- JJ node(637,180) → icon centred above, centre(637,96) → x=595,y=66 -->
-    <foreignObject class="loc-icon" id="icon-jj" x="595" y="66" width="84" height="100">
+    <foreignObject class="loc-icon" id="icon-jj" x="671" y="149" width="84" height="100">
       <div xmlns="http://www.w3.org/1999/xhtml" class="icon-pop">
         <div class="icon-disc"><img src="assets/images/icon/jebel ali.png" alt="Jebel Jais"/></div>
         <div class="icon-cap">Jebel Jais</div>
       </div>
     </foreignObject>
     <!-- Coastal node(346,83) → icon to the right, centre(420,83) → x=378,y=53 -->
-    <foreignObject class="loc-icon" id="icon-coastal" x="378" y="53" width="84" height="100">
+    <foreignObject class="loc-icon" id="icon-coastal" x="255" y="29" width="84" height="100">
       <div xmlns="http://www.w3.org/1999/xhtml" class="icon-pop">
         <div class="icon-disc"><img src="assets/images/icon/Al marjan.png" alt="Coastal"/></div>
         <div class="icon-cap">Coastal</div>
       </div>
     </foreignObject>
     <!-- Desert node(298,214) → icon above, centre(298,150) → x=256,y=120 -->
-    <foreignObject class="loc-icon" id="icon-desert" x="256" y="120" width="84" height="100">
+    <foreignObject class="loc-icon" id="icon-desert" x="203" y="184" width="84" height="100">
       <div xmlns="http://www.w3.org/1999/xhtml" class="icon-pop">
         <div class="icon-disc"><img src="assets/images/icon/desert experience.png" alt="Desert"/></div>
         <div class="icon-cap">Desert</div>
       </div>
     </foreignObject>
     <!-- Defender node(356,290) → icon below, centre(356,356) → x=314,y=326 — no icon yet -->
-    <foreignObject class="loc-icon" id="icon-defender" x="314" y="326" width="84" height="100">
+    <foreignObject class="loc-icon" id="icon-defender" x="357" y="295" width="84" height="100">
       <div xmlns="http://www.w3.org/1999/xhtml" class="icon-pop">
         <div class="icon-disc placeholder"></div>
         <div class="icon-cap">Defender</div>
       </div>
     </foreignObject>
     <!-- Wadi node(164,572) → icon above, centre(164,508) → x=122,y=478 -->
-    <foreignObject class="loc-icon" id="icon-wadi" x="122" y="478" width="84" height="100">
+    <foreignObject class="loc-icon" id="icon-wadi" x="122" y="473" width="84" height="100">
       <div xmlns="http://www.w3.org/1999/xhtml" class="icon-pop">
         <div class="icon-disc"><img src="assets/images/icon/Wadi Shoka.png" alt="Wadi Showka"/></div>
         <div class="icon-cap">Wadi Showka</div>
@@ -826,41 +833,84 @@ html, body { width:100%; height:100%; overflow:hidden; background:#10150D; }
     p.style.transition = 'stroke-dashoffset .6s cubic-bezier(.4,0,.2,1) var(--del,0ms), opacity .4s ease';
   });
 
+  /* ── Choreography timing ── */
+  const T_JJ_POP    = 480;   // JJ icon scale-up duration before lines start
+  const LINE_STAGGER = 110;  // delay between each branch line
+  const LINE_DRAW   = 950;   // single line draw duration
+  const LOC_STAGGER = 90;    // delay between each location-icon pop
+
+  const LOCS = ['coastal','desert','defender','wadi'];
+
+  /* Icon helpers */
+  function popIcon(id)      { document.getElementById('icon-' + id)?.classList.add('popped'); }
+  function unpopIcon(id)    { document.getElementById('icon-' + id)?.classList.remove('popped'); }
+  function unpopAllIcons()  { ['jj', ...LOCS].forEach(unpopIcon); }
+  function popLocationIcons(stagger) {
+    LOCS.forEach((id, i) =>
+      choreoTimer(() => popIcon(id), stagger ? i * LOC_STAGGER : 0));
+  }
+
+  function collapseLines(sel) {
+    svg.querySelectorAll(sel).forEach(l => { l.style.strokeDashoffset = l.getTotalLength(); });
+  }
+  function drawMainLines(stagger) {
+    svg.querySelectorAll('.main-line').forEach((l, i) =>
+      choreoTimer(() => { l.style.strokeDashoffset = 0; }, stagger ? i * LINE_STAGGER : 0));
+  }
+
+  /* Track choreography timers so we can cancel if the user clicks away */
+  let choreoTimers = [];
+  function choreoTimer(fn, ms) { choreoTimers.push(setTimeout(fn, ms)); }
+  function clearChoreo() { choreoTimers.forEach(clearTimeout); choreoTimers = []; }
+
   /* State machine */
   let state = 'resting';
 
-  function setState(next) {
+  function setState(next, opts) {
+    opts = opts || {};
+    clearChoreo();
     state = next;
     svg.setAttribute('data-state', next);
 
     if (next === 'resting') {
       hint.classList.remove('hidden');
       caption.classList.remove('dim');
-      svg.querySelectorAll('.main-line, .sub-line').forEach(l => {
-        l.style.strokeDashoffset = l.getTotalLength();
-      });
+      unpopAllIcons();
+      collapseLines('.main-line, .sub-line');
     }
+
     if (next === 'main') {
       hint.classList.add('hidden');
       caption.classList.add('dim');
-      svg.querySelectorAll('.main-line').forEach((l, i) => {
-        setTimeout(() => { l.style.strokeDashoffset = 0; }, i * 110);
-      });
-      svg.querySelectorAll('.sub-line').forEach(l => {
-        l.style.strokeDashoffset = l.getTotalLength();
-      });
+      collapseLines('.sub-line');
+
+      if (opts.choreograph) {
+        // 1) JJ icon pops up from the node
+        collapseLines('.main-line');
+        unpopAllIcons();
+        popIcon('jj');
+        // 2) after the pop, draw the branch lines
+        choreoTimer(() => drawMainLines(true), T_JJ_POP);
+        // 3) after lines finish, pop the location icons
+        const linesEnd = T_JJ_POP + (LOCS.length - 1) * LINE_STAGGER + LINE_DRAW;
+        choreoTimer(() => popLocationIcons(true), linesEnd);
+      } else {
+        // Immediate (returning from a sub view) — lines + all icons shown at once
+        drawMainLines(false);
+        popIcon('jj');
+        popLocationIcons(false);
+      }
     }
+
     if (next.startsWith('sub-')) {
       caption.classList.add('dim');
       const id = next.replace('sub-', '');
-      /* Draw this location's sub-lines */
       const grp = svg.querySelector('#subg-' + id);
       if (grp) grp.querySelectorAll('.sub-line').forEach((l, i) => {
         l.style.setProperty('--del', (i * 75) + 'ms');
         l.style.strokeDashoffset = 0;
       });
-      /* Collapse all other sub-lines */
-      ['coastal','desert','defender','wadi'].filter(x => x !== id).forEach(x => {
+      LOCS.filter(x => x !== id).forEach(x => {
         const g = svg.querySelector('#subg-' + x);
         if (g) g.querySelectorAll('.sub-line').forEach(l => {
           l.style.strokeDashoffset = l.getTotalLength();
@@ -869,15 +919,18 @@ html, body { width:100%; height:100%; overflow:hidden; background:#10150D; }
     }
   }
 
-  /* Click: Jebel Jais */
+  /* Click: Jebel Jais node → choreographed reveal */
   document.getElementById('node-jj').addEventListener('click', e => {
+    if (editMode) return;
     e.stopPropagation();
-    setState('main');
+    if (state === 'resting') setState('main', {choreograph:true});
+    else setState('main');            // from sub: snap back to main
   });
 
-  /* Click: location nodes and their level-1 cards */
-  ['coastal','desert','defender','wadi'].forEach(id => {
+  /* Click: location nodes and their level-1 cards → drill in */
+  LOCS.forEach(id => {
     const handler = e => {
+      if (editMode) return;
       e.stopPropagation();
       if (state === 'main' || state.startsWith('sub-')) setState('sub-' + id);
     };
@@ -886,14 +939,17 @@ html, body { width:100%; height:100%; overflow:hidden; background:#10150D; }
     if (card) card.addEventListener('click', handler);
   });
 
-  /* Click: icon popups (resting state) → start branch animation */
-  ['jj','coastal','desert','defender','wadi'].forEach(id => {
-    const ic = document.getElementById('icon-' + id);
-    if (ic) ic.addEventListener('click', e => {
-      if (editMode) return;          // don't navigate while editing
+  /* Click: JJ icon (after it has popped) → also drills nothing; location icons → drill in */
+  document.getElementById('icon-jj')?.addEventListener('click', e => {
+    if (editMode) return;
+    e.stopPropagation();
+    if (state === 'resting') setState('main', {choreograph:true});
+  });
+  LOCS.forEach(id => {
+    document.getElementById('icon-' + id)?.addEventListener('click', e => {
+      if (editMode) return;
       e.stopPropagation();
-      if (id === 'jj') setState('main');
-      else setState('main');         // reveal all branches first
+      if (state === 'main') setState('sub-' + id);
     });
   });
 
@@ -911,7 +967,8 @@ html, body { width:100%; height:100%; overflow:hidden; background:#10150D; }
       if (state.startsWith('sub-')) setState('main');
       else if (state === 'main')    setState('resting');
     }
-    if ((e.key === 'Enter' || e.key === ' ') && state === 'resting' && !editMode) setState('main');
+    if ((e.key === 'Enter' || e.key === ' ') && state === 'resting' && !editMode)
+      setState('main', {choreograph:true});
   });
 
   // ── EDIT MODE ─────────────────────────────────────────────────────────
