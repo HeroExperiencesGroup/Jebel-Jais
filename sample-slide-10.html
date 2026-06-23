@@ -375,7 +375,12 @@ html, body { width:100%; height:100%; overflow:hidden; background:#10150D; }
     </linearGradient>
   </defs>
 
-  <!-- TERRAIN -->
+  <!-- BACKGROUND MAP IMAGE (behind everything) -->
+  <image href="Jebel jais map.jpg"
+       x="0" y="0" width="1000" height="620"
+       preserveAspectRatio="none"/>
+
+  <!-- TERRAIN (drawn over the map — set opacity low or remove once real map is in) -->
   <path d="M 0,0 L 148,0 L 148,58 L 122,228 L 102,385 L 94,502 L 98,574 L 102,620 L 0,620 Z" fill="url(#g-sea)"/>
   <g opacity=".1" stroke="#2A6A90" stroke-width=".6" fill="none">
     <path d="M 12,90  Q 38,85  60,90"/><path d="M  9,170 Q 35,165 56,170"/>
@@ -408,10 +413,6 @@ html, body { width:100%; height:100%; overflow:hidden; background:#10150D; }
     <path class="main-line" id="line-defender" stroke="url(#gl-defender)" d="M 637,180 C 553,191 440,279 356,290"/>
     <path class="main-line" id="line-wadi"     stroke="url(#gl-wadi)"     d="M 637,180 C 495,219 306,533 164,572"/>
   </g>
-
-  <image href="Jebel jais map.jpg"
-       x="0" y="0" width="1000" height="620"
-       preserveAspectRatio="none"/>
 
   <!-- SUB-BRANCH PATHS (curved beziers, all verified to clear non-parent nodes) -->
 
