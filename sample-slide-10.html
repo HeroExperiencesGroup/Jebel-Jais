@@ -83,14 +83,11 @@ html, body { width:100%; height:100%; overflow:hidden; background:#10150D; }
 #mapSvg[data-state="sub-defender"] #snodes-defender .sub-node { opacity:1; }
 #mapSvg[data-state="sub-wadi"]     #snodes-wadi     .sub-node { opacity:1; }
 
-.loc-card { opacity:0; pointer-events:none; transition:opacity .4s .1s; overflow:visible; }
-#mapSvg[data-state="main"] .loc-card { opacity:1; pointer-events:all; }
-
-.act-card { opacity:0; pointer-events:none; transition:opacity .4s .15s; overflow:visible; }
-#mapSvg[data-state="sub-coastal"]  #scards-coastal  .act-card { opacity:1; pointer-events:all; }
-#mapSvg[data-state="sub-desert"]   #scards-desert   .act-card { opacity:1; pointer-events:all; }
-#mapSvg[data-state="sub-defender"] #scards-defender .act-card { opacity:1; pointer-events:all; }
-#mapSvg[data-state="sub-wadi"]     #scards-wadi     .act-card { opacity:1; pointer-events:all; }
+/* Cards revealed via JS-added .revealed class (timed after icons / sub-lines) */
+.loc-card { opacity:0; pointer-events:none; transition:opacity .45s ease; overflow:visible; }
+.loc-card.revealed { opacity:1; pointer-events:all; }
+.act-card { opacity:0; pointer-events:none; transition:opacity .45s ease; overflow:visible; }
+.act-card.revealed { opacity:1; pointer-events:all; }
 
 .node { cursor:pointer; }
 .node:hover .node-core { filter:brightness(1.3); }
@@ -827,41 +824,40 @@ html, body { width:100%; height:100%; overflow:hidden; background:#10150D; }
     p.style.strokeDashoffset = len;
   });
   svg.querySelectorAll('.main-line').forEach(p => {
-    p.style.transition = 'stroke-dashoffset .95s cubic-bezier(.4,0,.2,1), opacity .5s ease';
+    p.style.transition = 'stroke-dashoffset .9s cubic-bezier(.4,0,.2,1) var(--mdel,0ms), opacity .5s ease';
   });
   svg.querySelectorAll('.sub-line').forEach(p => {
     p.style.transition = 'stroke-dashoffset .6s cubic-bezier(.4,0,.2,1) var(--del,0ms), opacity .4s ease';
   });
 
-  /* ── Choreography timing ── */
-  const T_JJ_POP    = 480;   // JJ icon scale-up duration before lines start
-  const LINE_STAGGER = 110;  // delay between each branch line
-  const LINE_DRAW   = 950;   // single line draw duration
-  const LOC_STAGGER = 90;    // delay between each location-icon pop
+  /* ── Choreography timing (ms) ── */
+  const T_JJ_POP      = 500;   // JJ icon scale-up before lines start
+  const LINE_STAGGER  = 120;   // delay between each branch line
+  const LINE_DRAW     = 900;   // single line draw duration
+  const LOC_STAGGER   = 110;   // delay between each location icon/card
+  const CARD_AFTER_IC = 320;   // card appears this long after its own icon
+  const SUB_STAGGER   = 75;    // delay between each sub-line
+  const SUB_DRAW      = 600;   // sub-line draw duration
 
   const LOCS = ['coastal','desert','defender','wadi'];
 
-  /* Icon helpers */
-  function popIcon(id)      { document.getElementById('icon-' + id)?.classList.add('popped'); }
-  function unpopIcon(id)    { document.getElementById('icon-' + id)?.classList.remove('popped'); }
-  function unpopAllIcons()  { ['jj', ...LOCS].forEach(unpopIcon); }
-  function popLocationIcons(stagger) {
-    LOCS.forEach((id, i) =>
-      choreoTimer(() => popIcon(id), stagger ? i * LOC_STAGGER : 0));
-  }
-
-  function collapseLines(sel) {
-    svg.querySelectorAll(sel).forEach(l => { l.style.strokeDashoffset = l.getTotalLength(); });
-  }
-  function drawMainLines(stagger) {
-    svg.querySelectorAll('.main-line').forEach((l, i) =>
-      choreoTimer(() => { l.style.strokeDashoffset = 0; }, stagger ? i * LINE_STAGGER : 0));
-  }
-
-  /* Track choreography timers so we can cancel if the user clicks away */
+  /* Track choreography timers so they can be cancelled on a new action */
   let choreoTimers = [];
   function choreoTimer(fn, ms) { choreoTimers.push(setTimeout(fn, ms)); }
   function clearChoreo() { choreoTimers.forEach(clearTimeout); choreoTimers = []; }
+
+  /* Icon helpers */
+  function popIcon(id)     { document.getElementById('icon-' + id)?.classList.add('popped'); }
+  function unpopAllIcons() { ['jj', ...LOCS].forEach(id => document.getElementById('icon-' + id)?.classList.remove('popped')); }
+
+  /* Card helpers */
+  function revealCard(id)  { document.getElementById(id)?.classList.add('revealed'); }
+  function hideAllCards()  { svg.querySelectorAll('.loc-card.revealed, .act-card.revealed').forEach(c => c.classList.remove('revealed')); }
+
+  /* Line helpers */
+  function collapseLines(sel) {
+    svg.querySelectorAll(sel).forEach(l => { l.style.strokeDashoffset = l.getTotalLength(); });
+  }
 
   /* State machine */
   let state = 'resting';
@@ -876,46 +872,65 @@ html, body { width:100%; height:100%; overflow:hidden; background:#10150D; }
       hint.classList.remove('hidden');
       caption.classList.remove('dim');
       unpopAllIcons();
+      hideAllCards();
       collapseLines('.main-line, .sub-line');
     }
 
     if (next === 'main') {
       hint.classList.add('hidden');
       caption.classList.add('dim');
+      hideAllCards();
       collapseLines('.sub-line');
 
       if (opts.choreograph) {
-        // 1) JJ icon pops up from the node
+        // 1) JJ icon pops from the node
         collapseLines('.main-line');
         unpopAllIcons();
         popIcon('jj');
-        // 2) after the pop, draw the branch lines
-        choreoTimer(() => drawMainLines(true), T_JJ_POP);
-        // 3) after lines finish, pop the location icons
+
+        // 2) after the pop, branch lines draw (staggered via --mdel)
+        svg.querySelectorAll('.main-line').forEach((l, i) => {
+          choreoTimer(() => {
+            l.style.setProperty('--mdel', '0ms');
+            l.style.strokeDashoffset = 0;
+          }, T_JJ_POP + i * LINE_STAGGER);
+        });
+
+        // 3) after lines finish: each location icon pops, then its card
         const linesEnd = T_JJ_POP + (LOCS.length - 1) * LINE_STAGGER + LINE_DRAW;
-        choreoTimer(() => popLocationIcons(true), linesEnd);
+        LOCS.forEach((loc, i) => {
+          choreoTimer(() => popIcon(loc),                       linesEnd + i * LOC_STAGGER);
+          choreoTimer(() => revealCard('lcard-' + loc),         linesEnd + i * LOC_STAGGER + CARD_AFTER_IC);
+        });
       } else {
-        // Immediate (returning from a sub view) — lines + all icons shown at once
-        drawMainLines(false);
+        // Immediate (returning from a sub view) — everything shown at once
+        svg.querySelectorAll('.main-line').forEach(l => { l.style.setProperty('--mdel','0ms'); l.style.strokeDashoffset = 0; });
         popIcon('jj');
-        popLocationIcons(false);
+        LOCS.forEach(loc => { popIcon(loc); revealCard('lcard-' + loc); });
       }
     }
 
     if (next.startsWith('sub-')) {
       caption.classList.add('dim');
+      hideAllCards();
       const id = next.replace('sub-', '');
+
+      // Draw this location's sub-lines (staggered)
       const grp = svg.querySelector('#subg-' + id);
       if (grp) grp.querySelectorAll('.sub-line').forEach((l, i) => {
-        l.style.setProperty('--del', (i * 75) + 'ms');
+        l.style.setProperty('--del', (i * SUB_STAGGER) + 'ms');
         l.style.strokeDashoffset = 0;
       });
+      // Collapse the other groups' sub-lines
       LOCS.filter(x => x !== id).forEach(x => {
         const g = svg.querySelector('#subg-' + x);
-        if (g) g.querySelectorAll('.sub-line').forEach(l => {
-          l.style.strokeDashoffset = l.getTotalLength();
-        });
+        if (g) g.querySelectorAll('.sub-line').forEach(l => { l.style.strokeDashoffset = l.getTotalLength(); });
       });
+
+      // After the sub-line animation completes, reveal the sub-cards (staggered)
+      const subEnd = (4 - 1) * SUB_STAGGER + SUB_DRAW;
+      const cards = svg.querySelectorAll('#scards-' + id + ' .act-card');
+      cards.forEach((c, i) => choreoTimer(() => c.classList.add('revealed'), subEnd + i * 90));
     }
   }
 
