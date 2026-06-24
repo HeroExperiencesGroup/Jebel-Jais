@@ -243,8 +243,13 @@ html, body { width:100%; height:100%; overflow:hidden; background:#10150D; }
 }
 .loc-icon.popped { opacity:1; pointer-events:all; }
 .loc-icon.popped .icon-pop { transform:scale(1); }
-/* In sub states, icons stay hidden */
+/* In sub states, icons stay hidden … */
 #mapSvg[data-state^="sub"] .loc-icon { opacity:0 !important; pointer-events:none; }
+/* … except the active location's own icon (ID selector wins specificity) */
+#mapSvg[data-state="sub-coastal"]  #icon-coastal  { opacity:1 !important; pointer-events:all; }
+#mapSvg[data-state="sub-desert"]   #icon-desert   { opacity:1 !important; pointer-events:all; }
+#mapSvg[data-state="sub-defender"] #icon-defender  { opacity:1 !important; pointer-events:all; }
+#mapSvg[data-state="sub-wadi"]     #icon-wadi     { opacity:1 !important; pointer-events:all; }
 /* In edit mode, force icons full-size & visible for dragging */
 #mapSvg[data-edit="true"] .loc-icon .icon-pop { transform:scale(1) !important; }
 .icon-pop {
@@ -288,7 +293,7 @@ html, body { width:100%; height:100%; overflow:hidden; background:#10150D; }
     <div class="rule"></div>
     <h1 class="panel-headline">One<br>Emirate.<br>Four<br>Landscapes.</h1>
     <p class="panel-body">Jebel Jais is the anchor of a connected ecosystem spanning every landscape of Ras Al Khaimah.</p>
-    <p class="hint" id="hint">↗ Tap Jebel Jais to explore</p>
+    <p class="hint" id="hint">Press → to begin</p>
     <div class="legend">
       <div class="legend-item anchor">
         <div class="legend-dot anchor"></div>
@@ -933,12 +938,27 @@ html, body { width:100%; height:100%; overflow:hidden; background:#10150D; }
     }
   }
 
-  /* Click: Jebel Jais node → choreographed reveal */
+  /* ── CLICKER / KEYBOARD NAVIGATION ──────────────────────────────────
+     Linear step sequence driven by presentation clicker (arrow keys).
+     Node / icon clicks still work for direct jumping and sync stepIndex.
+  ─────────────────────────────────────────────────────────────────── */
+  const STEPS = ['resting', 'main', 'sub-coastal', 'sub-desert', 'sub-defender', 'sub-wadi'];
+  let stepIndex = 0;
+
+  function goToStep(idx) {
+    idx = Math.max(0, Math.min(STEPS.length - 1, idx));
+    stepIndex = idx;
+    const next = STEPS[idx];
+    if (next === 'main') setState('main', {choreograph: state === 'resting'});
+    else setState(next);
+  }
+
+  /* Click: Jebel Jais node */
   document.getElementById('node-jj').addEventListener('click', e => {
     if (editMode) return;
     e.stopPropagation();
-    if (state === 'resting') setState('main', {choreograph:true});
-    else setState('main');            // from sub: snap back to main
+    if (state === 'resting') { stepIndex = 1; setState('main', {choreograph:true}); }
+    else if (state.startsWith('sub-')) { stepIndex = 1; setState('main'); }
   });
 
   /* Click: location nodes and their level-1 cards → drill in */
@@ -946,43 +966,54 @@ html, body { width:100%; height:100%; overflow:hidden; background:#10150D; }
     const handler = e => {
       if (editMode) return;
       e.stopPropagation();
-      if (state === 'main' || state.startsWith('sub-')) setState('sub-' + id);
+      if (state === 'main' || state.startsWith('sub-')) {
+        stepIndex = STEPS.indexOf('sub-' + id);
+        setState('sub-' + id);
+      }
     };
     document.getElementById('node-' + id).addEventListener('click', handler);
     const card = document.getElementById('lcard-' + id);
     if (card) card.addEventListener('click', handler);
   });
 
-  /* Click: JJ icon (after it has popped) → also drills nothing; location icons → drill in */
+  /* Click: icons */
   document.getElementById('icon-jj')?.addEventListener('click', e => {
     if (editMode) return;
     e.stopPropagation();
-    if (state === 'resting') setState('main', {choreograph:true});
+    if (state === 'resting') { stepIndex = 1; setState('main', {choreograph:true}); }
   });
   LOCS.forEach(id => {
     document.getElementById('icon-' + id)?.addEventListener('click', e => {
       if (editMode) return;
       e.stopPropagation();
-      if (state === 'main') setState('sub-' + id);
+      if (state === 'main') {
+        stepIndex = STEPS.indexOf('sub-' + id);
+        setState('sub-' + id);
+      }
     });
   });
 
-  /* Click background: sub→main, main→resting */
-  svg.addEventListener('click', () => {
-    if (editMode) return;
-    if (state.startsWith('sub-')) setState('main');
-    else if (state === 'main')    setState('resting');
-  });
-
-  /* Keyboard */
+  /* Keyboard / clicker:
+       Forward  → ArrowRight, ArrowDown, PageDown, Space, Enter
+       Backward → ArrowLeft,  ArrowUp,   PageUp,   Backspace
+       Reset    → Escape
+  */
   document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') {
-      if (editMode) { exitEdit(); return; }
-      if (state.startsWith('sub-')) setState('main');
-      else if (state === 'main')    setState('resting');
+    if (editMode) { if (e.key === 'Escape') exitEdit(); return; }
+    switch (e.key) {
+      case 'ArrowRight': case 'ArrowDown': case 'PageDown': case ' ': case 'Enter':
+        e.preventDefault();
+        goToStep(stepIndex + 1);
+        break;
+      case 'ArrowLeft': case 'ArrowUp': case 'PageUp': case 'Backspace':
+        e.preventDefault();
+        goToStep(stepIndex - 1);
+        break;
+      case 'Escape':
+        stepIndex = 0;
+        setState('resting');
+        break;
     }
-    if ((e.key === 'Enter' || e.key === ' ') && state === 'resting' && !editMode)
-      setState('main', {choreograph:true});
   });
 
   // ── EDIT MODE ─────────────────────────────────────────────────────────
