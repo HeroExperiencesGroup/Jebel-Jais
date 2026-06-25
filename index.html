@@ -1,15 +1,1262 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Jebel Jais — Hero Experiences Group</title>
-  <link rel="stylesheet" href="css/style.css" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jebel Jais — The Flagship of Ras Al Khaimah's Adventure Future</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ════════════════════════════════════════════════════════════════
+   JEBEL JAIS — DESTINATION OPERATIONS · CLICKER PRESENTATION
+   Design authority: Final Consolidated PDF (Montserrat, earth-tone).
+   Fixed 1440×810 design stage, proportionally scaled to viewport.
+   ════════════════════════════════════════════════════════════════ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  /* ── Earth-tone palette (PDF-matched) ── */
+  --umber:#30291F;
+  --charcoal:#232621;
+  --bg-0:#1a1711;
+  --bg-1:#241f17;
+  --paper:#F4EFE6;        /* warm white */
+  --paper-dim:rgba(244,239,230,.62);
+  --stone:#A99E8C;        /* muted secondary */
+  --gold:#C49A5A;
+  --gold-hi:#E2BE82;
+  --line:rgba(244,239,230,.14);
+  --line-gold:rgba(196,154,90,.30);
+  /* design stage size */
+  --DW:1440px;
+  --DH:810px;
+}
+
+html,body{width:100%;height:100%;overflow:hidden;background:#0d0b08;font-family:'Montserrat',sans-serif;-webkit-font-smoothing:antialiased}
+body{color:var(--paper)}
+img{display:block}
+
+/* ════════ SPLASH ════════ */
+#splash{
+  position:fixed;inset:0;z-index:1000;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:radial-gradient(ellipse at 50% 38%,rgba(120,84,38,.30) 0%,transparent 60%),
+             linear-gradient(160deg,#1a1610 0%,#2a2419 48%,#15120c 100%);
+  transition:opacity .6s ease;text-align:center;padding:5vh 6vw;
+}
+#splash.out{opacity:0;pointer-events:none}
+.sp-label{font-weight:500;font-size:clamp(9px,.78vw,13px);letter-spacing:.42em;text-transform:uppercase;color:var(--gold);opacity:.85;margin-bottom:clamp(26px,5vh,54px)}
+.sp-rule{width:38px;height:1px;background:var(--line-gold);margin-bottom:clamp(22px,3.4vh,40px)}
+.sp-title{font-weight:200;font-size:clamp(40px,6.2vw,104px);line-height:1;letter-spacing:.04em;text-transform:uppercase;color:var(--paper);margin-bottom:clamp(14px,2vh,22px)}
+.sp-sub{font-weight:400;font-size:clamp(11px,1.05vw,18px);line-height:1.5;letter-spacing:.14em;text-transform:uppercase;color:var(--paper-dim);max-width:680px;margin:0 auto clamp(34px,5vh,58px)}
+
+/* toggle */
+.sp-toggle{display:flex;flex-direction:column;align-items:center;gap:12px;margin-bottom:clamp(30px,4.6vh,52px)}
+.sp-toggle-row{display:flex;align-items:center;gap:16px}
+.sp-toggle-label{font-weight:600;font-size:clamp(9px,.72vw,12px);letter-spacing:.26em;text-transform:uppercase;color:var(--paper)}
+.switch{position:relative;width:54px;height:26px;flex-shrink:0;cursor:pointer}
+.switch input{position:absolute;opacity:0;width:100%;height:100%;margin:0;cursor:pointer;z-index:2}
+.switch .track{position:absolute;inset:0;border-radius:13px;background:rgba(244,239,230,.12);border:1px solid var(--line);transition:.25s}
+.switch .thumb{position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:var(--stone);transition:.25s}
+.switch input:checked ~ .track{background:rgba(196,154,90,.28);border-color:var(--line-gold)}
+.switch input:checked ~ .thumb{left:33px;background:var(--gold-hi)}
+.sp-toggle-state{font-weight:500;font-size:clamp(8px,.62vw,11px);letter-spacing:.18em;text-transform:uppercase;color:var(--gold);min-width:34px;text-align:left}
+.sp-toggle-desc{font-weight:300;font-size:clamp(9px,.68vw,12.5px);line-height:1.6;letter-spacing:.03em;color:var(--paper-dim);max-width:540px}
+
+.sp-btn{
+  background:none;border:1px solid var(--line-gold);border-radius:2px;
+  color:var(--gold-hi);cursor:pointer;
+  font-weight:600;font-size:clamp(9px,.72vw,12px);letter-spacing:.3em;text-transform:uppercase;
+  padding:clamp(14px,1.9vh,22px) clamp(34px,3.2vw,56px);transition:all .22s;
+}
+.sp-btn:hover{background:rgba(196,154,90,.12);border-color:var(--gold);color:#fff}
+.sp-hint{font-weight:300;font-size:clamp(8px,.6vw,11px);letter-spacing:.16em;text-transform:uppercase;color:var(--stone);opacity:.7;margin-top:clamp(18px,2.6vh,30px)}
+
+/* ════════ DECK + STAGE ════════ */
+#deck{position:fixed;inset:0;display:none;background:#0d0b08}
+#deck.active{display:block}
+#stage{
+  position:absolute;left:50%;top:50%;
+  width:var(--DW);height:var(--DH);
+  transform:translate(-50%,-50%) scale(var(--scale,1));
+  transform-origin:center center;
+}
+
+.slide{
+  position:absolute;inset:0;overflow:hidden;
+  opacity:0;pointer-events:none;
+  transition:opacity .55s ease;
+}
+.slide.active{opacity:1;pointer-events:auto}
+
+/* slide background */
+.slide__bg{
+  position:absolute;inset:0;z-index:0;
+  background:linear-gradient(157deg,var(--bg-0) 0%,var(--bg-1) 50%,#13100b 100%);
+}
+.slide__bg.warm{background:radial-gradient(ellipse at 70% 26%,rgba(120,80,34,.40) 0%,transparent 55%),linear-gradient(157deg,#19150f 0%,#2a2317 50%,#15110b 100%)}
+.slide__scrim{position:absolute;inset:0;z-index:1;background:radial-gradient(ellipse at 50% 50%,transparent 46%,rgba(0,0,0,.42) 100%);pointer-events:none}
+
+/* top-left operational label + page number */
+.s-meta{position:absolute;top:46px;left:64px;z-index:6;display:flex;align-items:center;gap:14px}
+.s-meta .lbl{font-weight:600;font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:var(--gold);opacity:.8}
+.s-meta .pg{font-weight:400;font-size:11px;letter-spacing:.24em;color:var(--paper-dim)}
+
+/* footer rule + copyright + logo */
+.s-foot{position:absolute;left:64px;right:64px;bottom:40px;z-index:6;display:flex;justify-content:space-between;align-items:flex-end;padding-top:16px;border-top:1px solid var(--line)}
+.s-foot .cpy{font-weight:300;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--stone);opacity:.8}
+.s-foot .logo{font-weight:700;font-size:13px;letter-spacing:.3em;text-transform:uppercase;color:var(--paper);opacity:.9}
+.s-foot .logo span{color:var(--gold)}
+
+/* content wrap */
+.s-wrap{position:absolute;inset:0;z-index:4;display:flex;flex-direction:column;justify-content:center;padding:104px 64px 96px}
+
+/* ── TYPE ── */
+.kicker{font-weight:600;font-size:13px;letter-spacing:.34em;text-transform:uppercase;color:var(--gold);margin-bottom:22px}
+.rule{width:40px;height:2px;background:var(--gold);opacity:.7;margin-bottom:26px}
+.h-xl{font-weight:200;font-size:88px;line-height:1.02;letter-spacing:.02em;text-transform:uppercase;color:var(--paper)}
+.h-1{font-weight:300;font-size:58px;line-height:1.05;letter-spacing:.02em;text-transform:uppercase;color:var(--paper)}
+.h-2{font-weight:400;font-size:40px;line-height:1.1;letter-spacing:.02em;text-transform:uppercase;color:var(--paper)}
+.lead{font-weight:400;font-size:23px;line-height:1.5;letter-spacing:.01em;color:var(--paper);max-width:1040px}
+.lead.dim{color:var(--paper-dim)}
+.body{font-weight:300;font-size:17px;line-height:1.7;letter-spacing:.01em;color:var(--paper-dim);max-width:760px}
+.body strong{font-weight:600;color:var(--paper)}
+.up{text-transform:uppercase;letter-spacing:.04em}
+.gold{color:var(--gold)}
+
+.quote{font-weight:300;font-style:normal;font-size:34px;line-height:1.4;letter-spacing:.01em;color:var(--paper);max-width:1120px;padding-left:34px;border-left:2px solid var(--gold)}
+.quote em{font-style:normal;color:var(--gold-hi)}
+
+/* progressive build elements */
+[data-step]{opacity:0;transform:translateY(16px);transition:opacity .55s ease,transform .55s ease}
+[data-step].shown{opacity:1;transform:none}
+
+/* ── PHASE / STATE ROWS (Today/Tomorrow/Future) ── */
+.beats{display:flex;gap:30px;margin-top:46px}
+.beat{flex:1;border:1px solid var(--line);border-top:2px solid var(--line-gold);border-radius:3px;padding:30px 28px;background:rgba(20,16,10,.4)}
+.beat .b-k{font-weight:700;font-size:13px;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);margin-bottom:16px}
+.beat .b-t{font-weight:400;font-size:20px;line-height:1.35;color:var(--paper)}
+
+/* ── COLUMNS (outcomes) ── */
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:54px;margin-top:40px}
+.col-h{font-weight:600;font-size:14px;letter-spacing:.26em;text-transform:uppercase;color:var(--gold);margin-bottom:22px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+.grp{margin-bottom:24px}
+.grp .g-t{font-weight:600;font-size:16px;letter-spacing:.04em;text-transform:uppercase;color:var(--paper);margin-bottom:8px}
+.grp .g-l{font-weight:300;font-size:14.5px;line-height:1.6;color:var(--paper-dim)}
+
+/* ── BULLET LIST ── */
+.blist{display:flex;flex-direction:column;gap:16px;margin-top:34px;max-width:920px}
+.bli{display:flex;align-items:flex-start;gap:16px}
+.bli .dot{width:7px;height:7px;border-radius:50%;background:var(--gold);flex-shrink:0;margin-top:9px}
+.bli .t{font-weight:400;font-size:17px;line-height:1.5;letter-spacing:.02em;text-transform:uppercase;color:var(--paper)}
+
+/* chip list (segments) */
+.chips{display:flex;flex-wrap:wrap;gap:14px;margin-top:36px;max-width:1040px}
+.chip{font-weight:500;font-size:15px;letter-spacing:.1em;text-transform:uppercase;color:var(--paper);border:1px solid var(--line-gold);border-radius:30px;padding:13px 26px;background:rgba(196,154,90,.06)}
+
+/* ── PORTFOLIO (Who is Hero) ── */
+.pf-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:30px;margin-top:40px}
+.pf{display:flex;flex-direction:column;align-items:center;text-align:center}
+/* Two-layer Jebel Jais ridge mask: front = clipped image, back = same ridge
+   offset & at 50% opacity for layered depth (the "yellow" in the reference). */
+.mtn{--ridge:polygon(0% 100%, 0% 60%, 13% 47%, 24% 57%, 36% 29%, 47% 47%, 56% 21%, 67% 44%, 78% 32%, 90% 51%, 100% 39%, 100% 100%);position:relative;width:100%;aspect-ratio:1/1;margin-bottom:22px;overflow:visible}
+.mtn .layer{position:absolute;inset:0;-webkit-clip-path:var(--ridge);clip-path:var(--ridge)}
+/* offset duplicate behind, 50% opacity — peeks above/left of the front ridge */
+.mtn .back{transform:translate(-14px,-17px);opacity:.5;background:linear-gradient(160deg,#7c5f2d 0%,#36290f 100%)}
+.mtn .front{background:linear-gradient(160deg,var(--img-a,#3a2e1c) 0%,var(--img-b,#211910) 100%)}
+.mtn .front::after{content:'IMAGE';position:absolute;left:0;right:0;bottom:16%;text-align:center;font-weight:600;font-size:9px;letter-spacing:.3em;color:rgba(255,255,255,.28)}
+.pf .pf-n{font-weight:600;font-size:16px;letter-spacing:.06em;text-transform:uppercase;color:var(--paper);margin-bottom:6px}
+.pf .pf-d{font-weight:300;font-size:12.5px;line-height:1.55;color:var(--paper-dim)}
+
+.tags{display:flex;flex-wrap:wrap;justify-content:center;gap:10px 22px;margin-top:8px;max-width:1180px;margin-left:auto;margin-right:auto}
+.tags .tg{font-weight:500;font-size:12.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--stone)}
+.tags .tg.on{color:var(--gold)}
+.philo{font-weight:300;font-size:19px;line-height:1.5;color:var(--paper);text-align:center;max-width:1000px;margin:26px auto 0}
+.philo strong{font-weight:600;color:var(--gold-hi)}
+
+/* ── 2×2 / 2×3 IMAGE COLLAGE ── */
+.coll{display:grid;gap:18px;margin-top:34px}
+.coll.g4{grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr}
+.coll.g6{grid-template-columns:repeat(3,1fr);grid-template-rows:1fr 1fr}
+.cell{position:relative;border-radius:3px;overflow:hidden;border:1px solid var(--line);min-height:120px;background:linear-gradient(160deg,var(--img-a,#3a2e1c),var(--img-b,#1a140c))}
+.cell .cap{position:absolute;left:18px;bottom:14px;right:18px;z-index:2}
+.cell .cap .ct{font-weight:600;font-size:15px;letter-spacing:.08em;text-transform:uppercase;color:var(--paper)}
+.cell .cap .cs{font-weight:300;font-size:12px;letter-spacing:.04em;color:var(--paper-dim);margin-top:3px}
+.cell::before{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.66) 0%,transparent 55%)}
+.cell::after{content:'IMAGE';position:absolute;top:14px;right:16px;font-weight:600;font-size:8px;letter-spacing:.28em;color:rgba(255,255,255,.2)}
+
+/* split layout: image side + content side */
+.split{display:grid;grid-template-columns:1fr 1fr;gap:54px;align-items:center;height:100%}
+.split .media{position:relative;height:74%;border-radius:4px;overflow:hidden;border:1px solid var(--line);background:linear-gradient(160deg,var(--img-a,#3a2e1c),var(--img-b,#17110a))}
+.split .media::after{content:attr(data-img);position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);text-align:center;font-weight:600;font-size:10px;letter-spacing:.3em;color:rgba(255,255,255,.22)}
+
+/* ── STATS / IMPACT GRID ── */
+.impact{display:grid;grid-template-columns:repeat(3,1fr);gap:30px 40px;margin-top:38px}
+.imp .i-t{font-weight:600;font-size:18px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:8px}
+.imp .i-d{font-weight:300;font-size:14.5px;line-height:1.55;color:var(--paper-dim)}
+
+/* vision flow row */
+.flow{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin-top:30px}
+.flow .fw{font-weight:600;font-size:14.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--paper);border:1px solid var(--line-gold);border-radius:3px;padding:12px 18px;background:rgba(196,154,90,.05)}
+.flow .arr{color:var(--gold);font-size:16px}
+
+/* center layout (cover / closing) */
+.s-center{align-items:center;text-align:center;justify-content:center}
+.s-center .lead,.s-center .body{margin-left:auto;margin-right:auto}
+
+/* closing contact */
+.contact{margin-top:40px;display:flex;flex-direction:column;gap:6px;align-items:center}
+.contact .nm{font-weight:600;font-size:20px;letter-spacing:.16em;text-transform:uppercase;color:var(--paper)}
+.contact .rl{font-weight:400;font-size:13px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold)}
+.contact .em{font-weight:300;font-size:14px;letter-spacing:.04em;color:var(--paper-dim);margin-top:6px}
+
+/* ════════ HUD (outside scaled stage) ════════ */
+#hud{position:fixed;inset:0;z-index:900;pointer-events:none}
+#progress{position:fixed;top:0;left:0;height:2px;background:var(--gold);width:0;transition:width .4s ease;z-index:902}
+#dots{position:fixed;bottom:18px;left:0;right:0;display:flex;justify-content:center;gap:7px;z-index:901}
+.dot{width:6px;height:6px;border-radius:50%;background:rgba(196,154,90,.22);transition:all .3s}
+.dot.cur{background:var(--gold);transform:scale(1.5)}
+.dot.done{background:rgba(196,154,90,.5)}
+#counter{position:fixed;bottom:22px;right:30px;z-index:901;font-weight:500;font-size:11px;letter-spacing:.24em;color:var(--stone)}
+#exitFs{position:fixed;bottom:18px;left:26px;z-index:903;display:none;background:none;border:none;color:var(--stone);cursor:pointer;font-family:'Montserrat',sans-serif;font-weight:500;font-size:10px;letter-spacing:.2em;text-transform:uppercase;padding:6px;pointer-events:auto;opacity:.7;transition:opacity .2s}
+#exitFs:hover{opacity:1}
+
+/* ════════ SLIDE 10 — INTERACTIVE MAP ════════ */
+.map-stage{position:absolute;inset:0;z-index:4;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:96px 70px 92px}
+#mapSvg{width:100%;height:100%;max-height:600px;-webkit-user-select:none;user-select:none}
+.map-caption{font-weight:300;font-size:14px;letter-spacing:.06em;color:var(--paper-dim);text-align:center;margin-top:10px;transition:opacity .5s}
+.map-caption.dim{opacity:0}
+
+.main-line{fill:none;stroke-width:1.4;stroke-dasharray:6 9;transition:opacity .5s ease;opacity:0;pointer-events:none}
+#mapSvg[data-state="main"] .main-line{opacity:1}
+#mapSvg[data-state^="sub"] .main-line{opacity:.25}
+.sub-line{fill:none;stroke:var(--gold);stroke-width:1.2;stroke-dasharray:4 7;transition:opacity .4s;opacity:0;pointer-events:none}
+#mapSvg[data-state="sub-coastal"] #subg-coastal .sub-line{opacity:.72}
+#mapSvg[data-state="sub-desert"] #subg-desert .sub-line{opacity:.72}
+#mapSvg[data-state="sub-defender"] #subg-defender .sub-line{opacity:.72}
+#mapSvg[data-state="sub-wadi"] #subg-wadi .sub-line{opacity:.72}
+.sub-node{opacity:0;transition:opacity .4s}
+#mapSvg[data-state="sub-coastal"] #snodes-coastal .sub-node{opacity:1}
+#mapSvg[data-state="sub-desert"] #snodes-desert .sub-node{opacity:1}
+#mapSvg[data-state="sub-defender"] #snodes-defender .sub-node{opacity:1}
+#mapSvg[data-state="sub-wadi"] #snodes-wadi .sub-node{opacity:1}
+.loc-card{opacity:0;pointer-events:none;transition:opacity .45s ease;overflow:visible}
+.loc-card.revealed{opacity:1;pointer-events:all}
+.act-card{opacity:0;pointer-events:none;transition:opacity .45s ease;overflow:visible}
+.act-card.revealed{opacity:1;pointer-events:all}
+.node{cursor:pointer}
+.node:hover .node-core{filter:brightness(1.3)}
+@keyframes pulse-outer{0%,100%{r:50;opacity:.10}50%{r:60;opacity:.04}}
+@keyframes pulse-mid{0%,100%{r:33;opacity:.22}50%{r:40;opacity:.11}}
+@keyframes jj-glow-pulse{0%,100%{opacity:.55;transform:scale(.9)}50%{opacity:1;transform:scale(1.1)}}
+.jj-glow{transform-box:fill-box;transform-origin:center;animation:jj-glow-pulse 3.2s ease-in-out infinite}
+#mapSvg[data-state="resting"] .jj-pulse-outer{animation:pulse-outer 2.4s ease-in-out infinite}
+#mapSvg[data-state="resting"] .jj-pulse-mid{animation:pulse-mid 2.4s ease-in-out infinite .35s}
+#mapSvg:not([data-state="resting"]) .jj-pulse-outer,#mapSvg:not([data-state="resting"]) .jj-pulse-mid{animation:none}
+.map-dim{fill:rgba(0,0,0,0);transition:fill .5s;pointer-events:none}
+#mapSvg[data-state^="sub"] .map-dim{fill:rgba(0,0,0,.16)}
+.card-wrap{width:100%;height:100%;background:rgba(20,16,9,.92);border:1px solid var(--line-gold);border-radius:3px;overflow:hidden;cursor:pointer;display:flex;flex-direction:column;backdrop-filter:blur(10px);box-shadow:0 6px 32px rgba(0,0,0,.6);font-family:'Montserrat',sans-serif}
+.card-wrap:hover{border-color:rgba(196,154,90,.6)}
+.card-img{width:100%;flex-shrink:0;background:linear-gradient(160deg,var(--img-a,#1a2a1a) 0%,var(--img-b,#0a1a2a) 100%);position:relative;overflow:hidden}
+.card-img::after{content:'IMAGE';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:7px;letter-spacing:.25em;color:rgba(255,255,255,.14)}
+.card-body{padding:8px 11px 9px;flex:1;display:flex;flex-direction:column;gap:3px}
+.card-title{font-weight:600;font-size:11.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--paper)}
+.card-type{font-weight:500;font-size:7.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--gold)}
+.card-desc{font-weight:300;font-size:9px;line-height:1.55;color:var(--paper-dim);margin-top:3px;flex:1}
+.acard-wrap{width:100%;height:100%;background:rgba(18,12,6,.93);border:1px solid var(--line-gold);border-radius:3px;overflow:hidden;display:flex;flex-direction:column;cursor:pointer;backdrop-filter:blur(10px);box-shadow:0 4px 22px rgba(0,0,0,.5);font-family:'Montserrat',sans-serif}
+.acard-wrap:hover{border-color:rgba(196,154,90,.5)}
+.acard-img{width:100%;flex-shrink:0;background:linear-gradient(160deg,var(--img-a,#161e16) 0%,var(--img-b,#0c1620) 100%);position:relative;overflow:hidden}
+.acard-img::after{content:'IMAGE';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:6.5px;letter-spacing:.25em;color:rgba(255,255,255,.12)}
+.acard-body{padding:6px 9px 7px;flex:1;display:flex;flex-direction:column;gap:2px}
+.acard-title{font-weight:600;font-size:10px;letter-spacing:.03em;text-transform:uppercase;color:var(--paper)}
+.acard-sub{font-weight:500;font-size:7px;letter-spacing:.11em;text-transform:uppercase;color:var(--gold)}
+.loc-icon{opacity:0;pointer-events:none;overflow:visible}
+.loc-icon .icon-pop{transform:scale(0);transform-origin:50% 100%;transition:transform .45s cubic-bezier(.34,1.56,.64,1)}
+.loc-icon.popped{opacity:1;pointer-events:all}
+.loc-icon.popped .icon-pop{transform:scale(1)}
+#mapSvg[data-state^="sub"] .loc-icon{opacity:0 !important;pointer-events:none}
+#mapSvg[data-state="sub-coastal"] #icon-coastal{opacity:1 !important;pointer-events:all}
+#mapSvg[data-state="sub-desert"] #icon-desert{opacity:1 !important;pointer-events:all}
+#mapSvg[data-state="sub-defender"] #icon-defender{opacity:1 !important;pointer-events:all}
+#mapSvg[data-state="sub-wadi"] #icon-wadi{opacity:1 !important;pointer-events:all}
+.icon-pop{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;font-family:'Montserrat',sans-serif}
+.icon-disc{width:60px;height:60px;border-radius:50%;background:rgba(18,12,5,.85);border:1px solid var(--line-gold);box-shadow:0 4px 22px rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;overflow:hidden;backdrop-filter:blur(6px);transition:border-color .2s,transform .2s;flex-shrink:0}
+.icon-pop:hover .icon-disc{border-color:var(--gold-hi);transform:scale(1.06)}
+.icon-disc img{width:78%;height:78%;object-fit:contain}
+.icon-disc.placeholder::after{content:'?';font-weight:400;font-size:22px;color:rgba(196,154,90,.5)}
+.icon-label-box{display:flex;flex-direction:column;align-items:center;gap:1px;text-align:center}
+.icon-name{font-weight:600;font-size:11px;letter-spacing:.04em;text-transform:uppercase;color:#FBF6EA;white-space:nowrap;text-shadow:0 1px 5px rgba(0,0,0,.95),0 0 2px rgba(0,0,0,.9)}
+.icon-cat{font-weight:600;font-size:7.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold-hi);white-space:nowrap;text-shadow:0 1px 5px rgba(0,0,0,.95),0 0 2px rgba(0,0,0,.9)}
+
+/* ════════ SLIDE 10 — EDIT MODE (dev placement tool) ════════ */
+.edit-toggle-btn{position:fixed;top:14px;right:14px;z-index:9998;display:none;background:rgba(14,10,5,.88);border:1px solid var(--line-gold);border-radius:3px;color:var(--gold);cursor:pointer;font-family:'Montserrat',sans-serif;font-weight:600;font-size:9px;letter-spacing:.14em;text-transform:uppercase;padding:8px 13px;backdrop-filter:blur(6px);transition:all .2s}
+.edit-toggle-btn:hover{background:rgba(196,154,90,.15);color:#fff}
+.edit-toggle-btn.active{background:rgba(196,154,90,.22);border-color:var(--gold);color:var(--gold-hi)}
+.edit-panel{position:fixed;bottom:16px;right:16px;z-index:9999;width:268px;display:none;flex-direction:column;background:rgba(14,9,4,.97);border:1px solid var(--line-gold);border-radius:4px;box-shadow:0 10px 48px rgba(0,0,0,.75);font-family:'Montserrat',sans-serif;overflow:hidden}
+.edit-panel.open{display:flex}
+.ep-head{background:rgba(196,154,90,.1);border-bottom:1px solid var(--line-gold);padding:9px 12px;display:flex;align-items:center;justify-content:space-between}
+.ep-title{font-weight:600;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--gold)}
+.ep-close{background:none;border:none;color:var(--stone);cursor:pointer;font-size:17px;line-height:1;padding:0}
+.ep-close:hover{color:#fff}
+.ep-tabs{display:flex;gap:3px;padding:7px 9px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.ep-tab{background:rgba(196,154,90,.07);border:1px solid var(--line-gold);border-radius:2px;color:var(--gold);cursor:pointer;font-weight:600;font-size:8px;letter-spacing:.1em;text-transform:uppercase;padding:5px 8px;transition:all .18s}
+.ep-tab:hover{background:rgba(196,154,90,.18);color:#fff}
+.ep-tab.active{background:rgba(196,154,90,.22);border-color:var(--gold);color:var(--gold-hi)}
+.ep-help{padding:5px 12px 0;font-weight:300;font-size:8px;line-height:1.5;color:var(--stone)}
+.ep-list{padding:6px 10px;max-height:210px;overflow-y:auto;display:flex;flex-direction:column;gap:2px}
+.ep-row{display:flex;align-items:center;gap:8px;padding:4px 3px;border-radius:2px;cursor:grab;transition:background .15s}
+.ep-row:hover{background:rgba(196,154,90,.07)}
+.ep-row.dragging{background:rgba(196,154,90,.14);cursor:grabbing;outline:1px solid var(--gold)}
+.ep-label{font-weight:300;font-size:9px;color:var(--paper-dim);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ep-xy{font-weight:600;font-size:9px;font-family:monospace;color:var(--gold-hi);background:rgba(196,154,90,.1);border-radius:2px;padding:3px 6px;flex-shrink:0;min-width:90px;text-align:right}
+.ep-row.dragging .ep-xy{color:#FFF6D8;background:rgba(196,154,90,.25)}
+.ep-actions{padding:7px 9px;border-top:1px solid var(--line);display:flex;gap:5px}
+.ep-btn{flex:1;padding:6px;background:rgba(196,154,90,.1);border:1px solid var(--line-gold);border-radius:2px;color:var(--gold);cursor:pointer;font-weight:600;font-size:8px;letter-spacing:.12em;text-transform:uppercase;transition:all .2s}
+.ep-btn:hover{background:rgba(196,154,90,.22);color:#fff}
+.ep-btn.ok{background:rgba(60,140,60,.18);border-color:rgba(80,200,80,.35);color:rgba(130,220,130,.9)}
+.ep-subloc-row{display:none;gap:3px;padding:5px 9px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.ep-subloc-row.visible{display:flex}
+.ep-subtab{background:rgba(196,154,90,.07);border:1px solid var(--line-gold);border-radius:2px;color:var(--gold);cursor:pointer;font-weight:600;font-size:8px;letter-spacing:.1em;text-transform:uppercase;padding:4px 8px;transition:all .18s}
+.ep-subtab:hover{background:rgba(196,154,90,.18);color:#fff}
+.ep-subtab.active{background:rgba(196,154,90,.22);border-color:var(--gold);color:var(--gold-hi)}
+.ep-sides{display:flex;gap:2px;flex-shrink:0}
+.ep-side{width:15px;height:15px;border-radius:2px;padding:0;background:rgba(196,154,90,.07);border:1px solid var(--line-gold);color:var(--gold);cursor:pointer;font-weight:600;font-size:7px;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.ep-side:hover{background:rgba(196,154,90,.2);color:#fff}
+.ep-side.active{background:rgba(196,154,90,.3);border-color:var(--gold);color:var(--gold-hi)}
+.lh-handle{cursor:move;user-select:none;-webkit-user-select:none}
+.lh-guide{pointer-events:none}
+#mapSvg[data-edit="true"]{user-select:none;-webkit-user-select:none}
+#mapSvg[data-edit="true"] .card-wrap,#mapSvg[data-edit="true"] .acard-wrap{outline:1px dashed rgba(196,154,90,.35) !important}
+#mapSvg[data-edit="true"] .loc-icon .icon-pop{transform:scale(1) !important}
+
+/* ════════ REDUCED MOTION ════════ */
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.001ms !important;animation-iteration-count:1 !important}
+  [data-step]{transform:none}
+  .slide,[data-step],.map-caption,.loc-card,.act-card,.sub-node{transition-duration:.15s}
+}
+
+/* ════════ PORTRAIT MOBILE FALLBACK (review mode) ════════ */
+@media (max-aspect-ratio:1/1) and (max-width:820px){
+  #stage{position:static;transform:none;width:100%;height:auto}
+  .slide{position:static;opacity:1;pointer-events:auto;min-height:auto;border-bottom:1px solid var(--line)}
+  .slide:not(.active){opacity:1}
+  .s-wrap{position:static;padding:84px 28px 72px}
+  .h-xl{font-size:46px}.h-1{font-size:38px}.h-2{font-size:28px}
+  .beats,.cols,.pf-grid,.impact,.split,.coll.g6,.coll.g4{grid-template-columns:1fr;display:grid}
+  .beats,.split{display:grid}
+  #hud{display:none}
+}
+</style>
 </head>
 <body>
 
-  <!-- Pitch deck content goes here -->
+<!-- ════════ SPLASH ════════ -->
+<div id="splash">
+  <p class="sp-label">Hero Experiences Group</p>
+  <div class="sp-rule"></div>
+  <h1 class="sp-title">Jebel Jais</h1>
+  <p class="sp-sub">The Flagship of Ras Al Khaimah's Adventure Future</p>
 
-  <script src="js/main.js"></script>
+  <div class="sp-toggle">
+    <div class="sp-toggle-row">
+      <span class="sp-toggle-label">Progressive Reveals</span>
+      <label class="switch">
+        <input type="checkbox" id="progToggle" checked>
+        <span class="track"></span><span class="thumb"></span>
+      </label>
+      <span class="sp-toggle-state" id="progState">On</span>
+    </div>
+    <p class="sp-toggle-desc" id="progDesc">Slides reveal text and imagery progressively as you click. Turn off to show every slide fully and move directly between slides. The interactive ecosystem map stays interactive either way.</p>
+  </div>
+
+  <button class="sp-btn" id="beginBtn">Begin Presentation</button>
+  <p class="sp-hint">→ / Space advance &nbsp;·&nbsp; ← back &nbsp;·&nbsp; Esc returns here</p>
+</div>
+
+<!-- ════════ DECK ════════ -->
+<div id="deck">
+  <div id="stage">
+
+    <!-- ══ SLIDE 1 — JEBEL JAIS (cover) ══ -->
+    <section class="slide" data-slide="1" data-steps="1">
+      <div class="slide__bg warm"></div><div class="slide__scrim"></div>
+      <div class="s-meta"><span class="lbl">Jebel Jais Operations</span><span class="pg">Page 1</span></div>
+      <div class="s-wrap s-center">
+        <p class="kicker" data-step="0">Hero Experiences Group</p>
+        <h1 class="h-xl" data-step="0">Jebel Jais</h1>
+        <p class="lead dim" data-step="1" style="margin-top:26px">The Flagship of Ras Al Khaimah's Adventure Future</p>
+        <p class="body" data-step="1" style="margin-top:22px;text-align:center">A vision to transform Jebel Jais into one of the world's leading mountain destinations — and the anchor of a connected adventure ecosystem across Ras Al Khaimah.</p>
+      </div>
+      <div class="s-foot"><span class="cpy">© 2026 Hero Experiences Group · Confidential</span><span class="logo">Hero<span>·</span>JJ</span></div>
+    </section>
+
+    <!-- ══ SLIDE 2 — THE OPPORTUNITY ══ -->
+    <section class="slide" data-slide="2" data-steps="2">
+      <div class="slide__bg"></div><div class="slide__scrim"></div>
+      <div class="s-meta"><span class="lbl">Jebel Jais Operations</span><span class="pg">Page 2</span></div>
+      <div class="s-wrap">
+        <p class="kicker">The Opportunity</p>
+        <div class="rule"></div>
+        <h2 class="h-2" data-step="0">Today, Jebel Jais is home to some of the region's most successful adventure attractions. The opportunity ahead is far greater.</h2>
+        <p class="body" data-step="0" style="margin-top:20px">The next chapter is not about adding another attraction. It is about transforming Jebel Jais into a complete mountain destination — and using it as a catalyst for tourism growth across the emirate.</p>
+        <div class="beats">
+          <div class="beat" data-step="1"><div class="b-k">Today</div><div class="b-t">A collection of attractions</div></div>
+          <div class="beat" data-step="1"><div class="b-k">Tomorrow</div><div class="b-t">A fully integrated mountain destination</div></div>
+          <div class="beat" data-step="2"><div class="b-k">Future</div><div class="b-t">A connected adventure ecosystem spanning mountains, wadis, desert, and coast</div></div>
+        </div>
+      </div>
+      <div class="s-foot"><span class="cpy">© 2026 Hero Experiences Group · Confidential</span><span class="logo">Hero<span>·</span>JJ</span></div>
+    </section>
+
+    <!-- ══ SLIDE 3 — WHY THIS MATTERS ══ -->
+    <section class="slide" data-slide="3" data-steps="2">
+      <div class="slide__bg"></div><div class="slide__scrim"></div>
+      <div class="s-meta"><span class="lbl">Jebel Jais Operations</span><span class="pg">Page 3</span></div>
+      <div class="s-wrap">
+        <p class="kicker">Why This Matters</p>
+        <div class="rule"></div>
+        <p class="lead dim" data-step="0" style="margin-bottom:14px">A stronger Jebel Jais creates benefits far beyond the mountain itself.</p>
+        <div class="quote" data-step="0"><em>"Success should not be measured solely by attraction attendance, but by the long-term value created for visitors, residents, investors, and the emirate."</em></div>
+        <div class="cols">
+          <div data-step="1">
+            <div class="col-h">Key Outcomes</div>
+            <div class="grp"><div class="g-t">Improved Safety</div><div class="g-l">Enhanced traffic management and visitor circulation, reduced congestion and operational risk, and safer experiences for guests, staff, and emergency services.</div></div>
+            <div class="grp"><div class="g-t">A Better Guest Experience</div><div class="g-l">Improved arrival and wayfinding, higher-quality amenities, and more reasons to stay longer and return more often.</div></div>
+            <div class="grp"><div class="g-t">Economic Growth</div><div class="g-l">Increased visitor spending, greater private-sector investment, and new employment and business opportunities.</div></div>
+          </div>
+          <div data-step="1">
+            <div class="col-h">Global Positioning</div>
+            <div class="grp"><div class="g-t">Stronger Reputation</div><div class="g-l">Stronger international awareness and an enhanced reputation as the adventure capital of the region.</div></div>
+            <div class="grp"><div class="g-t">Destination Sustainability</div><div class="g-l">Revenue streams that support ongoing operations and maintenance, and funding mechanisms that help offset the significant cost of mountain infrastructure and road maintenance.</div></div>
+            <div class="grp"><div class="g-t">Balanced Growth</div><div class="g-l">Growth that protects the natural environment while enhancing visitor access.</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="s-foot"><span class="cpy">© 2026 Hero Experiences Group · Confidential</span><span class="logo">Hero<span>·</span>JJ</span></div>
+    </section>
+
+    <!-- ══ SLIDE 4 — WHO IS HERO? ══ -->
+    <section class="slide" data-slide="4" data-steps="2">
+      <div class="slide__bg"></div><div class="slide__scrim"></div>
+      <div class="s-meta"><span class="lbl">Jebel Jais Operations</span><span class="pg">Page 4</span></div>
+      <div class="s-wrap">
+        <p class="kicker">Who is Hero?</p>
+        <div class="rule"></div>
+        <h2 class="h-2" data-step="0" style="font-size:30px;max-width:1180px">Hero Experiences develops and operates tourism experiences that become defining parts of destination identity.</h2>
+        <p class="body" data-step="0" style="margin-top:14px">Today Hero operates and develops experiences across the UAE and Saudi Arabia, including:</p>
+        <div class="pf-grid">
+          <div class="pf" data-step="1"><div class="mtn"><div class="layer back"></div><div class="layer front" data-img="platinum" style="--img-a:#3a2c18;--img-b:#1f1810"></div></div><div class="pf-n">Platinum Heritage</div><div class="pf-d">Award-winning heritage tourism experiences in Dubai.</div></div>
+          <div class="pf" data-step="1"><div class="mtn"><div class="layer back"></div><div class="layer front" data-img="dubai-balloon" style="--img-a:#3a3220;--img-b:#1f1a10"></div></div><div class="pf-n">The Dubai Balloon</div><div class="pf-d">One of Dubai's most recognizable tourism attractions.</div></div>
+          <div class="pf" data-step="1"><div class="mtn"><div class="layer back"></div><div class="layer front" data-img="hero-balloon" style="--img-a:#3a2e1c;--img-b:#1f160e"></div></div><div class="pf-n">Hero Balloon Flights</div><div class="pf-d">Commercial balloon operations across UAE &amp; Saudi Arabia.</div></div>
+          <div class="pf" data-step="1"><div class="mtn"><div class="layer back"></div><div class="layer front" data-img="absolute-adventure" style="--img-a:#34301e;--img-b:#1b160d"></div></div><div class="pf-n">Absolute Adventure</div><div class="pf-d">Adventure and outdoor recreation experiences across the UAE.</div></div>
+        </div>
+        <div data-step="2" style="margin-top:30px">
+          <div class="tags">
+            <span class="tg on">Destination Development</span><span class="tg">Experience Design</span><span class="tg on">Tourism Operations</span><span class="tg">Commercial Activation</span><span class="tg on">Strategic Partnerships</span><span class="tg">Adventure Tourism</span>
+          </div>
+          <p class="philo">The world's most successful tourism destinations are not built around individual attractions. <strong>They are built around connected experiences.</strong></p>
+        </div>
+      </div>
+      <div class="s-foot"><span class="cpy">© 2026 Hero Experiences Group · Confidential</span><span class="logo">Hero<span>·</span>JJ</span></div>
+    </section>
+
+    <!-- ══ SLIDE 5 — THE JEBEL JAIS VISION ══ -->
+    <section class="slide" data-slide="5" data-steps="2">
+      <div class="slide__bg warm"></div><div class="slide__scrim"></div>
+      <div class="s-meta"><span class="lbl">Jebel Jais Operations</span><span class="pg">Page 7</span></div>
+      <div class="s-wrap">
+        <p class="kicker">The Jebel Jais Vision</p>
+        <div class="rule"></div>
+        <h2 class="h-1" data-step="0" style="font-size:46px;max-width:1180px">Visitors do not experience individual attractions. They experience a destination.</h2>
+        <p class="body" data-step="0" style="margin-top:22px">The vision for Jebel Jais is a seamless mountain experience where every touchpoint contributes to a memorable journey.</p>
+        <div data-step="1" style="margin-top:34px">
+          <div class="kicker" style="color:var(--gold-hi)">From beginning</div>
+          <div class="flow">
+            <span class="fw">Arrival</span><span class="arr">→</span>
+            <span class="fw">Exploration</span><span class="arr">→</span>
+            <span class="fw">Adventure</span><span class="arr">→</span>
+            <span class="fw">Dining</span><span class="arr">→</span>
+            <span class="fw">Events</span><span class="arr">→</span>
+            <span class="fw">Learning</span><span class="arr">→</span>
+            <span class="fw">Overnight Stays</span><span class="arr">→</span>
+            <span class="fw">Return Visits</span>
+          </div>
+          <div class="kicker" style="color:var(--gold-hi);margin-top:24px;margin-bottom:0">…to end.</div>
+        </div>
+      </div>
+      <div class="s-foot"><span class="cpy">© 2026 Hero Experiences Group · Confidential</span><span class="logo">Hero<span>·</span>JJ</span></div>
+    </section>
+
+    <!-- ══ SLIDE 6 — A FOUNDATION FOR GROWTH ══ -->
+    <section class="slide" data-slide="6" data-steps="2">
+      <div class="slide__bg"></div><div class="slide__scrim"></div>
+      <div class="s-meta"><span class="lbl">Jebel Jais Operations</span><span class="pg">Page 8</span></div>
+      <div class="s-wrap">
+        <p class="kicker">A Foundation for Growth</p>
+        <div class="rule"></div>
+        <p class="lead dim" data-step="0">As visitation continues to increase, future success depends on creating a stronger foundation for growth. Key priorities include:</p>
+        <div class="coll g4" style="grid-template-rows:auto auto">
+          <div class="cell" data-step="1" style="min-height:150px;--img-a:#34291a;--img-b:#1a140c"><div class="cap"><div class="ct">Mobility &amp; Circulation</div><div class="cs">Managing arrival, parking, traffic flow, and visitor movement.</div></div></div>
+          <div class="cell" data-step="1" style="min-height:150px;--img-a:#312a1c;--img-b:#181208"><div class="cap"><div class="ct">Guest Experience</div><div class="cs">Creating a welcoming and intuitive destination.</div></div></div>
+          <div class="cell" data-step="2" style="min-height:150px;--img-a:#2e2718;--img-b:#16110a"><div class="cap"><div class="ct">Capacity Planning</div><div class="cs">Preparing for future growth while protecting the mountain environment.</div></div></div>
+          <div class="cell" data-step="2" style="min-height:150px;--img-a:#332b1b;--img-b:#1a140b"><div class="cap"><div class="ct">Destination Integration</div><div class="cs">Connecting all assets into a unified visitor experience.</div></div></div>
+        </div>
+        <p class="body" data-step="2" style="margin-top:22px;text-transform:uppercase;letter-spacing:.04em">Before major expansion occurs, these fundamentals must be addressed.</p>
+      </div>
+      <div class="s-foot"><span class="cpy">© 2026 Hero Experiences Group · Confidential</span><span class="logo">Hero<span>·</span>JJ</span></div>
+    </section>
+
+    <!-- ══ SLIDE 7 — IMMEDIATE OPPORTUNITIES ══ -->
+    <section class="slide" data-slide="7" data-steps="2">
+      <div class="slide__bg"></div><div class="slide__scrim"></div>
+      <div class="s-meta"><span class="lbl">Jebel Jais Operations</span><span class="pg">Page 9</span></div>
+      <div class="s-wrap">
+        <p class="kicker">Immediate Opportunities</p>
+        <div class="rule"></div>
+        <p class="lead dim" data-step="0">Significant improvements can be implemented in the near term.</p>
+        <div class="coll g6">
+          <div class="cell" data-step="1" style="--img-a:#34291a;--img-b:#19130b"><div class="cap"><div class="ct">Arrival &amp; Welcome</div><div class="cs">Create a stronger sense of arrival.</div></div></div>
+          <div class="cell" data-step="1" style="--img-a:#312a1c;--img-b:#181208"><div class="cap"><div class="ct">Wayfinding &amp; Interpretation</div><div class="cs">Improve navigation and storytelling.</div></div></div>
+          <div class="cell" data-step="1" style="--img-a:#2c2719;--img-b:#15110a"><div class="cap"><div class="ct">Night-Time Activation</div><div class="cs">Extend visitation beyond daylight hours.</div></div></div>
+          <div class="cell" data-step="2" style="--img-a:#332b1b;--img-b:#1a140b"><div class="cap"><div class="ct">Programming &amp; Events</div><div class="cs">Create reasons to visit throughout the year.</div></div></div>
+          <div class="cell" data-step="2" style="--img-a:#2f2818;--img-b:#171109"><div class="cap"><div class="ct">Integrated Ticketing</div><div class="cs">Connect attractions and experiences.</div></div></div>
+          <div class="cell" data-step="2" style="--img-a:#352d1c;--img-b:#1b150c"><div class="cap"><div class="ct">School &amp; Corporate Markets</div><div class="cs">Unlock new visitor segments and year-round demand.</div></div></div>
+        </div>
+        <p class="body" data-step="2" style="margin-top:20px">These initiatives can immediately enhance guest satisfaction while supporting future growth.</p>
+      </div>
+      <div class="s-foot"><span class="cpy">© 2026 Hero Experiences Group · Confidential</span><span class="logo">Hero<span>·</span>JJ</span></div>
+    </section>
+
+    <!-- ══ SLIDE 8 — GROWING YEAR-ROUND DEMAND ══ -->
+    <section class="slide" data-slide="8" data-steps="1">
+      <div class="slide__bg warm"></div><div class="slide__scrim"></div>
+      <div class="s-meta"><span class="lbl">Jebel Jais Operations</span><span class="pg">Page 10</span></div>
+      <div class="s-wrap">
+        <div class="split">
+          <div>
+            <p class="kicker">Growing Year-Round Demand</p>
+            <div class="rule"></div>
+            <h2 class="h-2" data-step="0" style="font-size:34px">The future of Jebel Jais extends beyond individual attractions.</h2>
+            <p class="body" data-step="0" style="margin-top:18px">The objective is to create a destination that appeals to multiple visitor segments throughout the year.</p>
+            <div class="chips" data-step="1">
+              <span class="chip">Families</span><span class="chip">Adventure Travellers</span><span class="chip">Schools &amp; Youth Programs</span><span class="chip">Corporate Retreats</span><span class="chip">Events &amp; Festivals</span><span class="chip">GCC Leisure Markets</span><span class="chip">International Visitors</span>
+            </div>
+            <p class="body" data-step="1" style="margin-top:24px;text-transform:uppercase;letter-spacing:.03em">A broader visitor mix creates a more resilient and sustainable tourism economy.</p>
+          </div>
+          <div class="media" data-img="Year-round hospitality"></div>
+        </div>
+      </div>
+      <div class="s-foot"><span class="cpy">© 2026 Hero Experiences Group · Confidential</span><span class="logo">Hero<span>·</span>JJ</span></div>
+    </section>
+
+    <!-- ══ SLIDE 9 — JEBEL JAIS AS THE ANCHOR ══ -->
+    <section class="slide" data-slide="9" data-steps="2">
+      <div class="slide__bg warm"></div><div class="slide__scrim"></div>
+      <div class="s-meta"><span class="lbl">Jebel Jais Operations</span><span class="pg">Page 11</span></div>
+      <div class="s-wrap s-center">
+        <p class="kicker" data-step="0">Jebel Jais as the Anchor</p>
+        <div class="rule" style="margin-left:auto;margin-right:auto" data-step="0"></div>
+        <h2 class="h-1" data-step="0" style="font-size:48px;max-width:1180px">The greatest opportunity is not limited to the mountain itself.</h2>
+        <p class="lead" data-step="1" style="margin-top:26px;max-width:1080px">Jebel Jais can become the anchor of a broader adventure tourism ecosystem that showcases the diversity of Ras Al Khaimah.</p>
+        <p class="body" data-step="1" style="margin-top:18px;text-align:center">By connecting complementary destinations, visitors gain more reasons to stay longer, spend more, and return more frequently. <strong>This creates a tourism proposition unlike anywhere else in the Gulf.</strong></p>
+      </div>
+      <div class="s-foot"><span class="cpy">© 2026 Hero Experiences Group · Confidential</span><span class="logo">Hero<span>·</span>JJ</span></div>
+    </section>
+
+    <!-- ══ SLIDE 10 — THE ADVENTURE ECOSYSTEM (interactive map) ══ -->
+    <section class="slide" data-slide="10" data-steps="0" data-map="true">
+      <div class="slide__bg"></div><div class="slide__scrim"></div>
+      <div class="s-meta"><span class="lbl">Jebel Jais Operations</span><span class="pg">Page 12</span></div>
+      <div class="s-wrap" style="padding-bottom:0;justify-content:flex-start;position:absolute;height:auto;inset:0 0 auto 0">
+        <p class="kicker">The Adventure Ecosystem</p>
+        <div class="rule"></div>
+      </div>
+      <div class="map-stage">
+        <svg id="mapSvg" viewBox="0 0 1000 620" xmlns="http://www.w3.org/2000/svg" data-state="resting">
+        <defs>
+          <filter id="glow-lg" x="-70%" y="-70%" width="240%" height="240%"><feGaussianBlur stdDeviation="10" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          <radialGradient id="g-jj-glow" cx="637" cy="180" r="170" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#FFFFFF" stop-opacity=".55"/><stop offset="45%" stop-color="#F3E7CC" stop-opacity=".16"/><stop offset="100%" stop-color="#FFFFFF" stop-opacity="0"/>
+          </radialGradient>
+          <linearGradient id="gl-coast" x1="346" y1="83" x2="637" y2="180" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#C49A5A" stop-opacity=".2"/><stop offset="100%" stop-color="#C49A5A" stop-opacity=".76"/></linearGradient>
+          <linearGradient id="gl-desert" x1="298" y1="214" x2="637" y2="180" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#C49A5A" stop-opacity=".24"/><stop offset="100%" stop-color="#C49A5A" stop-opacity=".76"/></linearGradient>
+          <linearGradient id="gl-defender" x1="175" y1="515" x2="637" y2="180" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#C49A5A" stop-opacity=".3"/><stop offset="100%" stop-color="#C49A5A" stop-opacity=".78"/></linearGradient>
+          <linearGradient id="gl-wadi" x1="164" y1="572" x2="637" y2="180" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#C49A5A" stop-opacity=".26"/><stop offset="100%" stop-color="#C49A5A" stop-opacity=".78"/></linearGradient>
+        </defs>
+
+        <image href="Jebel jais map.jpg" x="0" y="0" width="1000" height="620" preserveAspectRatio="none"/>
+        <circle class="jj-glow" cx="637" cy="180" r="170" fill="url(#g-jj-glow)"/>
+        <rect x="0" y="0" width="1000" height="620" fill="rgba(8,10,7,.32)"/>
+        <rect class="map-dim" x="0" y="0" width="1000" height="620"/>
+
+        <g id="mainBranches">
+          <path class="main-line" id="line-coastal" stroke="url(#gl-coast)" d="M 637,180 C 499,69 432,20 346,83"/>
+          <path class="main-line" id="line-desert" stroke="url(#gl-desert)" d="M 637,180 C 499,121 403,243 298,214"/>
+          <path class="main-line" id="line-defender" stroke="url(#gl-defender)" d="M 637,180 C 378,248 392,510 175,515"/>
+          <path class="main-line" id="line-wadi" stroke="url(#gl-wadi)" d="M 637,180 C 568,300 569,591 164,572"/>
+        </g>
+
+        <g id="subg-coastal">
+          <path class="sub-line" id="sl-coastal-0" d="M 346,83 C 259,127 228,97 177,99"/>
+          <path class="sub-line" id="sl-coastal-1" d="M 346,83 C 383,64 404,132 434,131"/>
+          <path class="sub-line" id="sl-coastal-2" d="M 346,83 C 293,162 372,290 287,323"/>
+          <path class="sub-line" id="sl-coastal-3" d="M 346,83 C 377,156 363,328 447,353"/>
+        </g>
+        <g id="subg-desert">
+          <path class="sub-line" id="sl-desert-0" d="M 298,214 C 263,142 208,117 169,106"/>
+          <path class="sub-line" id="sl-desert-1" d="M 298,214 C 351,227 393,177 433,173"/>
+          <path class="sub-line" id="sl-desert-2" d="M 298,214 C 281,285 292,336 358,344"/>
+          <path class="sub-line" id="sl-desert-3" d="M 298,214 C 258,230 203,358 162,374"/>
+        </g>
+        <g id="subg-defender">
+          <path class="sub-line" id="sl-defender-0" d="M 175,515 C 176,450 175,400 152,366"/>
+          <path class="sub-line" id="sl-defender-1" d="M 175,515 C 277,363 222,164 435,129"/>
+          <path class="sub-line" id="sl-defender-2" d="M 175,515 C 220,515 265,515 303,510"/>
+          <path class="sub-line" id="sl-defender-3" d="M 175,515 C 272,450 342,177 551,414"/>
+        </g>
+        <g id="subg-wadi">
+          <path class="sub-line" id="sl-wadi-0" d="M 164,572 C 137,558 102,445 75,431"/>
+          <path class="sub-line" id="sl-wadi-1" d="M 164,572 C 175,539 189,274 199,241"/>
+          <path class="sub-line" id="sl-wadi-2" d="M 164,572 C 212,564 194,404 253,403"/>
+          <path class="sub-line" id="sl-wadi-3" d="M 164,572 C 236,568 331,532 403,528"/>
+        </g>
+
+        <g id="snodes-coastal">
+          <circle class="sub-node" cx="177" cy="99" r="4" fill="#4A9EC4"/><circle class="sub-node" cx="434" cy="131" r="4" fill="#4A9EC4"/><circle class="sub-node" cx="287" cy="323" r="4" fill="#4A9EC4"/><circle class="sub-node" cx="447" cy="353" r="4" fill="#4A9EC4"/>
+        </g>
+        <g id="snodes-desert">
+          <circle class="sub-node" cx="169" cy="106" r="4" fill="#B8903E"/><circle class="sub-node" cx="433" cy="173" r="4" fill="#B8903E"/><circle class="sub-node" cx="358" cy="344" r="4" fill="#B8903E"/><circle class="sub-node" cx="162" cy="374" r="4" fill="#B8903E"/>
+        </g>
+        <g id="snodes-defender">
+          <circle class="sub-node" cx="152" cy="366" r="4" fill="#9A7038"/><circle class="sub-node" cx="435" cy="129" r="4" fill="#9A7038"/><circle class="sub-node" cx="303" cy="510" r="4" fill="#9A7038"/><circle class="sub-node" cx="551" cy="414" r="4" fill="#9A7038"/>
+        </g>
+        <g id="snodes-wadi">
+          <circle class="sub-node" cx="75" cy="431" r="4" fill="#529052"/><circle class="sub-node" cx="199" cy="241" r="4" fill="#529052"/><circle class="sub-node" cx="253" cy="403" r="4" fill="#529052"/><circle class="sub-node" cx="403" cy="528" r="4" fill="#529052"/>
+        </g>
+
+        <!-- LEVEL-1 LOCATION CARDS -->
+        <foreignObject class="loc-card" id="lcard-coastal" x="406" y="11" width="165" height="220" data-loc="coastal">
+          <div xmlns="http://www.w3.org/1999/xhtml" class="card-wrap" style="--img-a:#0D2535;--img-b:#06181E;"><div class="card-img" style="height:110px;"></div><div class="card-body"><p class="card-title">Coastal Experiences</p><p class="card-type">Marine · Discovery</p><p class="card-desc">Marine adventure, island exploration, and coastal discovery along RAK's shoreline.</p></div></div>
+        </foreignObject>
+        <foreignObject class="loc-card" id="lcard-desert" x="36" y="20" width="165" height="220" data-loc="desert">
+          <div xmlns="http://www.w3.org/1999/xhtml" class="card-wrap" style="--img-a:#2A1A08;--img-b:#1A1205;"><div class="card-img" style="height:110px;"></div><div class="card-body"><p class="card-title">Desert &amp; Heritage</p><p class="card-type">Heritage · Conservation</p><p class="card-desc">Al Wadi Desert — heritage, landscapes, wildlife, and a premium sanctuary camp.</p></div></div>
+        </foreignObject>
+        <foreignObject class="loc-card" id="lcard-defender" x="290" y="298" width="165" height="220" data-loc="defender">
+          <div xmlns="http://www.w3.org/1999/xhtml" class="card-wrap" style="--img-a:#1E1408;--img-b:#281A0A;"><div class="card-img" style="height:110px;"></div><div class="card-body"><p class="card-title">Defender Experience</p><p class="card-type">Off-Road · Adventure</p><p class="card-desc">One of the Middle East's premier off-road destinations built around the Defender.</p></div></div>
+        </foreignObject>
+        <foreignObject class="loc-card" id="lcard-wadi" x="2" y="284" width="165" height="207" data-loc="wadi">
+          <div xmlns="http://www.w3.org/1999/xhtml" class="card-wrap" style="--img-a:#0E2010;--img-b:#0A1A0C;"><div class="card-img" style="height:110px;"></div><div class="card-body"><p class="card-title">Wadi Showka</p><p class="card-type">Nature · Recreation</p><p class="card-desc">A natural sanctuary for hiking, outdoor recreation, and immersive nature experiences.</p></div></div>
+        </foreignObject>
+
+        <!-- LEVEL-2 ACTIVITY CARDS -->
+        <g id="scards-coastal">
+          <foreignObject class="act-card" id="sc-c1" x="37" y="6" width="140" height="186"><div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#0D2535;--img-b:#06181E;"><div class="acard-img" style="height:96px;"></div><div class="acard-body"><p class="acard-title">Signature Coastal Events</p><p class="acard-sub">Waterfront experiences</p></div></div></foreignObject>
+          <foreignObject class="act-card" id="sc-c2" x="434" y="38" width="140" height="186"><div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#0A2030;--img-b:#061820;"><div class="acard-img" style="height:96px;"></div><div class="acard-body"><p class="acard-title">Island Exploration</p><p class="acard-sub">Off-shore discovery</p></div></div></foreignObject>
+          <foreignObject class="act-card" id="sc-c3" x="147" y="230" width="140" height="186"><div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#061A28;--img-b:#041220;"><div class="acard-img" style="height:96px;"></div><div class="acard-body"><p class="acard-title">Marine Adventure</p><p class="acard-sub">Water-based activities</p></div></div></foreignObject>
+          <foreignObject class="act-card" id="sc-c4" x="447" y="260" width="140" height="186"><div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#0A2030;--img-b:#081828;"><div class="acard-img" style="height:96px;"></div><div class="acard-body"><p class="acard-title">Coastal Discovery</p><p class="acard-sub">Guided exploration</p></div></div></foreignObject>
+        </g>
+        <g id="scards-desert">
+          <foreignObject class="act-card" id="sc-d1" x="29" y="13" width="140" height="186"><div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#2A1A08;--img-b:#1A1004;"><div class="acard-img" style="height:96px;"></div><div class="acard-body"><p class="acard-title">Sanctuary Camp</p><p class="acard-sub">Premium low-impact stay</p></div></div></foreignObject>
+          <foreignObject class="act-card" id="sc-d2" x="433" y="80" width="140" height="186"><div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#281606;--img-b:#180E04;"><div class="acard-img" style="height:96px;"></div><div class="acard-body"><p class="acard-title">Heritage &amp; Culture</p><p class="acard-sub">Cultural immersion</p></div></div></foreignObject>
+          <foreignObject class="act-card" id="sc-d3" x="288" y="344" width="140" height="186"><div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#101020;--img-b:#080812;"><div class="acard-img" style="height:96px;"></div><div class="acard-body"><p class="acard-title">Stargazing Programs</p><p class="acard-sub">Dark sky experiences</p></div></div></foreignObject>
+          <foreignObject class="act-card" id="sc-d4" x="22" y="281" width="140" height="186"><div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#1A2210;--img-b:#0E1A08;"><div class="acard-img" style="height:96px;"></div><div class="acard-body"><p class="acard-title">Conservation Tourism</p><p class="acard-sub">Rewilding &amp; protection</p></div></div></foreignObject>
+        </g>
+        <g id="scards-defender">
+          <foreignObject class="act-card" id="sc-df1" x="82" y="180" width="140" height="186"><div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#201408;--img-b:#140E04;"><div class="acard-img" style="height:96px;"></div><div class="acard-body"><p class="acard-title">Defender Driving</p><p class="acard-sub">Official experience</p></div></div></foreignObject>
+          <foreignObject class="act-card" id="sc-df2" x="435" y="36" width="140" height="186"><div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#221810;--img-b:#16100A;"><div class="acard-img" style="height:96px;"></div><div class="acard-body"><p class="acard-title">Corporate Experiences</p><p class="acard-sub">Team adventures</p></div></div></foreignObject>
+          <foreignObject class="act-card" id="sc-df3" x="303" y="417" width="140" height="186"><div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#1E1206;--img-b:#120C04;"><div class="acard-img" style="height:96px;"></div><div class="acard-body"><p class="acard-title">Training &amp; Certification</p><p class="acard-sub">Professional courses</p></div></div></foreignObject>
+          <foreignObject class="act-card" id="sc-df4" x="551" y="321" width="140" height="186"><div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#1C1408;--img-b:#100E06;"><div class="acard-img" style="height:96px;"></div><div class="acard-body"><p class="acard-title">Vehicle Launch Events</p><p class="acard-sub">Automotive tourism</p></div></div></foreignObject>
+        </g>
+        <g id="scards-wadi">
+          <foreignObject class="act-card" id="sc-w1" x="5" y="245" width="140" height="186"><div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#0E2010;--img-b:#081408;"><div class="acard-img" style="height:96px;"></div><div class="acard-body"><p class="acard-title">Mountain Heritage Camp</p><p class="acard-sub">Overnight stays</p></div></div></foreignObject>
+          <foreignObject class="act-card" id="sc-w2" x="129" y="55" width="140" height="186"><div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#0C1E0E;--img-b:#071208;"><div class="acard-img" style="height:96px;"></div><div class="acard-body"><p class="acard-title">Hiking &amp; Trail Networks</p><p class="acard-sub">Guided treks</p></div></div></foreignObject>
+          <foreignObject class="act-card" id="sc-w3" x="253" y="310" width="140" height="186"><div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#121E10;--img-b:#0A1608;"><div class="acard-img" style="height:96px;"></div><div class="acard-body"><p class="acard-title">School Adventure Programs</p><p class="acard-sub">Youth adventure</p></div></div></foreignObject>
+          <foreignObject class="act-card" id="sc-w4" x="403" y="447" width="140" height="162"><div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#0E1E12;--img-b:#08140A;"><div class="acard-img" style="height:80px;"></div><div class="acard-body"><p class="acard-title">Wellness Retreats</p><p class="acard-sub">Nature therapy</p></div></div></foreignObject>
+        </g>
+
+        <!-- ICON POPUPS -->
+        <g id="iconLayer">
+          <foreignObject class="loc-icon" id="icon-jj" x="671" y="149" width="84" height="118"><div xmlns="http://www.w3.org/1999/xhtml" class="icon-pop"><div class="icon-disc"><img src="assets/images/icon/jebel ali.png" alt="Jebel Jais"/></div><div class="icon-label-box"><span class="icon-name">Jebel Jais</span><span class="icon-cat">Mountain</span></div></div></foreignObject>
+          <foreignObject class="loc-icon" id="icon-coastal" x="255" y="29" width="84" height="118"><div xmlns="http://www.w3.org/1999/xhtml" class="icon-pop"><div class="icon-disc"><img src="assets/images/icon/Al marjan.png" alt="Coastal"/></div><div class="icon-label-box"><span class="icon-name">Coastal</span><span class="icon-cat">Marine</span></div></div></foreignObject>
+          <foreignObject class="loc-icon" id="icon-desert" x="203" y="184" width="84" height="118"><div xmlns="http://www.w3.org/1999/xhtml" class="icon-pop"><div class="icon-disc"><img src="assets/images/icon/desert experience.png" alt="Desert"/></div><div class="icon-label-box"><span class="icon-name">Desert</span><span class="icon-cat">Heritage</span></div></div></foreignObject>
+          <foreignObject class="loc-icon" id="icon-defender" x="194" y="471" width="84" height="118"><div xmlns="http://www.w3.org/1999/xhtml" class="icon-pop"><div class="icon-disc placeholder"></div><div class="icon-label-box"><span class="icon-name">Defender</span><span class="icon-cat">Off-Road</span></div></div></foreignObject>
+          <foreignObject class="loc-icon" id="icon-wadi" x="62" y="527" width="84" height="118"><div xmlns="http://www.w3.org/1999/xhtml" class="icon-pop"><div class="icon-disc"><img src="assets/images/icon/Wadi Shoka.png" alt="Wadi Showka"/></div><div class="icon-label-box"><span class="icon-name">Wadi Showka</span><span class="icon-cat">Nature</span></div></div></foreignObject>
+        </g>
+
+        <!-- INTERACTIVE NODES -->
+        <g class="node" id="node-jj" data-node="jj" transform="translate(-117,-8)">
+          <circle class="jj-pulse-outer" cx="754" cy="188" r="50" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
+          <circle class="jj-pulse-mid" cx="754" cy="188" r="33" fill="none" stroke="rgba(255,255,255,.2)" stroke-width=".8"/>
+          <circle cx="754" cy="188" r="21" fill="none" stroke="rgba(196,154,90,.36)" stroke-width="1"/>
+          <circle cx="754" cy="188" r="12" fill="#C49A5A" opacity=".12" filter="url(#glow-lg)"/>
+          <circle class="node-core" cx="754" cy="188" r="8" fill="#D4A848"/>
+          <circle cx="754" cy="188" r="4.5" fill="#F0D280"/>
+          <circle cx="754" cy="188" r="2" fill="#FFF6D8"/>
+        </g>
+        <g class="node" id="node-coastal" data-node="coastal" transform="translate(228,-345)">
+          <circle cx="118" cy="428" r="24" fill="none" stroke="rgba(58,136,180,.13)" stroke-width="1"/><circle cx="118" cy="428" r="15" fill="none" stroke="rgba(58,136,180,.26)" stroke-width=".8"/><circle cx="118" cy="428" r="9" fill="none" stroke="rgba(58,136,180,.44)" stroke-width=".8"/><circle class="node-core" cx="118" cy="428" r="5.5" fill="#2A6882"/><circle cx="118" cy="428" r="2.5" fill="#4A9EC4"/>
+        </g>
+        <g class="node" id="node-desert" data-node="desert" transform="translate(-50,-194)">
+          <circle cx="348" cy="408" r="24" fill="none" stroke="rgba(180,128,58,.13)" stroke-width="1"/><circle cx="348" cy="408" r="15" fill="none" stroke="rgba(180,128,58,.26)" stroke-width=".8"/><circle cx="348" cy="408" r="9" fill="none" stroke="rgba(180,128,58,.44)" stroke-width=".8"/><circle class="node-core" cx="348" cy="408" r="5.5" fill="#7A5A28"/><circle cx="348" cy="408" r="2.5" fill="#B8903E"/>
+        </g>
+        <g class="node" id="node-defender" data-node="defender" transform="translate(-355,220)">
+          <circle cx="530" cy="295" r="22" fill="none" stroke="rgba(160,118,58,.13)" stroke-width="1"/><circle cx="530" cy="295" r="14" fill="none" stroke="rgba(160,118,58,.26)" stroke-width=".8"/><circle cx="530" cy="295" r="8" fill="none" stroke="rgba(160,118,58,.44)" stroke-width=".8"/><circle class="node-core" cx="530" cy="295" r="5" fill="#5C4018"/><circle cx="530" cy="295" r="2.5" fill="#9A7038"/>
+        </g>
+        <g class="node" id="node-wadi" data-node="wadi" transform="translate(-462,82)">
+          <circle cx="626" cy="490" r="24" fill="none" stroke="rgba(78,142,78,.13)" stroke-width="1"/><circle cx="626" cy="490" r="15" fill="none" stroke="rgba(78,142,78,.26)" stroke-width=".8"/><circle cx="626" cy="490" r="9" fill="none" stroke="rgba(78,142,78,.44)" stroke-width=".8"/><circle class="node-core" cx="626" cy="490" r="5.5" fill="#325A32"/><circle cx="626" cy="490" r="2.5" fill="#529052"/>
+        </g>
+
+        <!-- Control-point handles for the Lines / Sub Lines edit tabs (populated by editor) -->
+        <g id="lineHandles" style="display:none"></g>
+
+        <image href="assets/images/icon/compass.png" x="921" y="14" width="72" height="72" opacity=".88"/>
+        <text x="490" y="22" text-anchor="middle" font-family="'Montserrat',sans-serif" font-size="13" fill="rgba(196,154,90,.3)" letter-spacing=".32em">RAS AL KHAIMAH</text>
+        </svg>
+        <p class="map-caption" id="mapCaption">Jebel Jais anchors a connected tourism network spanning the entire Emirate — click the mountain to begin.</p>
+      </div>
+      <div class="s-foot"><span class="cpy">© 2026 Hero Experiences Group · Confidential</span><span class="logo">Hero<span>·</span>JJ</span></div>
+    </section>
+
+    <!-- ══ SLIDE 11 — DESERT & HERITAGE EXPERIENCES ══ -->
+    <section class="slide" data-slide="11" data-steps="2">
+      <div class="slide__bg warm"></div><div class="slide__scrim"></div>
+      <div class="s-meta"><span class="lbl">Jebel Jais Operations</span><span class="pg">Page 13</span></div>
+      <div class="s-wrap">
+        <div class="split">
+          <div>
+            <p class="kicker">Desert &amp; Heritage Experiences</p>
+            <div class="rule"></div>
+            <h2 class="h-2" data-step="0" style="font-size:30px">The Al Wadi Desert is one of Ras Al Khaimah's greatest opportunities to create a world-class desert destination rooted in nature, culture, and conservation.</h2>
+            <p class="body" data-step="1" style="margin-top:18px">RAK is already advancing key initiatives, including a desert welcome centre and mountain biking trails. Hero's flagship opportunity is a <strong>Desert Sanctuary Camp</strong> — a premium, low-impact experience celebrating the heritage, landscapes, wildlife, and traditions of the Arabian desert.</p>
+            <div class="blist" data-step="2" style="margin-top:24px">
+              <div class="bli"><span class="dot"></span><span class="t">Desert Sanctuary Camp · Heritage &amp; Cultural Experiences</span></div>
+              <div class="bli"><span class="dot"></span><span class="t">Desert Exploration · Stargazing · Conservation Tourism</span></div>
+              <div class="bli"><span class="dot"></span><span class="t">Rewilding &amp; Revegetation · Premium Bespoke Experiences</span></div>
+            </div>
+          </div>
+          <div class="media" data-img="Al Wadi Desert sanctuary"></div>
+        </div>
+      </div>
+      <div class="s-foot"><span class="cpy">© 2026 Hero Experiences Group · Confidential</span><span class="logo">Hero<span>·</span>JJ</span></div>
+    </section>
+
+    <!-- ══ SLIDE 12 — WADI SHOWKA ══ -->
+    <section class="slide" data-slide="12" data-steps="1">
+      <div class="slide__bg"></div><div class="slide__scrim"></div>
+      <div class="s-meta"><span class="lbl">Jebel Jais Operations</span><span class="pg">Page 14</span></div>
+      <div class="s-wrap">
+        <p class="kicker">Wadi Showka</p>
+        <div class="rule"></div>
+        <h2 class="h-2" data-step="0" style="font-size:34px;max-width:1100px">An opportunity to establish Ras Al Khaimah's premier nature and outdoor recreation destination.</h2>
+        <div class="coll g6" data-step="1" style="grid-template-rows:1fr">
+          <div class="cell" style="--img-a:#2c2a18;--img-b:#15140a"><div class="cap"><div class="ct">Mountain Heritage Camp</div></div></div>
+          <div class="cell" style="--img-a:#2a2c1a;--img-b:#14160b"><div class="cap"><div class="ct">Hiking &amp; Trail Networks</div></div></div>
+          <div class="cell" style="--img-a:#28281a;--img-b:#13130a"><div class="cap"><div class="ct">School Adventure Programs</div></div></div>
+          <div class="cell" style="--img-a:#2c2a18;--img-b:#15140a"><div class="cap"><div class="ct">Nature-Based Recreation</div></div></div>
+          <div class="cell" style="--img-a:#2a2c1a;--img-b:#14160b"><div class="cap"><div class="ct">Wellness &amp; Outdoor Retreats</div></div></div>
+          <div class="cell" style="--img-a:#28281a;--img-b:#13130a"><div class="cap"><div class="ct">Family Camping Experiences</div></div></div>
+        </div>
+        <p class="body" data-step="1" style="margin-top:20px">Wadi Showka complements Jebel Jais by creating a more accessible and immersive outdoor experience.</p>
+      </div>
+      <div class="s-foot"><span class="cpy">© 2026 Hero Experiences Group · Confidential</span><span class="logo">Hero<span>·</span>JJ</span></div>
+    </section>
+
+    <!-- ══ SLIDE 13 — DEFENDER EXPERIENCE CENTRE ══ -->
+    <section class="slide" data-slide="13" data-steps="1">
+      <div class="slide__bg"></div><div class="slide__scrim"></div>
+      <div class="s-meta"><span class="lbl">Jebel Jais Operations</span><span class="pg">Page 15</span></div>
+      <div class="s-wrap">
+        <p class="kicker">Defender Experience Centre</p>
+        <div class="rule"></div>
+        <h2 class="h-2" data-step="0" style="font-size:34px;max-width:1100px">The potential to become one of the Middle East's premier off-road destinations.</h2>
+        <div class="coll g6" data-step="1" style="grid-template-rows:1fr">
+          <div class="cell" style="--img-a:#2c2418;--img-b:#15110a"><div class="cap"><div class="ct">Official Defender Driving</div></div></div>
+          <div class="cell" style="--img-a:#2a2618;--img-b:#14120a"><div class="cap"><div class="ct">Training &amp; Certification</div></div></div>
+          <div class="cell" style="--img-a:#28251a;--img-b:#13120a"><div class="cap"><div class="ct">Adventure Tourism Products</div></div></div>
+          <div class="cell" style="--img-a:#2c2418;--img-b:#15110a"><div class="cap"><div class="ct">Corporate Experiences</div></div></div>
+          <div class="cell" style="--img-a:#2a2618;--img-b:#14120a"><div class="cap"><div class="ct">Vehicle Launch Events</div></div></div>
+          <div class="cell" style="--img-a:#28251a;--img-b:#13120a"><div class="cap"><div class="ct">Regional Automotive Tourism</div></div></div>
+        </div>
+        <p class="body" data-step="1" style="margin-top:20px">This experience would create a unique tourism offering unavailable elsewhere in the GCC.</p>
+      </div>
+      <div class="s-foot"><span class="cpy">© 2026 Hero Experiences Group · Confidential</span><span class="logo">Hero<span>·</span>JJ</span></div>
+    </section>
+
+    <!-- ══ SLIDE 14 — COASTAL & MARINE EXPERIENCES ══ -->
+    <section class="slide" data-slide="14" data-steps="1">
+      <div class="slide__bg"></div><div class="slide__scrim"></div>
+      <div class="s-meta"><span class="lbl">Jebel Jais Operations</span><span class="pg">Page 16</span></div>
+      <div class="s-wrap">
+        <div class="split">
+          <div class="media" data-img="RAK coastline & marina" style="--img-a:#13283a;--img-b:#091824"></div>
+          <div>
+            <p class="kicker">Coastal &amp; Marine Experiences</p>
+            <div class="rule"></div>
+            <h2 class="h-2" data-step="0" style="font-size:32px">Ras Al Khaimah's coastline offers an additional dimension to the adventure ecosystem.</h2>
+            <div class="blist" data-step="1" style="margin-top:24px">
+              <div class="bli"><span class="dot"></span><span class="t">Coastal Discovery Tours · Marine Adventure Activities</span></div>
+              <div class="bli"><span class="dot"></span><span class="t">Wildlife Experiences · Waterfront Recreation</span></div>
+              <div class="bli"><span class="dot"></span><span class="t">Island Exploration · Signature Coastal Events</span></div>
+            </div>
+            <p class="body" data-step="1" style="margin-top:24px;text-transform:uppercase;letter-spacing:.03em">Mountains, desert, and coast create a destination proposition few places in the world can match.</p>
+          </div>
+        </div>
+      </div>
+      <div class="s-foot"><span class="cpy">© 2026 Hero Experiences Group · Confidential</span><span class="logo">Hero<span>·</span>JJ</span></div>
+    </section>
+
+    <!-- ══ SLIDE 15 — THE IMPACT ══ -->
+    <section class="slide" data-slide="15" data-steps="2">
+      <div class="slide__bg"></div><div class="slide__scrim"></div>
+      <div class="s-meta"><span class="lbl">Jebel Jais Operations</span><span class="pg">Page 17</span></div>
+      <div class="s-wrap">
+        <p class="kicker">The Impact</p>
+        <div class="rule"></div>
+        <p class="lead dim" data-step="0">A connected adventure ecosystem creates lasting value.</p>
+        <div class="impact">
+          <div class="imp" data-step="1"><div class="i-t">Tourism Growth</div><div class="i-d">Higher visitation and longer stays.</div></div>
+          <div class="imp" data-step="1"><div class="i-t">Investment Attraction</div><div class="i-d">New opportunities for private-sector participation.</div></div>
+          <div class="imp" data-step="1"><div class="i-t">Economic Diversification</div><div class="i-d">Expanded tourism offerings and revenue streams.</div></div>
+          <div class="imp" data-step="2"><div class="i-t">Employment Creation</div><div class="i-d">New careers and workforce development.</div></div>
+          <div class="imp" data-step="2"><div class="i-t">International Recognition</div><div class="i-d">Stronger destination awareness and competitiveness.</div></div>
+          <div class="imp" data-step="2"><div class="i-t">Community Benefit</div><div class="i-d">Enhanced recreational opportunities and quality of life.</div></div>
+        </div>
+        <p class="body" data-step="2" style="margin-top:28px;text-transform:uppercase;letter-spacing:.03em">The result is a stronger tourism economy and a more distinctive global identity for Ras Al Khaimah.</p>
+      </div>
+      <div class="s-foot"><span class="cpy">© 2026 Hero Experiences Group · Confidential</span><span class="logo">Hero<span>·</span>JJ</span></div>
+    </section>
+
+    <!-- ══ SLIDE 16 — A SHARED VISION FOR RAS AL KHAIMAH ══ -->
+    <section class="slide" data-slide="16" data-steps="3">
+      <div class="slide__bg warm"></div><div class="slide__scrim"></div>
+      <div class="s-meta"><span class="lbl">Jebel Jais Operations</span><span class="pg">Page 18</span></div>
+      <div class="s-wrap">
+        <p class="kicker">A Shared Vision for Ras Al Khaimah</p>
+        <div class="rule"></div>
+        <h2 class="h-2" data-step="0" style="font-size:30px;max-width:1200px">Jebel Jais can become one of the world's most compelling mountain destinations — and the catalyst for a connected adventure ecosystem across the emirate.</h2>
+        <p class="body" data-step="0" style="margin-top:14px">Hero's ambition is not simply to manage attractions. It is to help Ras Al Khaimah create a destination ecosystem worthy of its extraordinary landscapes and its long-term vision for the future.</p>
+        <div data-step="1" style="margin-top:24px">
+          <div class="col-h" style="max-width:1180px">Proposed Next Steps</div>
+          <div class="blist" style="margin-top:18px">
+            <div class="bli"><span class="dot"></span><span class="t">Advance Hero as the preferred operating and activation partner for Jebel Jais</span></div>
+            <div class="bli"><span class="dot"></span><span class="t">Develop a comprehensive mobility and circulation masterplan</span></div>
+            <div class="bli"><span class="dot"></span><span class="t">Implement immediate operational and guest-experience enhancements</span></div>
+            <div class="bli"><span class="dot"></span><span class="t">Collaboratively define the long-term adventure ecosystem strategy</span></div>
+          </div>
+        </div>
+        <p class="lead" data-step="2" style="margin-top:26px;max-width:1240px">Together, we can create a destination that inspires residents, attracts visitors from around the world, and strengthens Ras Al Khaimah's position as the adventure capital of the region.</p>
+      </div>
+      <div class="s-foot"><span class="cpy">© 2026 Hero Experiences Group · Confidential</span><span class="logo">Hero<span>·</span>JJ</span></div>
+    </section>
+
+    <!-- ══ SLIDE 17 — THANK YOU ══ -->
+    <section class="slide" data-slide="17" data-steps="0">
+      <div class="slide__bg warm"></div><div class="slide__scrim"></div>
+      <div class="s-meta"><span class="lbl">Jebel Jais Operations</span><span class="pg">Page 19</span></div>
+      <div class="s-wrap s-center">
+        <h1 class="h-xl" data-step="0">Thank You</h1>
+        <div class="rule" style="margin:26px auto 0" data-step="0"></div>
+        <div class="contact" data-step="0">
+          <span class="nm">Travis Kline</span>
+          <span class="rl">Chief Strategy Officer · Hero Experiences Group</span>
+          <span class="em">travis@hero-experiences.com</span>
+        </div>
+      </div>
+      <div class="s-foot"><span class="cpy">© 2026 Hero Experiences Group · Confidential</span><span class="logo">Hero<span>·</span>JJ</span></div>
+    </section>
+
+  </div><!-- /stage -->
+
+  <!-- HUD -->
+  <div id="hud"></div>
+  <div id="progress"></div>
+  <div id="dots"></div>
+  <div id="counter">1 / 17</div>
+  <button id="exitFs">⤢ Exit fullscreen</button>
+</div><!-- /deck -->
+
+<!-- ════════ SLIDE 10 — POSITION EDITOR (dev tool, shown only on Slide 10) ════════ -->
+<button class="edit-toggle-btn" id="editToggle">⟳ Edit positions</button>
+<div class="edit-panel" id="editPanel">
+  <div class="ep-head">
+    <span class="ep-title">Card Editor</span>
+    <button class="ep-close" id="editClose" title="Close">×</button>
+  </div>
+  <div class="ep-tabs" id="epTabs">
+    <button class="ep-tab active" data-group="Nodes">Nodes</button>
+    <button class="ep-tab" data-group="Lines">Lines</button>
+    <button class="ep-tab" data-group="Sub Lines">Sub Lines</button>
+    <button class="ep-tab" data-group="Icons">Icons</button>
+    <button class="ep-tab" data-group="L1">Level 1</button>
+    <button class="ep-tab" data-group="coastal">Coastal</button>
+    <button class="ep-tab" data-group="desert">Desert</button>
+    <button class="ep-tab" data-group="defender">Defender</button>
+    <button class="ep-tab" data-group="wadi">Wadi</button>
+  </div>
+  <div class="ep-subloc-row" id="epSublocRow">
+    <button class="ep-subtab active" data-subloc="coastal">Coastal</button>
+    <button class="ep-subtab" data-subloc="desert">Desert</button>
+    <button class="ep-subtab" data-subloc="defender">Defender</button>
+    <button class="ep-subtab" data-subloc="wadi">Wadi</button>
+  </div>
+  <p class="ep-help" id="epHelp">Drag a node dot on the map. Branch lines update live.</p>
+  <div class="ep-list" id="epList"></div>
+  <div class="ep-actions">
+    <button class="ep-btn" id="epCopy">Copy positions</button>
+    <button class="ep-btn" id="epReset">Reset group</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  'use strict';
+  const TOTAL = 17;
+  const MAP_SLIDE = 10;
+
+  const splash    = document.getElementById('splash');
+  const deck      = document.getElementById('deck');
+  const stage     = document.getElementById('stage');
+  const slides    = Array.from(document.querySelectorAll('.slide'));
+  const dotsWrap  = document.getElementById('dots');
+  const counter   = document.getElementById('counter');
+  const progress  = document.getElementById('progress');
+  const exitFsBtn = document.getElementById('exitFs');
+  const beginBtn  = document.getElementById('beginBtn');
+  const progToggle= document.getElementById('progToggle');
+  const progState = document.getElementById('progState');
+
+  /* steps per slide */
+  const maxSteps = {};
+  slides.forEach(s => { maxSteps[+s.dataset.slide] = parseInt(s.dataset.steps || '0', 10); });
+
+  let cur = 1, step = 0, inSplash = true;
+  let progressive = localStorage.getItem('jj-progressive');
+  progressive = progressive === null ? true : progressive === 'true';
+
+  /* ════════ STAGE SCALING ════════ */
+  function fitStage(){
+    const s = Math.min(window.innerWidth / 1440, window.innerHeight / 810);
+    stage.style.setProperty('--scale', s);
+  }
+  window.addEventListener('resize', fitStage);
+  fitStage();
+
+  /* ════════ NAV DOTS ════════ */
+  for (let i = 1; i <= TOTAL; i++){
+    const d = document.createElement('div');
+    d.className = 'dot'; d.id = 'dot' + i;
+    dotsWrap.appendChild(d);
+  }
+
+  /* ════════ PROGRESSIVE-REVEAL TOGGLE ════════ */
+  function syncToggleUI(){
+    progToggle.checked = progressive;
+    progState.textContent = progressive ? 'On' : 'Off';
+  }
+  progToggle.addEventListener('change', () => {
+    progressive = progToggle.checked;
+    localStorage.setItem('jj-progressive', progressive);
+    progState.textContent = progressive ? 'On' : 'Off';
+  });
+  syncToggleUI();
+
+  /* ════════ STEP RENDERING ════════ */
+  function applySteps(section, activeStep){
+    section.querySelectorAll('[data-step]').forEach(el => {
+      el.classList.toggle('shown', parseInt(el.dataset.step, 10) <= activeStep);
+    });
+  }
+
+  /* ════════ SHOW SLIDE ════════ */
+  function show(n, opts){
+    opts = opts || {};
+    n = Math.max(1, Math.min(TOTAL, n));
+    cur = n;
+    const section = slides.find(s => +s.dataset.slide === n);
+
+    slides.forEach(s => s.classList.toggle('active', s === section));
+
+    /* editor tool only available on the map slide */
+    const etb = document.getElementById('editToggle');
+    if (n !== MAP_SLIDE && window.EcoMap && window.EcoMap.leave) window.EcoMap.leave();
+    if (etb) etb.style.display = (n === MAP_SLIDE) ? 'block' : 'none';
+
+    if (n === MAP_SLIDE){
+      step = 0;
+      if (opts.dir === 'back') EcoMap.toEnd(); else EcoMap.reset();
+      step = EcoMap.step();
+    } else {
+      const mx = maxSteps[n];
+      if (!progressive)            step = mx;            // fully revealed
+      else if (opts.dir === 'back')step = mx;            // land fully shown
+      else                          step = 0;            // build from start
+      applySteps(section, step);
+    }
+
+    /* HUD */
+    for (let i = 1; i <= TOTAL; i++){
+      const d = document.getElementById('dot' + i);
+      d.className = 'dot' + (i === n ? ' cur' : i < n ? ' done' : '');
+    }
+    counter.textContent = n + ' / ' + TOTAL;
+    progress.style.width = ((n - 1) / (TOTAL - 1) * 100) + '%';
+    updateHash();
+  }
+
+  /* ════════ FORWARD / BACKWARD ════════ */
+  function fwd(){
+    if (inSplash){ begin(); return; }
+    if (cur === MAP_SLIDE){
+      if (EcoMap.advance()){ step = EcoMap.step(); updateHash(); }
+      else show(cur + 1, {dir:'fwd'});
+      return;
+    }
+    if (progressive && step < maxSteps[cur]){
+      step++;
+      applySteps(slides.find(s => +s.dataset.slide === cur), step);
+      updateHash();
+      return;
+    }
+    if (cur < TOTAL) show(cur + 1, {dir:'fwd'});
+  }
+  function bwd(){
+    if (inSplash) return;
+    if (cur === MAP_SLIDE){
+      if (EcoMap.back()){ step = EcoMap.step(); updateHash(); }
+      else show(cur - 1, {dir:'back'});
+      return;
+    }
+    if (progressive && step > 0){
+      step--;
+      applySteps(slides.find(s => +s.dataset.slide === cur), step);
+      updateHash();
+      return;
+    }
+    if (cur > 1) show(cur - 1, {dir:'back'});
+  }
+
+  /* ════════ URL HASH STATE ════════ */
+  let hashLock = false;
+  function updateHash(){
+    if (inSplash) return;
+    hashLock = true;
+    location.hash = '/' + cur + '/' + step;
+    setTimeout(() => hashLock = false, 0);
+  }
+  function readHash(){
+    const m = (location.hash || '').match(/^#\/(\d+)(?:\/(\d+))?/);
+    if (!m) return null;
+    return { slide: Math.max(1, Math.min(TOTAL, +m[1])), step: m[2] ? +m[2] : 0 };
+  }
+  window.addEventListener('hashchange', () => {
+    if (hashLock || inSplash) return;
+    const h = readHash();
+    if (h) jumpTo(h.slide, h.step);
+  });
+  function jumpTo(slide, targetStep){
+    show(slide, {dir:'fwd'});
+    if (slide === MAP_SLIDE){
+      let guard = 0;
+      while (EcoMap.step() < targetStep && EcoMap.advance() && guard++ < 12){}
+      step = EcoMap.step();
+    } else {
+      step = Math.min(targetStep, maxSteps[slide]);
+      if (!progressive) step = maxSteps[slide];
+      applySteps(slides.find(s => +s.dataset.slide === slide), step);
+    }
+    updateHash();
+  }
+
+  /* ════════ FULLSCREEN ════════ */
+  function enterFS(){ if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(()=>{}); }
+  function exitFS(){ if (document.exitFullscreen) document.exitFullscreen().catch(()=>{}); }
+  exitFsBtn.addEventListener('click', exitFS);
+  document.addEventListener('fullscreenchange', () => {
+    exitFsBtn.style.display = document.fullscreenElement ? 'block' : 'none';
+  });
+
+  /* ════════ BEGIN / RETURN ════════ */
+  function begin(){
+    inSplash = false;
+    splash.classList.add('out');
+    setTimeout(() => splash.style.display = 'none', 620);
+    deck.classList.add('active');
+    fitStage();
+    const h = readHash();
+    if (h) jumpTo(h.slide, h.step); else show(1, {dir:'fwd'});
+  }
+  function returnSplash(){
+    inSplash = true;
+    if (document.fullscreenElement) exitFS();
+    splash.style.display = '';
+    requestAnimationFrame(() => splash.classList.remove('out'));
+    deck.classList.remove('active');
+    if (EcoMap.leave) EcoMap.leave();
+    const etb = document.getElementById('editToggle');
+    if (etb) etb.style.display = 'none';
+    EcoMap.reset();
+    cur = 1; step = 0;
+    history.replaceState(null, '', location.pathname + location.search);
+  }
+
+  beginBtn.addEventListener('click', e => { e.stopPropagation(); enterFS(); begin(); });
+
+  /* ════════ KEYBOARD ════════ */
+  document.addEventListener('keydown', e => {
+    if (window.EcoMap && window.EcoMap.editing && window.EcoMap.editing()) return; // editor owns the keyboard
+    switch (e.key){
+      case 'ArrowRight': case 'ArrowDown': case 'PageDown': case ' ': case 'Enter':
+        e.preventDefault(); fwd(); break;
+      case 'ArrowLeft': case 'ArrowUp': case 'PageUp': case 'Backspace':
+        e.preventDefault(); bwd(); break;
+      case 'Home':
+        if (!inSplash){ e.preventDefault(); show(1, {dir:'fwd'}); } break;
+      case 'End':
+        if (!inSplash){ e.preventDefault(); show(TOTAL, {dir:'back'}); } break;
+      case 'Escape':
+        if (!inSplash) returnSplash(); break;
+    }
+  });
+
+  /* ════════ CLICK / EDGE ZONES ════════ */
+  deck.addEventListener('click', e => {
+    if (inSplash) return;
+    if (window.EcoMap && window.EcoMap.editing()) return; // editor active — no slide nav
+    /* ignore clicks on interactive map elements & HUD controls */
+    if (e.target.closest('#mapSvg .node, #mapSvg .loc-card, #mapSvg .act-card, #mapSvg .loc-icon, #exitFs, #dots')) return;
+    if (e.clientX < window.innerWidth * 0.12) bwd(); else fwd();
+  });
+
+  /* ════════ TOUCH SWIPE ════════ */
+  let tx = 0, ty = 0;
+  deck.addEventListener('touchstart', e => { tx = e.changedTouches[0].clientX; ty = e.changedTouches[0].clientY; }, {passive:true});
+  deck.addEventListener('touchend', e => {
+    if (inSplash) return;
+    const dx = e.changedTouches[0].clientX - tx, dy = e.changedTouches[0].clientY - ty;
+    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)){ if (dx < 0) fwd(); else bwd(); }
+  }, {passive:true});
+
+  /* ════════════════════════════════════════════════════════════════
+     ECOSYSTEM MAP CONTROLLER  (Slide 10 — exempt from reveal toggle)
+     STEPS: resting → main → coastal → desert → defender → wadi → main(full)
+     ════════════════════════════════════════════════════════════════ */
+  const EcoMap = window.EcoMap = (function(){
+    const svg = document.getElementById('mapSvg');
+    const caption = document.getElementById('mapCaption');
+    const LOCS = ['coastal','desert','defender','wadi'];
+    const STEPS = ['resting','main','sub-coastal','sub-desert','sub-defender','sub-wadi','main'];
+
+    const CAPS = {
+      'resting':'Jebel Jais anchors a connected tourism network spanning the entire Emirate — click the mountain to begin.',
+      'main':'One emirate, four landscapes — a connected adventure ecosystem.',
+      'sub-coastal':'Coastal & Marine — discovery, marine adventure, and island exploration.',
+      'sub-desert':'Desert & Heritage — sanctuary camp, culture, and conservation.',
+      'sub-defender':'Defender Experience — off-road driving, training, and corporate adventure.',
+      'sub-wadi':'Wadi Showka — nature, trails, and outdoor recreation.'
+    };
+
+    /* timing */
+    const T_JJ_POP=500, LINE_STAGGER=120, LINE_DRAW=900, LOC_STAGGER=110, CARD_AFTER_IC=320, SUB_STAGGER=75, SUB_DRAW=600;
+
+    /* init dash on paths */
+    svg.querySelectorAll('.main-line, .sub-line').forEach(p => {
+      const len = p.getTotalLength();
+      p.style.strokeDasharray = len; p.style.strokeDashoffset = len;
+    });
+    svg.querySelectorAll('.main-line').forEach(p => p.style.transition = 'stroke-dashoffset .9s cubic-bezier(.4,0,.2,1) var(--mdel,0ms), opacity .5s ease');
+    svg.querySelectorAll('.sub-line').forEach(p => p.style.transition = 'stroke-dashoffset .6s cubic-bezier(.4,0,.2,1) var(--del,0ms), opacity .4s ease');
+
+    let timers = [];
+    const T = (fn, ms) => timers.push(setTimeout(fn, ms));
+    const clearT = () => { timers.forEach(clearTimeout); timers = []; };
+
+    const popIcon = id => document.getElementById('icon-' + id) && document.getElementById('icon-' + id).classList.add('popped');
+    const unpopAll = () => ['jj', ...LOCS].forEach(id => { const e = document.getElementById('icon-' + id); if (e) e.classList.remove('popped'); });
+    const revealCard = id => { const e = document.getElementById(id); if (e) e.classList.add('revealed'); };
+    const hideCards = () => svg.querySelectorAll('.loc-card.revealed, .act-card.revealed').forEach(c => c.classList.remove('revealed'));
+    const collapse = sel => svg.querySelectorAll(sel).forEach(l => l.style.strokeDashoffset = l.getTotalLength());
+
+    let state = 'resting', idx = 0, onChange = null, editMode = false;
+
+    function setState(next, opts){
+      opts = opts || {}; clearT(); state = next; svg.setAttribute('data-state', next.startsWith('sub') ? next : next);
+      if (caption) caption.textContent = CAPS[next] || '';
+
+      if (next === 'resting'){
+        unpopAll(); hideCards(); collapse('.main-line, .sub-line');
+        if (caption) caption.classList.remove('dim');
+      }
+      if (next === 'main'){
+        if (caption) caption.classList.add('dim');
+        hideCards(); collapse('.sub-line');
+        if (opts.choreograph){
+          collapse('.main-line'); unpopAll(); popIcon('jj');
+          svg.querySelectorAll('.main-line').forEach((l, i) => T(() => { l.style.setProperty('--mdel','0ms'); l.style.strokeDashoffset = 0; }, T_JJ_POP + i * LINE_STAGGER));
+          const linesEnd = T_JJ_POP + (LOCS.length - 1) * LINE_STAGGER + LINE_DRAW;
+          LOCS.forEach((loc, i) => { T(() => popIcon(loc), linesEnd + i * LOC_STAGGER); T(() => revealCard('lcard-' + loc), linesEnd + i * LOC_STAGGER + CARD_AFTER_IC); });
+        } else {
+          svg.querySelectorAll('.main-line').forEach(l => { l.style.setProperty('--mdel','0ms'); l.style.strokeDashoffset = 0; });
+          popIcon('jj'); LOCS.forEach(loc => { popIcon(loc); revealCard('lcard-' + loc); });
+        }
+      }
+      if (next.startsWith('sub-')){
+        if (caption) caption.classList.add('dim');
+        hideCards();
+        const id = next.replace('sub-','');
+        const grp = svg.querySelector('#subg-' + id);
+        if (grp) grp.querySelectorAll('.sub-line').forEach((l, i) => { l.style.setProperty('--del', (i * SUB_STAGGER) + 'ms'); l.style.strokeDashoffset = 0; });
+        LOCS.filter(x => x !== id).forEach(x => { const g = svg.querySelector('#subg-' + x); if (g) g.querySelectorAll('.sub-line').forEach(l => l.style.strokeDashoffset = l.getTotalLength()); });
+        const subEnd = (4 - 1) * SUB_STAGGER + SUB_DRAW;
+        svg.querySelectorAll('#scards-' + id + ' .act-card').forEach((c, i) => T(() => c.classList.add('revealed'), subEnd + i * 90));
+      }
+      if (onChange) onChange(idx);
+    }
+
+    function goTo(i, choreoFrom){
+      idx = Math.max(0, Math.min(STEPS.length - 1, i));
+      const next = STEPS[idx];
+      if (next === 'main') setState('main', {choreograph: choreoFrom === 'resting'});
+      else setState(next);
+    }
+
+    /* node / card / icon clicks (disabled while the editor is active) */
+    document.getElementById('node-jj').addEventListener('click', e => { if (editMode) return; e.stopPropagation(); if (state === 'resting'){ idx = 1; setState('main', {choreograph:true}); } else if (state.startsWith('sub-')){ idx = 1; setState('main'); } });
+    document.getElementById('icon-jj').addEventListener('click', e => { if (editMode) return; e.stopPropagation(); if (state === 'resting'){ idx = 1; setState('main', {choreograph:true}); } });
+    LOCS.forEach(id => {
+      const drill = e => { if (editMode) return; e.stopPropagation(); if (state === 'main' || state.startsWith('sub-')){ idx = STEPS.indexOf('sub-' + id); setState('sub-' + id); } };
+      document.getElementById('node-' + id).addEventListener('click', drill);
+      const card = document.getElementById('lcard-' + id); if (card) card.addEventListener('click', drill);
+      const ic = document.getElementById('icon-' + id); if (ic) ic.addEventListener('click', e => { if (editMode) return; e.stopPropagation(); if (state === 'main'){ idx = STEPS.indexOf('sub-' + id); setState('sub-' + id); } });
+    });
+
+    /* exit edit mode on Escape (deck keydown bails out while editing) */
+    document.addEventListener('keydown', e => { if (editMode && e.key === 'Escape'){ e.preventDefault(); if (api.leaveEdit) api.leaveEdit(); } });
+
+    const api = {
+      reset(){ idx = 0; setState('resting'); },
+      toEnd(){ idx = STEPS.length - 1; setState('main', {choreograph:false}); },
+      advance(){ if (idx >= STEPS.length - 1) return false; const from = STEPS[idx]; goTo(idx + 1, from); return true; },
+      back(){ if (idx <= 0) return false; goTo(idx - 1, STEPS[idx]); return true; },
+      step(){ return idx; },
+      max(){ return STEPS.length - 1; },
+      set onChange(fn){ onChange = fn; },
+      /* ── editor interop ── */
+      _setState:(n,o)=>setState(n,o),
+      _state:()=>state,
+      setEditing(b){ editMode = !!b; },
+      editing(){ return editMode; },
+      leave(){ if (editMode && api.leaveEdit) api.leaveEdit(); }
+    };
+    return api;
+  })();
+
+  /* keep hash in sync when map advances via direct clicks */
+  EcoMap.onChange = function(i){ if (!inSplash && cur === MAP_SLIDE){ step = i; updateHash(); } };
+
+})();
+</script>
+<script src="js/ecosystem-editor.js"></script>
 </body>
 </html>

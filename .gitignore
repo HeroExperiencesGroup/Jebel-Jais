@@ -2,3 +2,7 @@
 Thumbs.db
 *.log
 node_modules/
+
+# Large local-only artifacts (kept out of git history)
+*.zip
+Final Consolidated Jebel Jais Destination Operations Proposal_240626 - Presentation.pdf

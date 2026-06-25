@@ -1,0 +1,20 @@
+/* Montserrat - SIL Open Font License 1.1
+   Source: Google Fonts */
+
+@font-face {
+  font-family: "Montserrat";
+  src: url("../assets/fonts/montserrat/Montserrat-VariableFont_wght.ttf")
+    format("truetype-variations");
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Montserrat";
+  src: url("../assets/fonts/montserrat/Montserrat-Italic-VariableFont_wght.ttf")
+    format("truetype-variations");
+  font-style: italic;
+  font-weight: 100 900;
+  font-display: swap;
+}
