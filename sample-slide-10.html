@@ -231,6 +231,12 @@ html, body { width:100%; height:100%; overflow:hidden; background:#10150D; }
 }
 .ep-btn:hover { background:rgba(196,149,64,.22); color:rgba(196,149,64,1); }
 .ep-btn.ok { background:rgba(60,140,60,.18); border-color:rgba(80,200,80,.35); color:rgba(130,220,130,.9); }
+/* Real card images — suppress placeholder crosshatch + "IMAGE" text */
+.card-img.has-img::before,  .card-img.has-img::after,
+.acard-img.has-img::before, .acard-img.has-img::after { display:none; }
+.card-img.has-img img, .acard-img.has-img img {
+  position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block;
+}
 /* Show dashed outline on cards in edit mode */
 #mapSvg[data-edit="true"] .card-wrap,
 #mapSvg[data-edit="true"] .acard-wrap { outline:1px dashed rgba(196,149,64,.35) !important; }
@@ -473,9 +479,8 @@ html, body { width:100%; height:100%; overflow:hidden; background:#10150D; }
   -->
   <g id="subg-coastal">
     <path class="sub-line" id="sl-coastal-0" d="M 346,83 C 259,127 228,97 177,99"/>
-    <path class="sub-line" id="sl-coastal-1" d="M 346,83 C 383,64 404,132 434,131"/>
-    <path class="sub-line" id="sl-coastal-2" d="M 346,83 C 293,162 372,290 287,323"/>
-    <path class="sub-line" id="sl-coastal-3" d="M 346,83 C 377,156 363,328 447,353"/>
+    <path class="sub-line" id="sl-coastal-1" d="M 346,83 C 293,162 372,290 287,323"/>
+    <path class="sub-line" id="sl-coastal-2" d="M 346,83 C 377,156 363,328 447,353"/>
   </g>
   <g id="subg-desert">
     <path class="sub-line" id="sl-desert-0" d="M 298,214 C 263,142 208,117 169,106"/>
@@ -501,7 +506,6 @@ html, body { width:100%; height:100%; overflow:hidden; background:#10150D; }
   <!-- Sub-node dots at card entry points -->
   <g id="snodes-coastal">
     <circle class="sub-node" cx="177" cy="99"  r="4" fill="#4A9EC4"/>
-    <circle class="sub-node" cx="434" cy="131" r="4" fill="#4A9EC4"/>
     <circle class="sub-node" cx="287" cy="323" r="4" fill="#4A9EC4"/>
     <circle class="sub-node" cx="447" cy="353" r="4" fill="#4A9EC4"/>
   </g>
@@ -530,13 +534,13 @@ html, body { width:100%; height:100%; overflow:hidden; background:#10150D; }
        ═══════════════════════════════════════════════════ -->
 
   <!-- Coastal: x=140,y=380 → x:140-305 clears Desert(348) ✓, Coastal node x=118<140 ✓ -->
-  <foreignObject class="loc-card" id="lcard-coastal" x="406" y="11" width="165" height="220" data-loc="coastal">
+  <foreignObject class="loc-card" id="lcard-coastal" x="404" y="41" width="165" height="220" data-loc="coastal">
     <div xmlns="http://www.w3.org/1999/xhtml" class="card-wrap" style="--img-a:#0D2535;--img-b:#06181E;">
-      <div class="card-img" style="height:110px;"></div>
+      <div class="card-img has-img" style="height:110px;"><img src="assets/images/interactive map images/Coastal experience/Coastal discovery.webp" alt="Coastal"/></div>
       <div class="card-body">
         <p class="card-title">Coastal Experiences</p>
         <p class="card-type">Marine · Discovery</p>
-        <p class="card-desc">Marine adventure, island exploration, and coastal discovery along RAK's shoreline.</p>
+        <p class="card-desc">Pearl experiences, signature boating, and coastal discovery along RAK's shoreline.</p>
       </div>
     </div>
   </foreignObject>
@@ -544,7 +548,7 @@ html, body { width:100%; height:100%; overflow:hidden; background:#10150D; }
   <!-- Desert: x=170,y=290 → x:170-335, Desert node x=348>335 ✓, Coastal node x=118<170 ✓ -->
   <foreignObject class="loc-card" id="lcard-desert" x="36" y="20" width="165" height="220" data-loc="desert">
     <div xmlns="http://www.w3.org/1999/xhtml" class="card-wrap" style="--img-a:#2A1A08;--img-b:#1A1205;">
-      <div class="card-img" style="height:110px;"></div>
+      <div class="card-img has-img" style="height:110px;"><img src="assets/images/interactive map images/Desert %26 Heritage/Heritage and Culture.jpg" alt="Desert"/></div>
       <div class="card-body">
         <p class="card-title">Desert Experiences</p>
         <p class="card-type">Heritage · Exploration</p>
@@ -556,7 +560,7 @@ html, body { width:100%; height:100%; overflow:hidden; background:#10150D; }
   <!-- Defender: x=360,y=200 → x:360-525, Desert x=348<360 ✓, Wadi x=626>525 ✓, JJ x=754>525 ✓ -->
   <foreignObject class="loc-card" id="lcard-defender" x="290" y="298" width="165" height="220" data-loc="defender">
     <div xmlns="http://www.w3.org/1999/xhtml" class="card-wrap" style="--img-a:#1E1408;--img-b:#281A0A;">
-      <div class="card-img" style="height:110px;"></div>
+      <div class="card-img has-img" style="height:110px;"><img src="assets/images/interactive map images/Defender/Defender driving.png" alt="Defender"/></div>
       <div class="card-body">
         <p class="card-title">Defender Experience</p>
         <p class="card-type">Off-Road · Adventure</p>
@@ -568,7 +572,7 @@ html, body { width:100%; height:100%; overflow:hidden; background:#10150D; }
   <!-- Wadi: x=654,y=410 → x:654-819, Wadi node x=626<654 ✓, JJ y=188<410 ✓ -->
   <foreignObject class="loc-card" id="lcard-wadi" x="2" y="284" width="165" height="207" data-loc="wadi">
     <div xmlns="http://www.w3.org/1999/xhtml" class="card-wrap" style="--img-a:#0E2010;--img-b:#0A1A0C;">
-      <div class="card-img" style="height:110px;"></div>
+      <div class="card-img has-img" style="height:110px;"><img src="assets/images/interactive map images/Wadi/Mountain heritage camp.jpg" alt="Wadi"/></div>
       <div class="card-body">
         <p class="card-title">Wadi Showka</p>
         <p class="card-type">Nature · Recreation</p>
@@ -582,29 +586,23 @@ html, body { width:100%; height:100%; overflow:hidden; background:#10150D; }
        2×2 grid per location — all cleared of non-parent nodes.
        ═══════════════════════════════════════════════════ -->
 
-  <!-- COASTAL 2×2 -->
+  <!-- COASTAL (3 cards — Island Exploration removed) -->
   <g id="scards-coastal">
     <foreignObject class="act-card" id="sc-c1" x="37" y="6" width="140" height="186">
       <div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#0D2535;--img-b:#06181E;">
-        <div class="acard-img" style="height:96px;"></div>
-        <div class="acard-body"><p class="acard-title">Coastal Events</p><p class="acard-sub">Signature experiences</p></div>
-      </div>
-    </foreignObject>
-    <foreignObject class="act-card" id="sc-c2" x="434" y="38" width="140" height="186">
-      <div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#0A2030;--img-b:#061820;">
-        <div class="acard-img" style="height:96px;"></div>
-        <div class="acard-body"><p class="acard-title">Island Exploration</p><p class="acard-sub">Off-shore discovery</p></div>
+        <div class="acard-img has-img" style="height:96px;"><img src="assets/images/interactive map images/Coastal experience/Boat Experience.jpg" alt="Boating"/></div>
+        <div class="acard-body"><p class="acard-title">Signature Boating Experiences</p><p class="acard-sub">Signature experiences</p></div>
       </div>
     </foreignObject>
     <foreignObject class="act-card" id="sc-c3" x="147" y="230" width="140" height="186">
       <div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#061A28;--img-b:#041220;">
-        <div class="acard-img" style="height:96px;"></div>
-        <div class="acard-body"><p class="acard-title">Marine Adventure</p><p class="acard-sub">Water-based activities</p></div>
+        <div class="acard-img has-img" style="height:96px;"><img src="assets/images/interactive map images/Coastal experience/pearl-experience.webp" alt="Pearl"/></div>
+        <div class="acard-body"><p class="acard-title">Pearl Experiences</p><p class="acard-sub">Water-based activities</p></div>
       </div>
     </foreignObject>
-    <foreignObject class="act-card" id="sc-c4" x="447" y="260" width="140" height="186">
+    <foreignObject class="act-card" id="sc-c4" x="424" y="155" width="140" height="186">
       <div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#0A2030;--img-b:#081828;">
-        <div class="acard-img" style="height:96px;"></div>
+        <div class="acard-img has-img" style="height:96px;"><img src="assets/images/interactive map images/Coastal experience/Coastal discovery.webp" alt="Coastal Discovery"/></div>
         <div class="acard-body"><p class="acard-title">Coastal Discovery</p><p class="acard-sub">Guided exploration</p></div>
       </div>
     </foreignObject>
@@ -614,25 +612,25 @@ html, body { width:100%; height:100%; overflow:hidden; background:#10150D; }
   <g id="scards-desert">
     <foreignObject class="act-card" id="sc-d1" x="29" y="13" width="140" height="186">
       <div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#2A1A08;--img-b:#1A1004;">
-        <div class="acard-img" style="height:96px;"></div>
+        <div class="acard-img has-img" style="height:96px;"><img src="assets/images/interactive map images/Desert %26 Heritage/Heritage and Culture.jpg" alt="Heritage"/></div>
         <div class="acard-body"><p class="acard-title">Heritage Experiences</p><p class="acard-sub">Cultural immersion</p></div>
       </div>
     </foreignObject>
     <foreignObject class="act-card" id="sc-d2" x="433" y="80" width="140" height="186">
       <div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#281606;--img-b:#180E04;">
-        <div class="acard-img" style="height:96px;"></div>
+        <div class="acard-img has-img" style="height:96px;"><img src="assets/images/interactive map images/Desert %26 Heritage/Sanctuary camp.png" alt="Desert Exploration"/></div>
         <div class="acard-body"><p class="acard-title">Desert Exploration</p><p class="acard-sub">Guided off-road</p></div>
       </div>
     </foreignObject>
     <foreignObject class="act-card" id="sc-d3" x="288" y="344" width="140" height="186">
       <div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#101020;--img-b:#080812;">
-        <div class="acard-img" style="height:96px;"></div>
+        <div class="acard-img has-img" style="height:96px;"><img src="assets/images/interactive map images/Desert %26 Heritage/Stargazing.jpg" alt="Stargazing"/></div>
         <div class="acard-body"><p class="acard-title">Stargazing Programmes</p><p class="acard-sub">Dark sky experiences</p></div>
       </div>
     </foreignObject>
     <foreignObject class="act-card" id="sc-d4" x="22" y="281" width="140" height="186">
       <div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#1A2210;--img-b:#0E1A08;">
-        <div class="acard-img" style="height:96px;"></div>
+        <div class="acard-img has-img" style="height:96px;"><img src="assets/images/interactive map images/Desert %26 Heritage/Conservation Tourism.jpg" alt="Conservation"/></div>
         <div class="acard-body"><p class="acard-title">Conservation Tourism</p><p class="acard-sub">Protected landscapes</p></div>
       </div>
     </foreignObject>
@@ -642,25 +640,25 @@ html, body { width:100%; height:100%; overflow:hidden; background:#10150D; }
   <g id="scards-defender">
     <foreignObject class="act-card" id="sc-df1" x="82" y="180" width="140" height="186">
       <div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#201408;--img-b:#140E04;">
-        <div class="acard-img" style="height:96px;"></div>
+        <div class="acard-img has-img" style="height:96px;"><img src="assets/images/interactive map images/Defender/Defender driving.png" alt="Defender Driving"/></div>
         <div class="acard-body"><p class="acard-title">Defender Driving</p><p class="acard-sub">Official experience</p></div>
       </div>
     </foreignObject>
     <foreignObject class="act-card" id="sc-df2" x="435" y="36" width="140" height="186">
       <div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#221810;--img-b:#16100A;">
-        <div class="acard-img" style="height:96px;"></div>
+        <div class="acard-img has-img" style="height:96px;"><img src="assets/images/interactive map images/Defender/Corporate experiences.png" alt="Corporate"/></div>
         <div class="acard-body"><p class="acard-title">Corporate Experiences</p><p class="acard-sub">Team adventures</p></div>
       </div>
     </foreignObject>
     <foreignObject class="act-card" id="sc-df3" x="303" y="417" width="140" height="186">
       <div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#1E1206;--img-b:#120C04;">
-        <div class="acard-img" style="height:96px;"></div>
+        <div class="acard-img has-img" style="height:96px;"><img src="assets/images/interactive map images/Defender/Training and certification.png" alt="Training"/></div>
         <div class="acard-body"><p class="acard-title">Training & Certification</p><p class="acard-sub">Professional courses</p></div>
       </div>
     </foreignObject>
     <foreignObject class="act-card" id="sc-df4" x="551" y="321" width="140" height="186">
       <div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#1C1408;--img-b:#100E06;">
-        <div class="acard-img" style="height:96px;"></div>
+        <div class="acard-img has-img" style="height:96px;"><img src="assets/images/interactive map images/Defender/Vehicle launch.png" alt="Vehicle Launch"/></div>
         <div class="acard-body"><p class="acard-title">Vehicle Launch Events</p><p class="acard-sub">Automotive tourism</p></div>
       </div>
     </foreignObject>
@@ -670,35 +668,26 @@ html, body { width:100%; height:100%; overflow:hidden; background:#10150D; }
   <g id="scards-wadi">
     <foreignObject class="act-card" id="sc-w1" x="5" y="245" width="140" height="186">
       <div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#0E2010;--img-b:#081408;">
-        <div class="acard-img" style="height:96px;"></div>
-        <div class="acard-body">
-          <p class="acard-title">Mountain Heritage Camp</p>
-          <p class="acard-sub">Overnight stays</p>
-        </div>
+        <div class="acard-img has-img" style="height:96px;"><img src="assets/images/interactive map images/Wadi/Mountain heritage camp.jpg" alt="Heritage Camp"/></div>
+        <div class="acard-body"><p class="acard-title">Mountain Heritage Camp</p><p class="acard-sub">Overnight stays</p></div>
       </div>
     </foreignObject>
     <foreignObject class="act-card" id="sc-w2" x="129" y="55" width="140" height="186">
       <div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#0C1E0E;--img-b:#071208;">
-        <div class="acard-img" style="height:96px;"></div>
+        <div class="acard-img has-img" style="height:96px;"><img src="assets/images/interactive map images/Wadi/Hiking and trails.jpg" alt="Hiking"/></div>
         <div class="acard-body"><p class="acard-title">Hiking & Trail Networks</p><p class="acard-sub">Guided treks</p></div>
       </div>
     </foreignObject>
     <foreignObject class="act-card" id="sc-w3" x="253" y="310" width="140" height="186">
       <div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#121E10;--img-b:#0A1608;">
-        <div class="acard-img" style="height:96px;"></div>
-        <div class="acard-body">
-          <p class="acard-title">School Programmes</p>
-          <p class="acard-sub">Youth adventure</p>
-        </div>
+        <div class="acard-img has-img" style="height:96px;"><img src="assets/images/interactive map images/Wadi/School adventure programs.jpg" alt="School"/></div>
+        <div class="acard-body"><p class="acard-title">School Programmes</p><p class="acard-sub">Youth adventure</p></div>
       </div>
     </foreignObject>
     <foreignObject class="act-card" id="sc-w4" x="403" y="447" width="140" height="162">
       <div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#0E1E12;--img-b:#08140A;">
-        <div class="acard-img" style="height:80px;"></div>
-        <div class="acard-body">
-          <p class="acard-title">Wellness Retreats</p>
-          <p class="acard-sub">Nature therapy</p>
-        </div>
+        <div class="acard-img has-img" style="height:80px;"><img src="assets/images/interactive map images/Wadi/Wellness Retreat.png" alt="Wellness"/></div>
+        <div class="acard-body"><p class="acard-title">Wellness Retreats</p><p class="acard-sub">Nature therapy</p></div>
       </div>
     </foreignObject>
   </g>
@@ -1121,8 +1110,9 @@ html, body { width:100%; height:100%; overflow:hidden; background:#10150D; }
       {id:'lcard-wadi',     label:'Wadi card'    },
     ],
     'coastal':  [
-      {id:'sc-c1',label:'Coastal Events'   }, {id:'sc-c2',label:'Island Exploration'},
-      {id:'sc-c3',label:'Marine Adventure' }, {id:'sc-c4',label:'Coastal Discovery' },
+      {id:'sc-c1',label:'Boating Exp.'    },
+      {id:'sc-c3',label:'Pearl Exp.'      },
+      {id:'sc-c4',label:'Coastal Discovery'},
     ],
     'desert': [
       {id:'sc-d1',label:'Heritage Exp.'   }, {id:'sc-d2',label:'Desert Exploration'},
@@ -1272,10 +1262,9 @@ html, body { width:100%; height:100%; overflow:hidden; background:#10150D; }
   /* ── Sub-line control points (4 lines × 4 locations) ────────────── */
   const subLineControls = {
     coastal: [
-      { cp1:{x:259,y:127}, cp2:{x:228,y: 97}, end:{x:177,y: 99} },
-      { cp1:{x:383,y: 64}, cp2:{x:404,y:132}, end:{x:434,y:131} },
-      { cp1:{x:293,y:162}, cp2:{x:372,y:290}, end:{x:287,y:323} },
-      { cp1:{x:377,y:156}, cp2:{x:363,y:328}, end:{x:447,y:353} },
+      { cp1:{x:259,y:127}, cp2:{x:228,y: 97}, end:{x:177,y: 99} }, // sc-c1
+      { cp1:{x:293,y:162}, cp2:{x:372,y:290}, end:{x:287,y:323} }, // sc-c3
+      { cp1:{x:377,y:156}, cp2:{x:363,y:328}, end:{x:447,y:353} }, // sc-c4
     ],
     desert: [
       { cp1:{x:263,y:142}, cp2:{x:208,y:117}, end:{x:169,y:106} },
@@ -1302,7 +1291,7 @@ html, body { width:100%; height:100%; overflow:hidden; background:#10150D; }
   let subLoc = 'coastal'; // active location in Sub Lines tab
 
   const SUB_CARD_MAP = {
-    coastal:  ['sc-c1', 'sc-c2', 'sc-c3', 'sc-c4'],
+    coastal:  ['sc-c1', 'sc-c3', 'sc-c4'],
     desert:   ['sc-d1', 'sc-d2', 'sc-d3', 'sc-d4'],
     defender: ['sc-df1','sc-df2','sc-df3','sc-df4'],
     wadi:     ['sc-w1', 'sc-w2', 'sc-w3', 'sc-w4'],
