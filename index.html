@@ -4,14 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Jebel Jais — The Flagship of Ras Al Khaimah's Adventure Future</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/fonts.css">
 <style>
 /* ════════════════════════════════════════════════════════════════
    JEBEL JAIS — DESTINATION OPERATIONS · CLICKER PRESENTATION
    Design authority: Final Consolidated PDF (Montserrat, earth-tone).
-   Fixed 1440×810 design stage, proportionally scaled to viewport.
+   Fixed 1920×1080 Canva design stage, proportionally scaled to viewport.
    ════════════════════════════════════════════════════════════════ */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
@@ -28,9 +26,9 @@
   --gold-hi:#E2BE82;
   --line:rgba(244,239,230,.14);
   --line-gold:rgba(196,154,90,.30);
-  /* design stage size */
-  --DW:1440px;
-  --DH:810px;
+  /* Canva design stage size */
+  --DW:1920px;
+  --DH:1080px;
 }
 
 html,body{width:100%;height:100%;overflow:hidden;background:#0d0b08;font-family:'Montserrat',sans-serif;-webkit-font-smoothing:antialiased}
@@ -260,6 +258,8 @@ img{display:block}
 .card-wrap:hover{border-color:rgba(196,154,90,.6)}
 .card-img{width:100%;flex-shrink:0;background:linear-gradient(160deg,var(--img-a,#1a2a1a) 0%,var(--img-b,#0a1a2a) 100%);position:relative;overflow:hidden}
 .card-img::after{content:'IMAGE';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:7px;letter-spacing:.25em;color:rgba(255,255,255,.14)}
+.card-img.has-img::after,.acard-img.has-img::after{display:none}
+.card-img.has-img img,.acard-img.has-img img{width:100%;height:100%;display:block;object-fit:cover}
 .card-body{padding:8px 11px 9px;flex:1;display:flex;flex-direction:column;gap:3px}
 .card-title{font-weight:600;font-size:11.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--paper)}
 .card-type{font-weight:500;font-size:7.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--gold)}
@@ -271,6 +271,7 @@ img{display:block}
 .acard-body{padding:6px 9px 7px;flex:1;display:flex;flex-direction:column;gap:2px}
 .acard-title{font-weight:600;font-size:10px;letter-spacing:.03em;text-transform:uppercase;color:var(--paper)}
 .acard-sub{font-weight:500;font-size:7px;letter-spacing:.11em;text-transform:uppercase;color:var(--gold)}
+.acard-desc{font-weight:300;font-size:8.2px;line-height:1.36;letter-spacing:.01em;color:var(--paper-dim);margin-top:2px}
 .loc-icon{opacity:0;pointer-events:none;overflow:visible}
 .loc-icon .icon-pop{transform:scale(0);transform-origin:50% 100%;transition:transform .45s cubic-bezier(.34,1.56,.64,1)}
 .loc-icon.popped{opacity:1;pointer-events:all}
@@ -348,6 +349,96 @@ img{display:block}
   .beats,.split{display:grid}
   #hud{display:none}
 }
+
+/* Canva source pages are rebuilt as exact, independent raster layers:
+   textless background, foreground media, and transparent typography. */
+.canva-slide{background:#30291f}
+.layered-slide__bg{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:fill;
+  user-select:none;
+  -webkit-user-drag:none;
+}
+.slide-crop{
+  position:absolute;
+  overflow:hidden;
+  z-index:2;
+}
+.slide-crop--media{z-index:1}
+.slide-crop--text{z-index:3}
+.slide-crop__canvas{
+  position:absolute;
+  width:1920px;
+  height:1080px;
+  max-width:none;
+  user-select:none;
+  -webkit-user-drag:none;
+}
+.canva-slide[data-slide="2"]::before,
+.canva-slide[data-slide="14"]::before{
+  content:'';
+  position:absolute;
+  left:108px;
+  right:108px;
+  bottom:108px;
+  height:1px;
+  z-index:4;
+  pointer-events:none;
+  background:rgba(244,239,230,.68);
+}
+.canva-slide[data-slide="14"]::after,
+.canva-slide[data-slide="16"]::after,
+.canva-slide[data-slide="17"]::after{
+  content:'';
+  position:absolute;
+  inset:0;
+  z-index:2;
+  pointer-events:none;
+  background:
+    linear-gradient(90deg,rgba(0,0,0,.30) 0%,rgba(0,0,0,.18) 38%,rgba(0,0,0,.07) 72%,rgba(0,0,0,.02) 100%),
+    linear-gradient(180deg,rgba(0,0,0,.10) 0%,rgba(0,0,0,0) 42%,rgba(0,0,0,.14) 100%);
+}
+.canva-slide[data-slide="17"] .vision-bullets{
+  position:absolute;
+  left:122px;
+  top:577px;
+  z-index:4;
+  display:flex;
+  flex-direction:column;
+  gap:33px;
+  pointer-events:none;
+}
+.canva-slide[data-slide="17"] .vision-bullet{
+  width:5px;
+  height:5px;
+  border-radius:50%;
+  background:var(--paper);
+  opacity:.95;
+}
+.canva-map-slide{
+  background:#30291f url("assets/slides/backgrounds/slide-11.webp") center/100% 100% no-repeat;
+}
+.canva-map-slide > .slide__bg,
+.canva-map-slide > .slide__scrim,
+.canva-map-slide > .s-meta,
+.canva-map-slide > .s-wrap,
+.canva-map-slide > .s-foot{display:none}
+.canva-map-slide .map-stage{padding:200px 93.333px 122.667px}
+.canva-map-slide #mapSvg{max-height:720px}
+.canva-map-slide .map-caption{font-size:18.667px}
+.canva-map-slide .map-title-layer{position:absolute;inset:0;z-index:6;pointer-events:none;font-family:'Montserrat',sans-serif}
+.canva-map-slide .map-title-text{position:absolute;left:108px;top:117px;font-weight:300;font-size:60px;line-height:1;letter-spacing:.02em;text-transform:uppercase;color:var(--paper)}
+.canva-map-slide .map-page-meta{position:absolute;top:64px;right:108px;font-weight:500;font-size:14px;line-height:1.35;letter-spacing:.08em;text-transform:uppercase;text-align:right;color:var(--paper)}
+.canva-map-slide .map-footer-copy{position:absolute;left:108px;bottom:76px;font-weight:400;font-size:15px;line-height:1;letter-spacing:.01em;color:var(--paper)}
+#progress,
+#dots,
+#counter,
+#exitFs,
+#editToggle,
+#editPanel{display:none !important}
 </style>
 </head>
 <body>
@@ -573,147 +664,421 @@ img{display:block}
         <p class="kicker">The Adventure Ecosystem</p>
         <div class="rule"></div>
       </div>
+      <div class="map-title-layer" aria-hidden="true">
+        <div class="map-title-text">The Adventure Ecosystem</div>
+        <div class="map-page-meta">Jebel Jais Operations<br>Page 11</div>
+        <div class="map-footer-copy">© Copyright 2026 Hero Experiences Group. All rights reserved.</div>
+      </div>
       <div class="map-stage">
-        <svg id="mapSvg" viewBox="0 0 1000 620" xmlns="http://www.w3.org/2000/svg" data-state="resting">
-        <defs>
-          <filter id="glow-lg" x="-70%" y="-70%" width="240%" height="240%"><feGaussianBlur stdDeviation="10" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-          <radialGradient id="g-jj-glow" cx="637" cy="180" r="170" gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stop-color="#FFFFFF" stop-opacity=".55"/><stop offset="45%" stop-color="#F3E7CC" stop-opacity=".16"/><stop offset="100%" stop-color="#FFFFFF" stop-opacity="0"/>
-          </radialGradient>
-          <linearGradient id="gl-coast" x1="346" y1="83" x2="637" y2="180" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#C49A5A" stop-opacity=".2"/><stop offset="100%" stop-color="#C49A5A" stop-opacity=".76"/></linearGradient>
-          <linearGradient id="gl-desert" x1="298" y1="214" x2="637" y2="180" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#C49A5A" stop-opacity=".24"/><stop offset="100%" stop-color="#C49A5A" stop-opacity=".76"/></linearGradient>
-          <linearGradient id="gl-defender" x1="175" y1="515" x2="637" y2="180" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#C49A5A" stop-opacity=".3"/><stop offset="100%" stop-color="#C49A5A" stop-opacity=".78"/></linearGradient>
-          <linearGradient id="gl-wadi" x1="164" y1="572" x2="637" y2="180" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#C49A5A" stop-opacity=".26"/><stop offset="100%" stop-color="#C49A5A" stop-opacity=".78"/></linearGradient>
-        </defs>
+        <svg id="mapSvg" class="map-svg" viewBox="0 0 1000 620"
+       xmlns="http://www.w3.org/2000/svg" data-state="resting">
+  <defs>
+    <filter id="glow-xl" x="-100%" y="-100%" width="300%" height="300%">
+      <feGaussianBlur stdDeviation="18" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="glow-lg" x="-70%" y="-70%" width="240%" height="240%">
+      <feGaussianBlur stdDeviation="10" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
 
-        <image href="Jebel jais map.jpg" x="0" y="0" width="1000" height="620" preserveAspectRatio="none"/>
-        <circle class="jj-glow" cx="637" cy="180" r="170" fill="url(#g-jj-glow)"/>
-        <rect x="0" y="0" width="1000" height="620" fill="rgba(8,10,7,.32)"/>
-        <rect class="map-dim" x="0" y="0" width="1000" height="620"/>
+    <linearGradient id="g-sea" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#040E18"/><stop offset="100%" stop-color="#0B2030"/>
+    </linearGradient>
+    <linearGradient id="g-coast" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#0F2218"/><stop offset="100%" stop-color="#1A2E1C"/>
+    </linearGradient>
+    <linearGradient id="g-desert" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#2C2010"/><stop offset="100%" stop-color="#181208"/>
+    </linearGradient>
+    <radialGradient id="g-mountain" cx="75%" cy="32%" r="55%">
+      <stop offset="0%" stop-color="#281808"/><stop offset="100%" stop-color="#100C04"/>
+    </radialGradient>
+    <radialGradient id="g-jj-glow" cx="637" cy="180" r="170" gradientUnits="userSpaceOnUse">
+      <stop offset="0%"   stop-color="#FFFFFF" stop-opacity=".55"/>
+      <stop offset="45%"  stop-color="#F3E7CC" stop-opacity=".16"/>
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0"/>
+    </radialGradient>
 
-        <g id="mainBranches">
-          <path class="main-line" id="line-coastal" stroke="url(#gl-coast)" d="M 637,180 C 499,69 432,20 346,83"/>
-          <path class="main-line" id="line-desert" stroke="url(#gl-desert)" d="M 637,180 C 499,121 403,243 298,214"/>
-          <path class="main-line" id="line-defender" stroke="url(#gl-defender)" d="M 637,180 C 378,248 392,510 175,515"/>
-          <path class="main-line" id="line-wadi" stroke="url(#gl-wadi)" d="M 637,180 C 568,300 569,591 164,572"/>
-        </g>
+    <linearGradient id="gl-coast"    x1="346" y1="83"  x2="637" y2="180" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#C49540" stop-opacity=".2"/><stop offset="100%" stop-color="#C49540" stop-opacity=".76"/>
+    </linearGradient>
+    <linearGradient id="gl-desert"   x1="298" y1="214" x2="637" y2="180" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#C49540" stop-opacity=".24"/><stop offset="100%" stop-color="#C49540" stop-opacity=".76"/>
+    </linearGradient>
+    <linearGradient id="gl-defender" x1="175" y1="515" x2="637" y2="180" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#C49540" stop-opacity=".3"/><stop offset="100%" stop-color="#C49540" stop-opacity=".78"/>
+    </linearGradient>
+    <linearGradient id="gl-wadi"     x1="164" y1="572" x2="637" y2="180" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#C49540" stop-opacity=".26"/><stop offset="100%" stop-color="#C49540" stop-opacity=".78"/>
+    </linearGradient>
+  </defs>
 
-        <g id="subg-coastal">
-          <path class="sub-line" id="sl-coastal-0" d="M 346,83 C 259,127 228,97 177,99"/>
-          <path class="sub-line" id="sl-coastal-1" d="M 346,83 C 383,64 404,132 434,131"/>
-          <path class="sub-line" id="sl-coastal-2" d="M 346,83 C 293,162 372,290 287,323"/>
-          <path class="sub-line" id="sl-coastal-3" d="M 346,83 C 377,156 363,328 447,353"/>
-        </g>
-        <g id="subg-desert">
-          <path class="sub-line" id="sl-desert-0" d="M 298,214 C 263,142 208,117 169,106"/>
-          <path class="sub-line" id="sl-desert-1" d="M 298,214 C 351,227 393,177 433,173"/>
-          <path class="sub-line" id="sl-desert-2" d="M 298,214 C 281,285 292,336 358,344"/>
-          <path class="sub-line" id="sl-desert-3" d="M 298,214 C 258,230 203,358 162,374"/>
-        </g>
-        <g id="subg-defender">
-          <path class="sub-line" id="sl-defender-0" d="M 175,515 C 176,450 175,400 152,366"/>
-          <path class="sub-line" id="sl-defender-1" d="M 175,515 C 277,363 222,164 435,129"/>
-          <path class="sub-line" id="sl-defender-2" d="M 175,515 C 220,515 265,515 303,510"/>
-          <path class="sub-line" id="sl-defender-3" d="M 175,515 C 272,450 342,177 551,414"/>
-        </g>
-        <g id="subg-wadi">
-          <path class="sub-line" id="sl-wadi-0" d="M 164,572 C 137,558 102,445 75,431"/>
-          <path class="sub-line" id="sl-wadi-1" d="M 164,572 C 175,539 189,274 199,241"/>
-          <path class="sub-line" id="sl-wadi-2" d="M 164,572 C 212,564 194,404 253,403"/>
-          <path class="sub-line" id="sl-wadi-3" d="M 164,572 C 236,568 331,532 403,528"/>
-        </g>
+  <!-- BACKGROUND MAP IMAGE (behind everything) -->
+  <image href="Jebel jais map.webp"
+       x="0" y="0" width="1000" height="620"
+       preserveAspectRatio="none"/>
 
-        <g id="snodes-coastal">
-          <circle class="sub-node" cx="177" cy="99" r="4" fill="#4A9EC4"/><circle class="sub-node" cx="434" cy="131" r="4" fill="#4A9EC4"/><circle class="sub-node" cx="287" cy="323" r="4" fill="#4A9EC4"/><circle class="sub-node" cx="447" cy="353" r="4" fill="#4A9EC4"/>
-        </g>
-        <g id="snodes-desert">
-          <circle class="sub-node" cx="169" cy="106" r="4" fill="#B8903E"/><circle class="sub-node" cx="433" cy="173" r="4" fill="#B8903E"/><circle class="sub-node" cx="358" cy="344" r="4" fill="#B8903E"/><circle class="sub-node" cx="162" cy="374" r="4" fill="#B8903E"/>
-        </g>
-        <g id="snodes-defender">
-          <circle class="sub-node" cx="152" cy="366" r="4" fill="#9A7038"/><circle class="sub-node" cx="435" cy="129" r="4" fill="#9A7038"/><circle class="sub-node" cx="303" cy="510" r="4" fill="#9A7038"/><circle class="sub-node" cx="551" cy="414" r="4" fill="#9A7038"/>
-        </g>
-        <g id="snodes-wadi">
-          <circle class="sub-node" cx="75" cy="431" r="4" fill="#529052"/><circle class="sub-node" cx="199" cy="241" r="4" fill="#529052"/><circle class="sub-node" cx="253" cy="403" r="4" fill="#529052"/><circle class="sub-node" cx="403" cy="528" r="4" fill="#529052"/>
-        </g>
+  <!-- STYLIZED TERRAIN — hidden by default so the real map image shows.
+       Toggle display to "inline" to use the hand-drawn placeholder instead. -->
+  <g id="stylizedTerrain" style="display:none">
+    <path d="M 0,0 L 148,0 L 148,58 L 122,228 L 102,385 L 94,502 L 98,574 L 102,620 L 0,620 Z" fill="url(#g-sea)"/>
+    <g opacity=".1" stroke="#2A6A90" stroke-width=".6" fill="none">
+      <path d="M 12,90  Q 38,85  60,90"/><path d="M  9,170 Q 35,165 56,170"/>
+      <path d="M  7,250 Q 32,245 53,250"/><path d="M  8,330 Q 33,325 52,330"/>
+      <path d="M  8,410 Q 33,405 50,410"/><path d="M  9,490 Q 34,485 50,490"/>
+      <path d="M 11,570 Q 36,565 54,570"/>
+    </g>
+    <path d="M 148,58 L 302,0 L 332,0 L 322,58 L 275,202 L 232,354 L 208,484 L 198,574 L 202,620 L 102,620 L 98,574 L 94,502 L 102,385 L 122,228 Z" fill="url(#g-coast)"/>
+    <path d="M 322,58 L 598,0 L 768,0 L 788,58 L 776,228 L 758,388 L 734,544 L 682,596 L 614,620 L 202,620 L 198,574 L 208,484 L 232,354 L 275,202 L 322,58 Z" fill="url(#g-desert)"/>
+    <path d="M 768,0 L 1000,0 L 1000,620 L 614,620 L 682,596 L 734,544 L 758,388 L 776,228 L 788,58 Z" fill="url(#g-mountain)"/>
+    <g opacity=".14" fill="#3A2610">
+      <polygon points="820,98  788,170 856,170"/><polygon points="872,70  836,148 910,148"/>
+      <polygon points="912,108 876,182 950,182"/><polygon points="848,148 812,222 882,222"/>
+      <polygon points="796,170 760,246 832,246"/><polygon points="878,158 840,236 918,236"/>
+      <polygon points="948,118 910,200 990,200"/><polygon points="766,192 728,268 806,268"/>
+    </g>
+    <path d="M 148,58 L 322,58 L 598,0 L 788,58 L 776,228 L 758,388 L 734,544 L 682,596 L 614,620 L 202,620 L 198,574 L 208,484 L 232,354 L 275,202 Z"
+          fill="none" stroke="rgba(196,149,64,.2)" stroke-width="1.2"/>
+    <path d="M 148,58 L 122,228 L 102,385 L 94,502 L 98,574 L 102,620"
+          fill="none" stroke="rgba(196,149,64,.3)" stroke-width="1"/>
+  </g>
 
-        <!-- LEVEL-1 LOCATION CARDS -->
-        <foreignObject class="loc-card" id="lcard-coastal" x="406" y="11" width="165" height="220" data-loc="coastal">
-          <div xmlns="http://www.w3.org/1999/xhtml" class="card-wrap" style="--img-a:#0D2535;--img-b:#06181E;"><div class="card-img" style="height:110px;"></div><div class="card-body"><p class="card-title">Coastal Experiences</p><p class="card-type">Marine · Discovery</p><p class="card-desc">Marine adventure, island exploration, and coastal discovery along RAK's shoreline.</p></div></div>
-        </foreignObject>
-        <foreignObject class="loc-card" id="lcard-desert" x="36" y="20" width="165" height="220" data-loc="desert">
-          <div xmlns="http://www.w3.org/1999/xhtml" class="card-wrap" style="--img-a:#2A1A08;--img-b:#1A1205;"><div class="card-img" style="height:110px;"></div><div class="card-body"><p class="card-title">Desert &amp; Heritage</p><p class="card-type">Heritage · Conservation</p><p class="card-desc">Al Wadi Desert — heritage, landscapes, wildlife, and a premium sanctuary camp.</p></div></div>
-        </foreignObject>
-        <foreignObject class="loc-card" id="lcard-defender" x="290" y="298" width="165" height="220" data-loc="defender">
-          <div xmlns="http://www.w3.org/1999/xhtml" class="card-wrap" style="--img-a:#1E1408;--img-b:#281A0A;"><div class="card-img" style="height:110px;"></div><div class="card-body"><p class="card-title">Defender Experience</p><p class="card-type">Off-Road · Adventure</p><p class="card-desc">One of the Middle East's premier off-road destinations built around the Defender.</p></div></div>
-        </foreignObject>
-        <foreignObject class="loc-card" id="lcard-wadi" x="2" y="284" width="165" height="207" data-loc="wadi">
-          <div xmlns="http://www.w3.org/1999/xhtml" class="card-wrap" style="--img-a:#0E2010;--img-b:#0A1A0C;"><div class="card-img" style="height:110px;"></div><div class="card-body"><p class="card-title">Wadi Showka</p><p class="card-type">Nature · Recreation</p><p class="card-desc">A natural sanctuary for hiking, outdoor recreation, and immersive nature experiences.</p></div></div>
-        </foreignObject>
+  <!-- White pulsing glow behind Jebel Jais -->
+  <circle class="jj-glow" cx="637" cy="180" r="170" fill="url(#g-jj-glow)"/>
 
-        <!-- LEVEL-2 ACTIVITY CARDS -->
-        <g id="scards-coastal">
-          <foreignObject class="act-card" id="sc-c1" x="37" y="6" width="140" height="186"><div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#0D2535;--img-b:#06181E;"><div class="acard-img" style="height:96px;"></div><div class="acard-body"><p class="acard-title">Signature Coastal Events</p><p class="acard-sub">Waterfront experiences</p></div></div></foreignObject>
-          <foreignObject class="act-card" id="sc-c2" x="434" y="38" width="140" height="186"><div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#0A2030;--img-b:#061820;"><div class="acard-img" style="height:96px;"></div><div class="acard-body"><p class="acard-title">Island Exploration</p><p class="acard-sub">Off-shore discovery</p></div></div></foreignObject>
-          <foreignObject class="act-card" id="sc-c3" x="147" y="230" width="140" height="186"><div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#061A28;--img-b:#041220;"><div class="acard-img" style="height:96px;"></div><div class="acard-body"><p class="acard-title">Marine Adventure</p><p class="acard-sub">Water-based activities</p></div></div></foreignObject>
-          <foreignObject class="act-card" id="sc-c4" x="447" y="260" width="140" height="186"><div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#0A2030;--img-b:#081828;"><div class="acard-img" style="height:96px;"></div><div class="acard-body"><p class="acard-title">Coastal Discovery</p><p class="acard-sub">Guided exploration</p></div></div></foreignObject>
-        </g>
-        <g id="scards-desert">
-          <foreignObject class="act-card" id="sc-d1" x="29" y="13" width="140" height="186"><div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#2A1A08;--img-b:#1A1004;"><div class="acard-img" style="height:96px;"></div><div class="acard-body"><p class="acard-title">Sanctuary Camp</p><p class="acard-sub">Premium low-impact stay</p></div></div></foreignObject>
-          <foreignObject class="act-card" id="sc-d2" x="433" y="80" width="140" height="186"><div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#281606;--img-b:#180E04;"><div class="acard-img" style="height:96px;"></div><div class="acard-body"><p class="acard-title">Heritage &amp; Culture</p><p class="acard-sub">Cultural immersion</p></div></div></foreignObject>
-          <foreignObject class="act-card" id="sc-d3" x="288" y="344" width="140" height="186"><div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#101020;--img-b:#080812;"><div class="acard-img" style="height:96px;"></div><div class="acard-body"><p class="acard-title">Stargazing Programs</p><p class="acard-sub">Dark sky experiences</p></div></div></foreignObject>
-          <foreignObject class="act-card" id="sc-d4" x="22" y="281" width="140" height="186"><div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#1A2210;--img-b:#0E1A08;"><div class="acard-img" style="height:96px;"></div><div class="acard-body"><p class="acard-title">Conservation Tourism</p><p class="acard-sub">Rewilding &amp; protection</p></div></div></foreignObject>
-        </g>
-        <g id="scards-defender">
-          <foreignObject class="act-card" id="sc-df1" x="82" y="180" width="140" height="186"><div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#201408;--img-b:#140E04;"><div class="acard-img" style="height:96px;"></div><div class="acard-body"><p class="acard-title">Defender Driving</p><p class="acard-sub">Official experience</p></div></div></foreignObject>
-          <foreignObject class="act-card" id="sc-df2" x="435" y="36" width="140" height="186"><div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#221810;--img-b:#16100A;"><div class="acard-img" style="height:96px;"></div><div class="acard-body"><p class="acard-title">Corporate Experiences</p><p class="acard-sub">Team adventures</p></div></div></foreignObject>
-          <foreignObject class="act-card" id="sc-df3" x="303" y="417" width="140" height="186"><div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#1E1206;--img-b:#120C04;"><div class="acard-img" style="height:96px;"></div><div class="acard-body"><p class="acard-title">Training &amp; Certification</p><p class="acard-sub">Professional courses</p></div></div></foreignObject>
-          <foreignObject class="act-card" id="sc-df4" x="551" y="321" width="140" height="186"><div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#1C1408;--img-b:#100E06;"><div class="acard-img" style="height:96px;"></div><div class="acard-body"><p class="acard-title">Vehicle Launch Events</p><p class="acard-sub">Automotive tourism</p></div></div></foreignObject>
-        </g>
-        <g id="scards-wadi">
-          <foreignObject class="act-card" id="sc-w1" x="5" y="245" width="140" height="186"><div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#0E2010;--img-b:#081408;"><div class="acard-img" style="height:96px;"></div><div class="acard-body"><p class="acard-title">Mountain Heritage Camp</p><p class="acard-sub">Overnight stays</p></div></div></foreignObject>
-          <foreignObject class="act-card" id="sc-w2" x="129" y="55" width="140" height="186"><div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#0C1E0E;--img-b:#071208;"><div class="acard-img" style="height:96px;"></div><div class="acard-body"><p class="acard-title">Hiking &amp; Trail Networks</p><p class="acard-sub">Guided treks</p></div></div></foreignObject>
-          <foreignObject class="act-card" id="sc-w3" x="253" y="310" width="140" height="186"><div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#121E10;--img-b:#0A1608;"><div class="acard-img" style="height:96px;"></div><div class="acard-body"><p class="acard-title">School Adventure Programs</p><p class="acard-sub">Youth adventure</p></div></div></foreignObject>
-          <foreignObject class="act-card" id="sc-w4" x="403" y="447" width="140" height="162"><div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#0E1E12;--img-b:#08140A;"><div class="acard-img" style="height:80px;"></div><div class="acard-body"><p class="acard-title">Wellness Retreats</p><p class="acard-sub">Nature therapy</p></div></div></foreignObject>
-        </g>
+  <!-- Readability scrim over the map so lines/labels/cards stay legible -->
+  <rect x="0" y="0" width="1000" height="620" fill="rgba(8,10,7,.32)"/>
 
-        <!-- ICON POPUPS -->
-        <g id="iconLayer">
-          <foreignObject class="loc-icon" id="icon-jj" x="671" y="149" width="84" height="118"><div xmlns="http://www.w3.org/1999/xhtml" class="icon-pop"><div class="icon-disc"><img src="assets/images/icon/jebel ali.png" alt="Jebel Jais"/></div><div class="icon-label-box"><span class="icon-name">Jebel Jais</span><span class="icon-cat">Mountain</span></div></div></foreignObject>
-          <foreignObject class="loc-icon" id="icon-coastal" x="255" y="29" width="84" height="118"><div xmlns="http://www.w3.org/1999/xhtml" class="icon-pop"><div class="icon-disc"><img src="assets/images/icon/Al marjan.png" alt="Coastal"/></div><div class="icon-label-box"><span class="icon-name">Coastal</span><span class="icon-cat">Marine</span></div></div></foreignObject>
-          <foreignObject class="loc-icon" id="icon-desert" x="203" y="184" width="84" height="118"><div xmlns="http://www.w3.org/1999/xhtml" class="icon-pop"><div class="icon-disc"><img src="assets/images/icon/desert experience.png" alt="Desert"/></div><div class="icon-label-box"><span class="icon-name">Desert</span><span class="icon-cat">Heritage</span></div></div></foreignObject>
-          <foreignObject class="loc-icon" id="icon-defender" x="194" y="471" width="84" height="118"><div xmlns="http://www.w3.org/1999/xhtml" class="icon-pop"><div class="icon-disc placeholder"></div><div class="icon-label-box"><span class="icon-name">Defender</span><span class="icon-cat">Off-Road</span></div></div></foreignObject>
-          <foreignObject class="loc-icon" id="icon-wadi" x="62" y="527" width="84" height="118"><div xmlns="http://www.w3.org/1999/xhtml" class="icon-pop"><div class="icon-disc"><img src="assets/images/icon/Wadi Shoka.png" alt="Wadi Showka"/></div><div class="icon-label-box"><span class="icon-name">Wadi Showka</span><span class="icon-cat">Nature</span></div></div></foreignObject>
-        </g>
+  <!-- DIM OVERLAY (deepens on drill-down) -->
+  <rect class="map-dim" x="0" y="0" width="1000" height="620"/>
 
-        <!-- INTERACTIVE NODES -->
-        <g class="node" id="node-jj" data-node="jj" transform="translate(-117,-8)">
-          <circle class="jj-pulse-outer" cx="754" cy="188" r="50" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
-          <circle class="jj-pulse-mid" cx="754" cy="188" r="33" fill="none" stroke="rgba(255,255,255,.2)" stroke-width=".8"/>
-          <circle cx="754" cy="188" r="21" fill="none" stroke="rgba(196,154,90,.36)" stroke-width="1"/>
-          <circle cx="754" cy="188" r="12" fill="#C49A5A" opacity=".12" filter="url(#glow-lg)"/>
-          <circle class="node-core" cx="754" cy="188" r="8" fill="#D4A848"/>
-          <circle cx="754" cy="188" r="4.5" fill="#F0D280"/>
-          <circle cx="754" cy="188" r="2" fill="#FFF6D8"/>
-        </g>
-        <g class="node" id="node-coastal" data-node="coastal" transform="translate(228,-345)">
-          <circle cx="118" cy="428" r="24" fill="none" stroke="rgba(58,136,180,.13)" stroke-width="1"/><circle cx="118" cy="428" r="15" fill="none" stroke="rgba(58,136,180,.26)" stroke-width=".8"/><circle cx="118" cy="428" r="9" fill="none" stroke="rgba(58,136,180,.44)" stroke-width=".8"/><circle class="node-core" cx="118" cy="428" r="5.5" fill="#2A6882"/><circle cx="118" cy="428" r="2.5" fill="#4A9EC4"/>
-        </g>
-        <g class="node" id="node-desert" data-node="desert" transform="translate(-50,-194)">
-          <circle cx="348" cy="408" r="24" fill="none" stroke="rgba(180,128,58,.13)" stroke-width="1"/><circle cx="348" cy="408" r="15" fill="none" stroke="rgba(180,128,58,.26)" stroke-width=".8"/><circle cx="348" cy="408" r="9" fill="none" stroke="rgba(180,128,58,.44)" stroke-width=".8"/><circle class="node-core" cx="348" cy="408" r="5.5" fill="#7A5A28"/><circle cx="348" cy="408" r="2.5" fill="#B8903E"/>
-        </g>
-        <g class="node" id="node-defender" data-node="defender" transform="translate(-355,220)">
-          <circle cx="530" cy="295" r="22" fill="none" stroke="rgba(160,118,58,.13)" stroke-width="1"/><circle cx="530" cy="295" r="14" fill="none" stroke="rgba(160,118,58,.26)" stroke-width=".8"/><circle cx="530" cy="295" r="8" fill="none" stroke="rgba(160,118,58,.44)" stroke-width=".8"/><circle class="node-core" cx="530" cy="295" r="5" fill="#5C4018"/><circle cx="530" cy="295" r="2.5" fill="#9A7038"/>
-        </g>
-        <g class="node" id="node-wadi" data-node="wadi" transform="translate(-462,82)">
-          <circle cx="626" cy="490" r="24" fill="none" stroke="rgba(78,142,78,.13)" stroke-width="1"/><circle cx="626" cy="490" r="15" fill="none" stroke="rgba(78,142,78,.26)" stroke-width=".8"/><circle cx="626" cy="490" r="9" fill="none" stroke="rgba(78,142,78,.44)" stroke-width=".8"/><circle class="node-core" cx="626" cy="490" r="5.5" fill="#325A32"/><circle cx="626" cy="490" r="2.5" fill="#529052"/>
-        </g>
+  <!-- MAIN BRANCH LINES — JJ(637,180) → each node -->
+  <g id="mainBranches">
+    <path class="main-line" id="line-coastal"  stroke="url(#gl-coast)"    d="M 637,180 C 499,69 432,20 346,83"/>
+    <path class="main-line" id="line-desert"   stroke="url(#gl-desert)"   d="M 637,180 C 499,121 403,243 298,214"/>
+    <path class="main-line" id="line-defender" stroke="url(#gl-defender)" d="M 637,180 C 378,248 392,510 175,515"/>
+    <path class="main-line" id="line-wadi"     stroke="url(#gl-wadi)"     d="M 637,180 C 568,300 569,591 164,572"/>
+  </g>
 
-        <!-- Control-point handles for the Lines / Sub Lines edit tabs (populated by editor) -->
-        <g id="lineHandles" style="display:none"></g>
+  <!-- SUB-BRANCH PATHS (curved beziers, all verified to clear non-parent nodes) -->
 
-        <image href="assets/images/icon/compass.png" x="921" y="14" width="72" height="72" opacity=".88"/>
-        <text x="490" y="22" text-anchor="middle" font-family="'Montserrat',sans-serif" font-size="13" fill="rgba(196,154,90,.3)" letter-spacing=".32em">RAS AL KHAIMAH</text>
-        </svg>
+  <!-- Sub-branch curves — new parent positions after map repositioning:
+       Coastal(346,83) · Desert(298,214) · Defender(356,290) · Wadi(164,572)
+       Entry points = nearest card edge to parent node.
+  -->
+  <g id="subg-coastal">
+    <path class="sub-line" id="sl-coastal-0" d="M 346,83 C 259,127 228,97 177,99"/>
+    <path class="sub-line" id="sl-coastal-1" d="M 346,83 C 293,162 372,290 287,323"/>
+    <path class="sub-line" id="sl-coastal-2" d="M 346,83 C 387,123 389,240 424,248"/>
+  </g>
+  <g id="subg-desert">
+    <path class="sub-line" id="sl-desert-0" d="M 298,214 C 263,142 208,117 169,106"/>
+    <path class="sub-line" id="sl-desert-1" d="M 298,214 C 351,227 393,177 433,173"/>
+    <path class="sub-line" id="sl-desert-2" d="M 298,214 C 281,285 292,336 358,344"/>
+    <path class="sub-line" id="sl-desert-3" d="M 298,214 C 258,230 203,358 162,374"/>
+  </g>
+  <!-- Defender parent now (175,515) -->
+  <g id="subg-defender">
+    <path class="sub-line" id="sl-defender-0" d="M 175,515 C 176,450 175,400 152,366"/>
+    <path class="sub-line" id="sl-defender-1" d="M 175,515 C 277,363 222,164 435,129"/>
+    <path class="sub-line" id="sl-defender-2" d="M 175,515 C 220,515 265,515 303,510"/>
+    <path class="sub-line" id="sl-defender-3" d="M 175,515 C 272,450 342,177 551,414"/>
+  </g>
+  <g id="subg-wadi">
+    <path class="sub-line" id="sl-wadi-0" d="M 164,572 C 137,558 102,445 75,431"/>
+    <path class="sub-line" id="sl-wadi-1" d="M 164,572 C 175,539 189,274 199,241"/>
+    <path class="sub-line" id="sl-wadi-2" d="M 164,572 C 212,564 194,404 253,403"/>
+    <path class="sub-line" id="sl-wadi-3" d="M 164,572 C 236,568 331,532 403,528"/>
+  </g>
+
+  <!-- SUB-NODE DOTS (at connection endpoints, colour-coded per location) -->
+  <!-- Sub-node dots at card entry points -->
+  <g id="snodes-coastal">
+    <circle class="sub-node" cx="177" cy="99"  r="4" fill="#4A9EC4"/>
+    <circle class="sub-node" cx="287" cy="323" r="4" fill="#4A9EC4"/>
+    <circle class="sub-node" cx="424" cy="248" r="4" fill="#4A9EC4"/>
+  </g>
+  <g id="snodes-desert">
+    <circle class="sub-node" cx="169" cy="106" r="4" fill="#B8903E"/>
+    <circle class="sub-node" cx="433" cy="173" r="4" fill="#B8903E"/>
+    <circle class="sub-node" cx="358" cy="344" r="4" fill="#B8903E"/>
+    <circle class="sub-node" cx="162" cy="374" r="4" fill="#B8903E"/>
+  </g>
+  <g id="snodes-defender">
+    <circle class="sub-node" cx="152" cy="366" r="4" fill="#9A7038"/>
+    <circle class="sub-node" cx="435" cy="129" r="4" fill="#9A7038"/>
+    <circle class="sub-node" cx="303" cy="510" r="4" fill="#9A7038"/>
+    <circle class="sub-node" cx="551" cy="414" r="4" fill="#9A7038"/>
+  </g>
+  <g id="snodes-wadi">
+    <circle class="sub-node" cx="75"  cy="431" r="4" fill="#529052"/>
+    <circle class="sub-node" cx="199" cy="241" r="4" fill="#529052"/>
+    <circle class="sub-node" cx="253" cy="403" r="4" fill="#529052"/>
+    <circle class="sub-node" cx="403" cy="528" r="4" fill="#529052"/>
+  </g>
+
+  <!-- ═══════════════════════════════════════════════════
+       LEVEL-1 LOCATION CARDS  (165×220, image 110px)
+       Positions verified clear of all non-parent nodes.
+       ═══════════════════════════════════════════════════ -->
+
+  <!-- Coastal: x=140,y=380 → x:140-305 clears Desert(348) ✓, Coastal node x=118<140 ✓ -->
+  <foreignObject class="loc-card" id="lcard-coastal" x="404" y="41" width="165" height="220" data-loc="coastal">
+    <div xmlns="http://www.w3.org/1999/xhtml" class="card-wrap" style="--img-a:#0D2535;--img-b:#06181E;">
+      <div class="card-img has-img" style="height:110px;"><img src="assets/images/interactive map images/Coastal experience/Coastal discovery.webp" alt="Coastal"/></div>
+      <div class="card-body">
+        <p class="card-title">Coastal Experiences</p>
+        <p class="card-type">Marine · Discovery</p>
+        <p class="card-desc">Pearl experiences, signature boating, and coastal discovery along RAK's shoreline.</p>
+      </div>
+    </div>
+  </foreignObject>
+
+  <!-- Desert: x=170,y=290 → x:170-335, Desert node x=348>335 ✓, Coastal node x=118<170 ✓ -->
+  <foreignObject class="loc-card" id="lcard-desert" x="36" y="20" width="165" height="220" data-loc="desert">
+    <div xmlns="http://www.w3.org/1999/xhtml" class="card-wrap" style="--img-a:#2A1A08;--img-b:#1A1205;">
+      <div class="card-img has-img" style="height:110px;"><img src="assets/images/interactive map images/Desert %26 Heritage/Heritage and Culture.webp" alt="Desert"/></div>
+      <div class="card-body">
+        <p class="card-title">Desert Experiences</p>
+        <p class="card-type">Heritage · Exploration</p>
+        <p class="card-desc">Ancient heritage and dramatic landscapes combining cultural discovery with adventure.</p>
+      </div>
+    </div>
+  </foreignObject>
+
+  <!-- Defender: x=360,y=200 → x:360-525, Desert x=348<360 ✓, Wadi x=626>525 ✓, JJ x=754>525 ✓ -->
+  <foreignObject class="loc-card" id="lcard-defender" x="290" y="298" width="165" height="220" data-loc="defender">
+    <div xmlns="http://www.w3.org/1999/xhtml" class="card-wrap" style="--img-a:#1E1408;--img-b:#281A0A;">
+      <div class="card-img has-img" style="height:110px;"><img src="assets/images/interactive map images/Defender/Defender driving.webp" alt="Defender"/></div>
+      <div class="card-body">
+        <p class="card-title">Defender Experience</p>
+        <p class="card-type">Off-Road · Adventure</p>
+        <p class="card-desc">One of the Middle East's premier off-road destinations built around the Defender.</p>
+      </div>
+    </div>
+  </foreignObject>
+
+  <!-- Wadi: x=654,y=410 → x:654-819, Wadi node x=626<654 ✓, JJ y=188<410 ✓ -->
+  <foreignObject class="loc-card" id="lcard-wadi" x="2" y="284" width="165" height="207" data-loc="wadi">
+    <div xmlns="http://www.w3.org/1999/xhtml" class="card-wrap" style="--img-a:#0E2010;--img-b:#0A1A0C;">
+      <div class="card-img has-img" style="height:110px;"><img src="assets/images/interactive map images/Wadi/Mountain heritage camp.webp" alt="Wadi"/></div>
+      <div class="card-body">
+        <p class="card-title">Wadi Showka</p>
+        <p class="card-type">Nature · Recreation</p>
+        <p class="card-desc">A natural sanctuary for hiking, outdoor recreation, and immersive nature experiences.</p>
+      </div>
+    </div>
+  </foreignObject>
+
+  <!-- ═══════════════════════════════════════════════════
+       LEVEL-2 ACTIVITY CARDS  (140×186, image 96px)
+       2×2 grid per location — all cleared of non-parent nodes.
+       ═══════════════════════════════════════════════════ -->
+
+  <!-- COASTAL (3 cards — Island Exploration removed) -->
+  <g id="scards-coastal">
+    <foreignObject class="act-card" id="sc-c1" x="37" y="6" width="140" height="186">
+      <div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#0D2535;--img-b:#06181E;">
+        <div class="acard-img has-img" style="height:96px;"><img src="assets/images/interactive map images/Coastal experience/Boat Experience.webp" alt="Boating"/></div>
+        <div class="acard-body"><p class="acard-title">Signature Boating Experiences</p><p class="acard-sub">Signature experiences</p><p class="acard-desc">Premium on-water journeys create memorable coastal arrival moments.</p></div>
+      </div>
+    </foreignObject>
+    <foreignObject class="act-card" id="sc-c3" x="147" y="230" width="140" height="186">
+      <div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#061A28;--img-b:#041220;">
+        <div class="acard-img has-img" style="height:96px;"><img src="assets/images/interactive map images/Coastal experience/pearl-experience.webp" alt="Pearl"/></div>
+        <div class="acard-body"><p class="acard-title">Pearl Experiences</p><p class="acard-sub">Water-based activities</p><p class="acard-desc">Hands-on heritage storytelling connects visitors to maritime roots.</p></div>
+      </div>
+    </foreignObject>
+    <foreignObject class="act-card" id="sc-c4" x="424" y="155" width="140" height="186">
+      <div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#0A2030;--img-b:#081828;">
+        <div class="acard-img has-img" style="height:96px;"><img src="assets/images/interactive map images/Coastal experience/Coastal discovery.webp" alt="Coastal Discovery"/></div>
+        <div class="acard-body"><p class="acard-title">Coastal Discovery</p><p class="acard-sub">Guided exploration</p><p class="acard-desc">Guided coastal routes link scenery, wildlife, and culture.</p></div>
+      </div>
+    </foreignObject>
+  </g>
+
+  <!-- DESERT 2×2 -->
+  <g id="scards-desert">
+    <foreignObject class="act-card" id="sc-d1" x="29" y="13" width="140" height="186">
+      <div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#2A1A08;--img-b:#1A1004;">
+        <div class="acard-img has-img" style="height:96px;"><img src="assets/images/interactive map images/Desert %26 Heritage/Heritage and Culture.webp" alt="Heritage"/></div>
+        <div class="acard-body"><p class="acard-title">Heritage Experiences</p><p class="acard-sub">Cultural immersion</p><p class="acard-desc">Hosted storytelling and craft introduce desert traditions.</p></div>
+      </div>
+    </foreignObject>
+    <foreignObject class="act-card" id="sc-d2" x="433" y="80" width="140" height="186">
+      <div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#281606;--img-b:#180E04;">
+        <div class="acard-img has-img" style="height:96px;"><img src="assets/images/interactive map images/Desert %26 Heritage/Sanctuary camp.webp" alt="Desert Exploration"/></div>
+        <div class="acard-body"><p class="acard-title">Desert Exploration</p><p class="acard-sub">Guided off-road</p><p class="acard-desc">Low-impact routes open Al Wadi safely and comfortably.</p></div>
+      </div>
+    </foreignObject>
+    <foreignObject class="act-card" id="sc-d3" x="288" y="344" width="140" height="186">
+      <div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#101020;--img-b:#080812;">
+        <div class="acard-img has-img" style="height:96px;"><img src="assets/images/interactive map images/Desert %26 Heritage/Stargazing.webp" alt="Stargazing"/></div>
+        <div class="acard-body"><p class="acard-title">Stargazing Programmes</p><p class="acard-sub">Dark sky experiences</p><p class="acard-desc">Dark-sky sessions extend visitation into evening hours.</p></div>
+      </div>
+    </foreignObject>
+    <foreignObject class="act-card" id="sc-d4" x="22" y="281" width="140" height="186">
+      <div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#1A2210;--img-b:#0E1A08;">
+        <div class="acard-img has-img" style="height:96px;"><img src="assets/images/interactive map images/Desert %26 Heritage/Conservation Tourism.webp" alt="Conservation"/></div>
+        <div class="acard-body"><p class="acard-title">Conservation Tourism</p><p class="acard-sub">Protected landscapes</p><p class="acard-desc">Nature-led activities support habitat protection and education.</p></div>
+      </div>
+    </foreignObject>
+  </g>
+
+  <!-- DEFENDER 2×2 -->
+  <g id="scards-defender">
+    <foreignObject class="act-card" id="sc-df1" x="82" y="180" width="140" height="186">
+      <div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#201408;--img-b:#140E04;">
+        <div class="acard-img has-img" style="height:96px;"><img src="assets/images/interactive map images/Defender/Defender driving.webp" alt="Defender Driving"/></div>
+        <div class="acard-body"><p class="acard-title">Defender Driving</p><p class="acard-sub">Official experience</p><p class="acard-desc">Controlled off-road routes deliver premium vehicle storytelling.</p></div>
+      </div>
+    </foreignObject>
+    <foreignObject class="act-card" id="sc-df2" x="435" y="36" width="140" height="186">
+      <div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#221810;--img-b:#16100A;">
+        <div class="acard-img has-img" style="height:96px;"><img src="assets/images/interactive map images/Defender/Corporate experiences.webp" alt="Corporate"/></div>
+        <div class="acard-body"><p class="acard-title">Corporate Experiences</p><p class="acard-sub">Team adventures</p><p class="acard-desc">Team formats create high-value incentive experiences.</p></div>
+      </div>
+    </foreignObject>
+    <foreignObject class="act-card" id="sc-df3" x="303" y="417" width="140" height="186">
+      <div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#1E1206;--img-b:#120C04;">
+        <div class="acard-img has-img" style="height:96px;"><img src="assets/images/interactive map images/Defender/Training and certification.webp" alt="Training"/></div>
+        <div class="acard-body"><p class="acard-title">Training &amp; Certification</p><p class="acard-sub">Professional courses</p><p class="acard-desc">Structured courses build confidence, safety, and repeat participation.</p></div>
+      </div>
+    </foreignObject>
+    <foreignObject class="act-card" id="sc-df4" x="551" y="321" width="140" height="186">
+      <div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#1C1408;--img-b:#100E06;">
+        <div class="acard-img has-img" style="height:96px;"><img src="assets/images/interactive map images/Defender/Vehicle launch.webp" alt="Vehicle Launch"/></div>
+        <div class="acard-body"><p class="acard-title">Vehicle Launch Events</p><p class="acard-sub">Automotive tourism</p><p class="acard-desc">Scenic terrain becomes a distinctive automotive stage.</p></div>
+      </div>
+    </foreignObject>
+  </g>
+
+  <!-- WADI 2×2 -->
+  <g id="scards-wadi">
+    <foreignObject class="act-card" id="sc-w1" x="5" y="245" width="140" height="186">
+      <div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#0E2010;--img-b:#081408;">
+        <div class="acard-img has-img" style="height:96px;"><img src="assets/images/interactive map images/Wadi/Mountain heritage camp.webp" alt="Heritage Camp"/></div>
+        <div class="acard-body"><p class="acard-title">Mountain Heritage Camp</p><p class="acard-sub">Overnight stays</p><p class="acard-desc">A rooted overnight base supports deeper nature immersion.</p></div>
+      </div>
+    </foreignObject>
+    <foreignObject class="act-card" id="sc-w2" x="129" y="55" width="140" height="186">
+      <div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#0C1E0E;--img-b:#071208;">
+        <div class="acard-img has-img" style="height:96px;"><img src="assets/images/interactive map images/Wadi/Hiking and trails.webp" alt="Hiking"/></div>
+        <div class="acard-body"><p class="acard-title">Hiking &amp; Trail Networks</p><p class="acard-sub">Guided treks</p><p class="acard-desc">Trail systems make Wadi Showka accessible to varied abilities.</p></div>
+      </div>
+    </foreignObject>
+    <foreignObject class="act-card" id="sc-w3" x="253" y="310" width="140" height="186">
+      <div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#121E10;--img-b:#0A1608;">
+        <div class="acard-img has-img" style="height:96px;"><img src="assets/images/interactive map images/Wadi/School adventure programs.webp" alt="School"/></div>
+        <div class="acard-body"><p class="acard-title">School Programmes</p><p class="acard-sub">Youth adventure</p><p class="acard-desc">Curriculum-linked outdoor learning builds adventure confidence.</p></div>
+      </div>
+    </foreignObject>
+    <foreignObject class="act-card" id="sc-w4" x="403" y="447" width="140" height="162">
+      <div xmlns="http://www.w3.org/1999/xhtml" class="acard-wrap" style="--img-a:#0E1E12;--img-b:#08140A;">
+        <div class="acard-img has-img" style="height:80px;"><img src="assets/images/interactive map images/Wadi/Wellness Retreat.webp" alt="Wellness"/></div>
+        <div class="acard-body"><p class="acard-title">Wellness Retreats</p><p class="acard-sub">Nature therapy</p><p class="acard-desc">Calm settings support restorative movement and mindful recovery.</p></div>
+      </div>
+    </foreignObject>
+  </g>
+
+  <!-- ═══════════════════════════════════════════════════
+       ICON POPUPS — shown in resting state, near each node.
+       Editable via the "Icons" tab (drag like cards).
+       Width 84, disc 62 → icon centre = x+42.
+       ═══════════════════════════════════════════════════ -->
+  <g id="iconLayer">
+    <foreignObject class="loc-icon" id="icon-jj" x="671" y="149" width="84" height="118">
+      <div xmlns="http://www.w3.org/1999/xhtml" class="icon-pop">
+        <div class="icon-disc"><img src="assets/images/icon/jebel ali.webp" alt="Jebel Jais"/></div>
+        <div class="icon-label-box"><span class="icon-name">Jebel Jais</span><span class="icon-cat">Mountain</span></div>
+      </div>
+    </foreignObject>
+    <foreignObject class="loc-icon" id="icon-coastal" x="255" y="29" width="84" height="118">
+      <div xmlns="http://www.w3.org/1999/xhtml" class="icon-pop">
+        <div class="icon-disc"><img src="assets/images/icon/Al marjan.webp" alt="Coastal"/></div>
+        <div class="icon-label-box"><span class="icon-name">Coastal</span><span class="icon-cat">Marine</span></div>
+      </div>
+    </foreignObject>
+    <foreignObject class="loc-icon" id="icon-desert" x="203" y="184" width="84" height="118">
+      <div xmlns="http://www.w3.org/1999/xhtml" class="icon-pop">
+        <div class="icon-disc"><img src="assets/images/icon/desert experience.webp" alt="Desert"/></div>
+        <div class="icon-label-box"><span class="icon-name">Desert</span><span class="icon-cat">Heritage</span></div>
+      </div>
+    </foreignObject>
+    <foreignObject class="loc-icon" id="icon-defender" x="194" y="471" width="84" height="118">
+      <div xmlns="http://www.w3.org/1999/xhtml" class="icon-pop">
+        <div class="icon-disc"><img src="assets/images/icon/Defender.webp" alt="Defender"/></div>
+        <div class="icon-label-box"><span class="icon-name">Defender</span><span class="icon-cat">Off-Road</span></div>
+      </div>
+    </foreignObject>
+    <foreignObject class="loc-icon" id="icon-wadi" x="62" y="527" width="84" height="118">
+      <div xmlns="http://www.w3.org/1999/xhtml" class="icon-pop">
+        <div class="icon-disc"><img src="assets/images/icon/Wadi Shoka.webp" alt="Wadi Showka"/></div>
+        <div class="icon-label-box"><span class="icon-name">Wadi Showka</span><span class="icon-cat">Nature</span></div>
+      </div>
+    </foreignObject>
+  </g>
+
+  <!-- ═══════════════════════════════════════════════════
+       INTERACTIVE NODES (rendered last = on top of cards)
+       ═══════════════════════════════════════════════════ -->
+
+  <!-- Jebel Jais visual→(637,180) via translate(-117,-8) on base(754,188) -->
+  <g class="node" id="node-jj" data-node="jj" transform="translate(-117,-8)">
+    <circle class="jj-pulse-outer" cx="754" cy="188" r="50" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
+    <circle class="jj-pulse-mid"   cx="754" cy="188" r="33" fill="none" stroke="rgba(255,255,255,.2)" stroke-width=".8"/>
+    <circle cx="754" cy="188" r="21"  fill="none" stroke="rgba(196,149,64,.36)" stroke-width="1"/>
+    <circle cx="754" cy="188" r="12"  fill="#C49540" opacity=".12" filter="url(#glow-lg)"/>
+    <circle class="node-core" cx="754" cy="188" r="8"   fill="#D4A848"/>
+    <circle cx="754" cy="188" r="4.5" fill="#F0D280"/>
+    <circle cx="754" cy="188" r="2"   fill="#FFF6D8"/>
+  </g>
+
+  <!-- Coastal visual→(346,83) via translate(228,-345) on base(118,428) -->
+  <g class="node" id="node-coastal" data-node="coastal" transform="translate(228,-345)">
+    <circle cx="118" cy="428" r="24" fill="none" stroke="rgba(58,136,180,.13)" stroke-width="1"/>
+    <circle cx="118" cy="428" r="15" fill="none" stroke="rgba(58,136,180,.26)" stroke-width=".8"/>
+    <circle cx="118" cy="428" r="9"  fill="none" stroke="rgba(58,136,180,.44)" stroke-width=".8"/>
+    <circle class="node-core" cx="118" cy="428" r="5.5" fill="#2A6882"/>
+    <circle cx="118" cy="428" r="2.5" fill="#4A9EC4"/>
+  </g>
+
+  <!-- Desert visual→(298,214) via translate(-50,-194) on base(348,408) -->
+  <g class="node" id="node-desert" data-node="desert" transform="translate(-50,-194)">
+    <circle cx="348" cy="408" r="24" fill="none" stroke="rgba(180,128,58,.13)" stroke-width="1"/>
+    <circle cx="348" cy="408" r="15" fill="none" stroke="rgba(180,128,58,.26)" stroke-width=".8"/>
+    <circle cx="348" cy="408" r="9"  fill="none" stroke="rgba(180,128,58,.44)" stroke-width=".8"/>
+    <circle class="node-core" cx="348" cy="408" r="5.5" fill="#7A5A28"/>
+    <circle cx="348" cy="408" r="2.5" fill="#B8903E"/>
+  </g>
+
+  <!-- Defender visual→(175,515) via translate(-355,220) on base(530,295) -->
+  <g class="node" id="node-defender" data-node="defender" transform="translate(-355,220)">
+    <circle cx="530" cy="295" r="22" fill="none" stroke="rgba(160,118,58,.13)" stroke-width="1"/>
+    <circle cx="530" cy="295" r="14" fill="none" stroke="rgba(160,118,58,.26)" stroke-width=".8"/>
+    <circle cx="530" cy="295" r="8"  fill="none" stroke="rgba(160,118,58,.44)" stroke-width=".8"/>
+    <circle class="node-core" cx="530" cy="295" r="5"  fill="#5C4018"/>
+    <circle cx="530" cy="295" r="2.5" fill="#9A7038"/>
+  </g>
+
+  <!-- Wadi visual→(164,572) via translate(-462,82) on base(626,490) -->
+  <g class="node" id="node-wadi" data-node="wadi" transform="translate(-462,82)">
+    <circle cx="626" cy="490" r="24" fill="none" stroke="rgba(78,142,78,.13)" stroke-width="1"/>
+    <circle cx="626" cy="490" r="15" fill="none" stroke="rgba(78,142,78,.26)" stroke-width=".8"/>
+    <circle cx="626" cy="490" r="9"  fill="none" stroke="rgba(78,142,78,.44)" stroke-width=".8"/>
+    <circle class="node-core" cx="626" cy="490" r="5.5" fill="#325A32"/>
+    <circle cx="626" cy="490" r="2.5" fill="#529052"/>
+  </g>
+
+  <!-- Control-point handles for the Lines edit tab (populated by JS) -->
+  <g id="lineHandles" style="display:none"></g>
+
+  <!-- DECORATIVE -->
+  <image href="assets/images/icon/compass.webp" x="921" y="14" width="72" height="72" opacity=".88"/>
+  <text x="490" y="22" text-anchor="middle" font-family="'Inter',sans-serif" font-size="13" fill="rgba(196,149,64,.25)" letter-spacing=".32em">RAS AL KHAIMAH</text>
+
+  </svg>
         <p class="map-caption" id="mapCaption">Jebel Jais anchors a connected tourism network spanning the entire Emirate — click the mountain to begin.</p>
       </div>
       <div class="s-foot"><span class="cpy">© 2026 Hero Experiences Group · Confidential</span><span class="logo">Hero<span>·</span>JJ</span></div>
@@ -873,7 +1238,7 @@ img{display:block}
   <div id="hud"></div>
   <div id="progress"></div>
   <div id="dots"></div>
-  <div id="counter">1 / 17</div>
+  <div id="counter">1 / 18</div>
   <button id="exitFs">⤢ Exit fullscreen</button>
 </div><!-- /deck -->
 
@@ -912,8 +1277,133 @@ img{display:block}
 <script>
 (function(){
   'use strict';
-  const TOTAL = 17;
-  const MAP_SLIDE = 10;
+  const TOTAL = 18;
+  const MAP_SLIDE = 11;
+  const ASSET_VERSION = '7';
+  const asset = path => `${path}?v=${ASSET_VERSION}`;
+
+  /* Text bands preserve the source typography exactly while assigning
+     logical narrative groups to clicker steps. Values use the
+     native 1920 × 1080 Canva coordinate space. */
+  const TEXT_BANDS = {
+    1:[[0,1080,0]],
+    2:[[0,200,0],[200,360,1],[360,470,2],[470,610,3],[610,760,4],[760,930,5],[930,1080,0]],
+    3:[[0,500,0],[500,705,1,90,860],[705,835,2,90,860],[835,970,3,90,860],[590,700,4,930,1810],[700,910,5,930,1810],[970,1080,0]],
+    4:[[0,235,0],[235,960,1],[960,1080,0]],
+    5:[[0,240,0],[240,430,1],[960,1080,0]],
+    6:[[0,230,0],[230,330,1],[330,780,2],[780,930,3],[930,1080,0]],
+    7:[[0,230,0],[230,920,1],[920,970,2],[970,1080,0]],
+    8:[[0,220,0],[220,900,1],[900,970,2],[970,1080,0]],
+    9:[[0,260,0],[260,370,1],[370,500,2],[500,640,3],[640,760,4],[760,970,4],[970,1080,0]],
+    10:[[0,235,0],[235,320,1],[320,460,2],[460,970,2],[970,1080,0]],
+    11:[],
+    12:[[0,250,0],[250,335,1],[335,430,2],[430,720,3],[900,960,4],[960,1080,0]],
+    13:[[0,235,0],[235,900,1],[900,970,2],[970,1080,0]],
+    14:[[0,235,0],[235,900,1],[900,970,2],[970,1080,0]],
+    15:[[0,230,0],[230,900,1],[900,960,2],[960,1080,0]],
+    16:[[0,240,0],[240,315,1],[315,470,2],[470,790,3],[900,960,4],[960,1080,0]],
+    17:[[0,230,0],[230,320,1],[320,440,2],[440,730,3],[880,970,4],[970,1080,0]],
+    18:[[0,1080,0]]
+  };
+
+  const MEDIA_BANDS = {
+    4:[[285,1027,1]],
+    7:[[270,920,1]],
+    8:[[220,900,1]],
+    12:[[424,886,3]],
+    13:[[235,900,1]],
+    14:[[235,900,1]],
+    15:[[500,900,1]]
+  };
+  const VECTOR_REVEAL_PAGES = new Set([3,12,15]);
+
+  function addCropLayer(slide, src, band, media){
+    const [top,bottom,step,left = 0,right = 1920] = band;
+    const crop = document.createElement('div');
+    crop.className = 'slide-crop ' + (media ? 'slide-crop--media' : 'slide-crop--text');
+    crop.dataset.step = String(step);
+    crop.style.left = left + 'px';
+    crop.style.width = (right - left) + 'px';
+    crop.style.top = top + 'px';
+    crop.style.height = (bottom - top) + 'px';
+
+    const image = document.createElement('img');
+    image.className = 'slide-crop__canvas';
+    image.src = src;
+    image.alt = '';
+    image.draggable = false;
+    image.style.left = (-left) + 'px';
+    image.style.top = (-top) + 'px';
+    crop.appendChild(image);
+    slide.appendChild(crop);
+  }
+
+  function addVisionBullets(slide){
+    const bullets = document.createElement('div');
+    bullets.className = 'vision-bullets';
+    bullets.dataset.step = '3';
+    bullets.setAttribute('aria-hidden', 'true');
+    for (let index = 0; index < 4; index++){
+      const dot = document.createElement('span');
+      dot.className = 'vision-bullet';
+      bullets.appendChild(dot);
+    }
+    slide.appendChild(bullets);
+  }
+
+  function maxBuildStep(number){
+    const all = [...(TEXT_BANDS[number] || []), ...(MEDIA_BANDS[number] || [])];
+    return all.reduce((max,band) => Math.max(max,band[2]), 0);
+  }
+
+  /* Keep the existing splash and interactive map. Every other slide is
+     reconstructed from the separated Canva layers. */
+  const mapSlide = document.querySelector('.slide[data-map="true"]');
+  document.querySelectorAll('.slide').forEach(slide => {
+    if (slide !== mapSlide) slide.remove();
+  });
+  mapSlide.dataset.slide = String(MAP_SLIDE);
+  mapSlide.dataset.steps = '0';
+  mapSlide.classList.add('canva-map-slide');
+  (TEXT_BANDS[MAP_SLIDE] || []).forEach(band => {
+    addCropLayer(mapSlide, asset('assets/slides/text/slide-11.webp'), band, false);
+  });
+
+  function createCanvaSlide(number){
+    const slide = document.createElement('section');
+    slide.className = 'slide canva-slide';
+    slide.dataset.slide = String(number);
+    slide.dataset.steps = String(maxBuildStep(number));
+
+    const pageId = String(number).padStart(2, '0');
+    const background = document.createElement('img');
+    background.className = 'layered-slide__bg';
+    background.src = asset(`assets/slides/backgrounds/slide-${pageId}.webp`);
+    background.alt = `Jebel Jais destination operations proposal — page ${number}`;
+    background.draggable = false;
+    slide.appendChild(background);
+
+    (MEDIA_BANDS[number] || []).forEach(band => {
+      addCropLayer(slide, asset(`assets/slides/media/slide-${pageId}.webp`), band, true);
+    });
+    if (VECTOR_REVEAL_PAGES.has(number)){
+      (TEXT_BANDS[number] || []).forEach(band => {
+        addCropLayer(slide, asset(`assets/slides/vectors/slide-${pageId}.webp`), band, false);
+      });
+    }
+    (TEXT_BANDS[number] || []).forEach(band => {
+      addCropLayer(slide, asset(`assets/slides/text/slide-${pageId}.webp`), band, false);
+    });
+    if (number === 17) addVisionBullets(slide);
+    return slide;
+  }
+
+  for (let number = 1; number < MAP_SLIDE; number++){
+    mapSlide.parentNode.insertBefore(createCanvaSlide(number), mapSlide);
+  }
+  for (let number = MAP_SLIDE + 1; number <= TOTAL; number++){
+    mapSlide.parentNode.appendChild(createCanvaSlide(number));
+  }
 
   const splash    = document.getElementById('splash');
   const deck      = document.getElementById('deck');
@@ -932,12 +1422,13 @@ img{display:block}
   slides.forEach(s => { maxSteps[+s.dataset.slide] = parseInt(s.dataset.steps || '0', 10); });
 
   let cur = 1, step = 0, inSplash = true;
+  if (location.hash) history.replaceState(null, '', location.pathname + location.search);
   let progressive = localStorage.getItem('jj-progressive');
   progressive = progressive === null ? true : progressive === 'true';
 
   /* ════════ STAGE SCALING ════════ */
   function fitStage(){
-    const s = Math.min(window.innerWidth / 1440, window.innerHeight / 810);
+    const s = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
     stage.style.setProperty('--scale', s);
   }
   window.addEventListener('resize', fitStage);
@@ -985,6 +1476,7 @@ img{display:block}
 
     if (n === MAP_SLIDE){
       step = 0;
+      applySteps(section, 0);
       if (opts.dir === 'back') EcoMap.toEnd(); else EcoMap.reset();
       step = EcoMap.step();
     } else {
@@ -1084,8 +1576,8 @@ img{display:block}
     setTimeout(() => splash.style.display = 'none', 620);
     deck.classList.add('active');
     fitStage();
-    const h = readHash();
-    if (h) jumpTo(h.slide, h.step); else show(1, {dir:'fwd'});
+    history.replaceState(null, '', location.pathname + location.search);
+    show(1, {dir:'fwd'});
   }
   function returnSplash(){
     inSplash = true;
