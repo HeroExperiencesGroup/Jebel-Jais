@@ -1249,7 +1249,7 @@ img{display:block}
   <div id="hud"></div>
   <div id="progress"></div>
   <div id="dots"></div>
-  <div id="counter">1 / 20</div>
+  <div id="counter">1 / 21</div>
   <div id="slideRail" aria-label="Slide navigation"></div>
   <button id="exitFs">⤢ Exit fullscreen</button>
 </div><!-- /deck -->
@@ -1289,9 +1289,9 @@ img{display:block}
 <script>
 (function(){
   'use strict';
-  const TOTAL = 20;
-  const MAP_SLIDE = 13;
-  const ASSET_VERSION = '16';
+  const TOTAL = 21;
+  const MAP_SLIDE = 14;
+  const ASSET_VERSION = '17';
   const asset = path => `${path}?v=${ASSET_VERSION}`;
 
   /* Text bands preserve the source typography exactly while assigning
@@ -1304,6 +1304,8 @@ img{display:block}
     4:[[0,235,0],[235,960,1],[960,1080,0]],
     'new-05':[[0,190,0],[190,380,1],[380,970,2],[970,1080,0]],
     'new-06':[[0,245,0],[245,640,1],[640,910,2],[910,970,3],[970,1080,0]],
+    'new-08':[[0,260,0],[260,410,1],[410,900,2],[900,960,3],[960,1080,0]],
+    'new-09':[[0,330,0],[330,500,1],[500,780,2],[780,930,3],[930,1080,0]],
     5:[[0,240,0],[240,430,1],[960,1080,0]],
     6:[[0,230,0],[230,330,1],[330,780,2],[780,930,3],[930,1080,0]],
     7:[[0,230,0],[230,920,1],[920,970,2],[970,1080,0]],
@@ -1335,37 +1337,39 @@ img{display:block}
     5:'05-v2',
     6:'06-v2',
     7:'05',
-    8:'06',
-    9:'07',
-    10:'08',
-    11:'09',
-    12:'10',
-    13:'11',
-    14:'12',
-    15:'13',
-    16:'14',
-    17:'15',
-    18:'16',
-    19:'17',
-    20:'18'
+    8:'08-v2',
+    9:'09-v2',
+    10:'07',
+    11:'08',
+    12:'09',
+    13:'10',
+    14:'11',
+    15:'12',
+    16:'13',
+    17:'14',
+    18:'15',
+    19:'16',
+    20:'17',
+    21:'18'
   };
   const BAND_SOURCES = {
     5:'new-05',
     6:'new-06',
     7:5,
-    8:6,
-    9:7,
-    10:8,
-    11:9,
-    12:10,
-    13:11,
-    14:12,
-    15:13,
-    16:14,
-    17:15,
-    18:16,
-    19:17,
-    20:18
+    8:'new-08',
+    9:'new-09',
+    10:7,
+    11:8,
+    12:9,
+    13:10,
+    14:11,
+    15:12,
+    16:13,
+    17:14,
+    18:15,
+    19:16,
+    20:17,
+    21:18
   };
   const slideAssetId = number => {
     const source = SLIDE_ASSETS[number] || number;
