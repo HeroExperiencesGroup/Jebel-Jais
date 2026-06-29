@@ -656,7 +656,7 @@ img{display:block}
     <!-- ══ SLIDE 9 — JEBEL JAIS AS THE ANCHOR ══ -->
     <section class="slide" data-slide="9" data-steps="2">
       <div class="slide__bg warm"></div><div class="slide__scrim"></div>
-      <div class="s-meta"><span class="lbl">Jebel Jais Operations</span><span class="pg">Page 11</span></div>
+      <div class="s-meta"><span class="lbl">Jebel Jais Operations</span><span class="pg">Page 12</span></div>
       <div class="s-wrap s-center">
         <p class="kicker" data-step="0">Jebel Jais as the Anchor</p>
         <div class="rule" style="margin-left:auto;margin-right:auto" data-step="0"></div>
@@ -677,7 +677,7 @@ img{display:block}
       </div>
       <div class="map-title-layer" aria-hidden="true">
         <div class="map-title-text">The Adventure Ecosystem</div>
-        <div class="map-page-meta">Jebel Jais Operations<br>Page 11</div>
+        <div class="map-page-meta">Jebel Jais Operations<br>Page 12</div>
         <div class="map-footer-copy">© Copyright 2026 Hero Experiences Group. All rights reserved.</div>
       </div>
       <div class="map-stage">
@@ -1249,7 +1249,7 @@ img{display:block}
   <div id="hud"></div>
   <div id="progress"></div>
   <div id="dots"></div>
-  <div id="counter">1 / 18</div>
+  <div id="counter">1 / 19</div>
   <div id="slideRail" aria-label="Slide navigation"></div>
   <button id="exitFs">⤢ Exit fullscreen</button>
 </div><!-- /deck -->
@@ -1289,9 +1289,9 @@ img{display:block}
 <script>
 (function(){
   'use strict';
-  const TOTAL = 18;
-  const MAP_SLIDE = 11;
-  const ASSET_VERSION = '14';
+  const TOTAL = 19;
+  const MAP_SLIDE = 12;
+  const ASSET_VERSION = '15';
   const asset = path => `${path}?v=${ASSET_VERSION}`;
 
   /* Text bands preserve the source typography exactly while assigning
@@ -1302,6 +1302,7 @@ img{display:block}
     2:[[0,200,0],[200,360,1],[360,470,2],[470,610,3],[610,760,4],[760,930,5],[930,1080,0]],
     3:[[0,500,0],[500,705,1,90,860],[705,835,2,90,860],[835,970,3,90,860],[590,700,4,930,1810],[700,910,5,930,1810],[970,1080,0]],
     4:[[0,235,0],[235,960,1],[960,1080,0]],
+    'new-05':[[0,270,0],[270,690,1],[690,970,2],[970,1080,0]],
     5:[[0,240,0],[240,430,1],[960,1080,0]],
     6:[[0,230,0],[230,330,1],[330,780,2],[780,930,3],[930,1080,0]],
     7:[[0,230,0],[230,920,1],[920,970,2],[970,1080,0]],
@@ -1329,6 +1330,48 @@ img{display:block}
     15:[[500,900,1]]
   };
   const VECTOR_REVEAL_PAGES = new Set([3,12,15]);
+  const SLIDE_ASSETS = {
+    5:'05-v2',
+    6:'05',
+    7:'06',
+    8:'07',
+    9:'08',
+    10:'09',
+    11:'10',
+    12:'11',
+    13:'12',
+    14:'13',
+    15:'14',
+    16:'15',
+    17:'16',
+    18:'17',
+    19:'18'
+  };
+  const BAND_SOURCES = {
+    5:'new-05',
+    6:5,
+    7:6,
+    8:7,
+    9:8,
+    10:9,
+    11:10,
+    12:11,
+    13:12,
+    14:13,
+    15:14,
+    16:15,
+    17:16,
+    18:17,
+    19:18
+  };
+  const slideAssetId = number => {
+    const source = SLIDE_ASSETS[number] || number;
+    return typeof source === 'number' ? String(source).padStart(2, '0') : source;
+  };
+  const bandSource = number => BAND_SOURCES[number] || number;
+  const textBandsFor = number => TEXT_BANDS[bandSource(number)] || [];
+  const mediaBandsFor = number => MEDIA_BANDS[bandSource(number)] || [];
+  const hasVectorLayer = number => VECTOR_REVEAL_PAGES.has(bandSource(number));
 
   function addCropLayer(slide, src, band, media){
     const [top,bottom,step,left = 0,right = 1920] = band;
@@ -1365,7 +1408,7 @@ img{display:block}
   }
 
   function maxBuildStep(number){
-    const all = [...(TEXT_BANDS[number] || []), ...(MEDIA_BANDS[number] || [])];
+    const all = [...textBandsFor(number), ...mediaBandsFor(number)];
     return all.reduce((max,band) => Math.max(max,band[2]), 0);
   }
 
@@ -1378,7 +1421,7 @@ img{display:block}
   mapSlide.dataset.slide = String(MAP_SLIDE);
   mapSlide.dataset.steps = '0';
   mapSlide.classList.add('canva-map-slide');
-  (TEXT_BANDS[MAP_SLIDE] || []).forEach(band => {
+  textBandsFor(MAP_SLIDE).forEach(band => {
     addCropLayer(mapSlide, asset('assets/slides/text/slide-11.webp'), band, false);
   });
 
@@ -1388,7 +1431,7 @@ img{display:block}
     slide.dataset.slide = String(number);
     slide.dataset.steps = String(maxBuildStep(number));
 
-    const pageId = String(number).padStart(2, '0');
+    const pageId = slideAssetId(number);
     const background = document.createElement('img');
     background.className = 'layered-slide__bg';
     background.src = asset(`assets/slides/backgrounds/slide-${pageId}.webp`);
@@ -1396,18 +1439,18 @@ img{display:block}
     background.draggable = false;
     slide.appendChild(background);
 
-    (MEDIA_BANDS[number] || []).forEach(band => {
+    mediaBandsFor(number).forEach(band => {
       addCropLayer(slide, asset(`assets/slides/media/slide-${pageId}.webp`), band, true);
     });
-    if (VECTOR_REVEAL_PAGES.has(number)){
-      (TEXT_BANDS[number] || []).forEach(band => {
+    if (hasVectorLayer(number)){
+      textBandsFor(number).forEach(band => {
         addCropLayer(slide, asset(`assets/slides/vectors/slide-${pageId}.webp`), band, false);
       });
     }
-    (TEXT_BANDS[number] || []).forEach(band => {
+    textBandsFor(number).forEach(band => {
       addCropLayer(slide, asset(`assets/slides/text/slide-${pageId}.webp`), band, false);
     });
-    if (number === 17) addVisionBullets(slide);
+    if (bandSource(number) === 17) addVisionBullets(slide);
     return slide;
   }
 
