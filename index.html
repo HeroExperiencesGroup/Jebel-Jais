@@ -219,6 +219,17 @@ img{display:block}
 #counter{position:fixed;bottom:22px;right:30px;z-index:901;font-weight:500;font-size:11px;letter-spacing:.24em;color:var(--stone)}
 #exitFs{position:fixed;bottom:18px;left:26px;z-index:903;display:none;background:none;border:none;color:var(--stone);cursor:pointer;font-family:'Montserrat',sans-serif;font-weight:500;font-size:10px;letter-spacing:.2em;text-transform:uppercase;padding:6px;pointer-events:auto;opacity:.7;transition:opacity .2s}
 #exitFs:hover{opacity:1}
+#slideRail{position:fixed;top:50%;right:0;width:132px;height:34vh;min-height:220px;max-height:360px;z-index:904;pointer-events:none;transform:translateY(-50%)}
+.rail-item{position:absolute;right:18px;top:var(--rail-y);width:94px;height:18px;display:flex;align-items:center;justify-content:flex-end;gap:10px;border:0;background:none;color:var(--stone);font-family:'Montserrat',sans-serif;cursor:pointer;opacity:var(--rail-opacity,0);pointer-events:none;transform:translateY(-50%) translateX(var(--rail-shift,10px));transition:opacity .08s linear,transform .08s linear}
+.rail-item:focus-visible{outline:1px solid rgba(232,194,116,.85);outline-offset:3px;opacity:1;pointer-events:auto;transform:translateY(-50%) translateX(-3px)}
+.rail-item.is-visible{pointer-events:auto}
+.rail-num{width:30px;text-align:right;font-weight:700;font-size:11px;line-height:1;letter-spacing:.18em;color:rgba(244,239,230,.84);text-shadow:0 1px 8px rgba(0,0,0,.7)}
+.rail-tick{display:block;width:40px;height:2px;border-radius:2px;background:rgba(244,239,230,.68);box-shadow:0 0 10px rgba(196,154,90,.16);transform:scaleX(var(--rail-scale,.4));transform-origin:right center}
+.rail-item.is-hot .rail-num{color:#fff8df;text-shadow:0 1px 10px rgba(0,0,0,.9),0 0 12px rgba(232,194,116,.45)}
+.rail-item.is-hot .rail-tick{height:3px;background:#fff0bd;box-shadow:0 0 18px rgba(232,194,116,.52)}
+.rail-item.cur .rail-num{color:var(--gold-hi)}
+.rail-item.cur .rail-tick{height:3px;background:var(--gold-hi);box-shadow:0 0 14px rgba(232,194,116,.34)}
+.rail-item:hover{opacity:1;transform:translateY(-50%) translateX(-4px)}
 
 /* ════════ SLIDE 10 — INTERACTIVE MAP ════════ */
 .map-stage{position:absolute;inset:0;z-index:4;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:96px 70px 92px}
@@ -347,7 +358,7 @@ img{display:block}
   .h-xl{font-size:46px}.h-1{font-size:38px}.h-2{font-size:28px}
   .beats,.cols,.pf-grid,.impact,.split,.coll.g6,.coll.g4{grid-template-columns:1fr;display:grid}
   .beats,.split{display:grid}
-  #hud{display:none}
+  #hud,#slideRail{display:none}
 }
 
 /* Canva source pages are rebuilt as exact, independent raster layers:
@@ -1239,6 +1250,7 @@ img{display:block}
   <div id="progress"></div>
   <div id="dots"></div>
   <div id="counter">1 / 18</div>
+  <div id="slideRail" aria-label="Slide navigation"></div>
   <button id="exitFs">⤢ Exit fullscreen</button>
 </div><!-- /deck -->
 
@@ -1417,6 +1429,7 @@ img{display:block}
   const beginBtn  = document.getElementById('beginBtn');
   const progToggle= document.getElementById('progToggle');
   const progState = document.getElementById('progState');
+  const slideRail = document.getElementById('slideRail');
 
   /* steps per slide */
   const maxSteps = {};
@@ -1440,6 +1453,65 @@ img{display:block}
     const d = document.createElement('div');
     d.className = 'dot'; d.id = 'dot' + i;
     dotsWrap.appendChild(d);
+  }
+
+  /* Proximity slide rail */
+  const railItems = [];
+  for (let i = 1; i <= TOTAL; i++){
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'rail-item';
+    btn.dataset.slide = String(i);
+    btn.style.setProperty('--rail-y', ((i - 0.5) / TOTAL * 100) + '%');
+    btn.setAttribute('aria-label', 'Go to slide ' + i);
+    btn.innerHTML = '<span class="rail-num">' + String(i).padStart(2, '0') + '</span><span class="rail-tick"></span>';
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      show(i, {dir:i < cur ? 'back' : 'fwd'});
+      hideSlideRail();
+    });
+    slideRail.appendChild(btn);
+    railItems.push(btn);
+  }
+
+  function syncSlideRail(){
+    railItems.forEach(btn => btn.classList.toggle('cur', Number(btn.dataset.slide) === cur));
+  }
+
+  function hideSlideRail(){
+    if (slideRail.contains(document.activeElement)) document.activeElement.blur();
+    railItems.forEach(btn => {
+      btn.classList.remove('is-visible','is-hot');
+      btn.style.setProperty('--rail-opacity', '0');
+      btn.style.setProperty('--rail-scale', '.4');
+      btn.style.setProperty('--rail-shift', '10px');
+    });
+  }
+
+  function updateSlideRail(e){
+    if (inSplash || (window.EcoMap && window.EcoMap.editing && window.EcoMap.editing())){
+      hideSlideRail();
+      return;
+    }
+    const edgeReach = 170;
+    const verticalReach = 48;
+    const edgeFactor = Math.max(0, 1 - ((window.innerWidth - e.clientX) / edgeReach));
+    if (edgeFactor <= 0){
+      hideSlideRail();
+      return;
+    }
+    railItems.forEach(btn => {
+      const rect = btn.getBoundingClientRect();
+      const center = rect.top + rect.height / 2;
+      const verticalFactor = Math.max(0, 1 - (Math.abs(e.clientY - center) / verticalReach));
+      const strength = Math.pow(edgeFactor * verticalFactor, 1.08);
+      const opacity = strength < .04 ? 0 : Math.min(1, strength);
+      btn.classList.toggle('is-visible', opacity > .08);
+      btn.classList.toggle('is-hot', opacity > .62);
+      btn.style.setProperty('--rail-opacity', opacity.toFixed(3));
+      btn.style.setProperty('--rail-scale', (.45 + opacity * .9).toFixed(3));
+      btn.style.setProperty('--rail-shift', (10 - opacity * 14).toFixed(2) + 'px');
+    });
   }
 
   /* ════════ PROGRESSIVE-REVEAL TOGGLE ════════ */
@@ -1493,6 +1565,7 @@ img{display:block}
       const d = document.getElementById('dot' + i);
       d.className = 'dot' + (i === n ? ' cur' : i < n ? ' done' : '');
     }
+    syncSlideRail();
     counter.textContent = n + ' / ' + TOTAL;
     progress.style.width = ((n - 1) / (TOTAL - 1) * 100) + '%';
     updateHash();
@@ -1516,17 +1589,6 @@ img{display:block}
   }
   function bwd(){
     if (inSplash) return;
-    if (cur === MAP_SLIDE){
-      if (EcoMap.back()){ step = EcoMap.step(); updateHash(); }
-      else show(cur - 1, {dir:'back'});
-      return;
-    }
-    if (progressive && step > 0){
-      step--;
-      applySteps(slides.find(s => +s.dataset.slide === cur), step);
-      updateHash();
-      return;
-    }
     if (cur > 1) show(cur - 1, {dir:'back'});
   }
 
@@ -1614,11 +1676,15 @@ img{display:block}
   });
 
   /* ════════ CLICK / EDGE ZONES ════════ */
+  deck.addEventListener('mousemove', updateSlideRail, {passive:true});
+  deck.addEventListener('mouseleave', hideSlideRail);
+  window.addEventListener('blur', hideSlideRail);
+
   deck.addEventListener('click', e => {
     if (inSplash) return;
     if (window.EcoMap && window.EcoMap.editing()) return; // editor active — no slide nav
     /* ignore clicks on interactive map elements & HUD controls */
-    if (e.target.closest('#mapSvg .node, #mapSvg .loc-card, #mapSvg .act-card, #mapSvg .loc-icon, #exitFs, #dots')) return;
+    if (e.target.closest('#mapSvg .node, #mapSvg .loc-card, #mapSvg .act-card, #mapSvg .loc-icon, #exitFs, #dots, #slideRail')) return;
     if (e.clientX < window.innerWidth * 0.12) bwd(); else fwd();
   });
 
