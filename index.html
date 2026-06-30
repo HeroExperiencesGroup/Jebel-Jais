@@ -1529,6 +1529,8 @@ body.mobile-presenting.mobile-zoomed #stage{transition:none}
   let isPinching = false;
   let isPanning = false;
   let suppressClickUntil = 0;
+  let suppressTouchNavUntil = 0;
+  let pinchReleaseGuard = false;
 
   function clamp(value, min, max){ return Math.max(min, Math.min(max, value)); }
   function viewportSize(){
@@ -1546,6 +1548,11 @@ body.mobile-presenting.mobile-zoomed #stage{transition:none}
     return isMobilePresenting() && vp.height > vp.width;
   }
   function mobileZoomLocked(){ return isMobilePresenting() && mobileZoom > 1.02; }
+  function suppressGestureNavigation(ms = 650){
+    const until = Date.now() + ms;
+    suppressClickUntil = Math.max(suppressClickUntil, until);
+    suppressTouchNavUntil = Math.max(suppressTouchNavUntil, until);
+  }
   function stagePlacement(zoomValue = mobileZoom, panX = mobilePanX, panY = mobilePanY){
     const vp = viewportSize();
     const rotated = isMobilePortrait();
@@ -1617,6 +1624,7 @@ body.mobile-presenting.mobile-zoomed #stage{transition:none}
     mobilePanY = 0;
     isPinching = false;
     isPanning = false;
+    pinchReleaseGuard = false;
     document.body.classList.remove('mobile-zooming','mobile-zoomed');
     applyMobileZoom();
   }
@@ -1941,9 +1949,11 @@ body.mobile-presenting.mobile-zoomed #stage{transition:none}
       e.preventDefault();
       isPinching = true;
       isPanning = false;
+      pinchReleaseGuard = true;
       pinchStartDistance = Math.max(1, touchDistance(e.touches));
       pinchStartZoom = mobileZoom;
       pinchAnchor = designFromScreen(touchCenter(e.touches));
+      suppressGestureNavigation();
       document.body.classList.add('mobile-zooming');
       return;
     }
@@ -1959,6 +1969,7 @@ body.mobile-presenting.mobile-zoomed #stage{transition:none}
     if (inSplash) return;
     if (isPinching && e.touches.length >= 2){
       e.preventDefault();
+      suppressGestureNavigation();
       const center = touchCenter(e.touches);
       const nextZoom = clamp(pinchStartZoom * (touchDistance(e.touches) / pinchStartDistance), 1, ZOOM_MAX);
       mobileZoom = nextZoom <= 1.02 ? 1 : nextZoom;
@@ -1982,17 +1993,24 @@ body.mobile-presenting.mobile-zoomed #stage{transition:none}
     if (inSplash) return;
     if (isPinching){
       e.preventDefault();
-      suppressClickUntil = Date.now() + 360;
+      suppressGestureNavigation();
       if (e.touches.length < 2){
         isPinching = false;
         document.body.classList.remove('mobile-zooming');
         if (mobileZoomLocked() && e.touches.length === 1) startPan(e.touches[0]);
+        if (e.touches.length === 0) pinchReleaseGuard = false;
       }
+      return;
+    }
+    if (pinchReleaseGuard || Date.now() < suppressTouchNavUntil){
+      e.preventDefault();
+      suppressGestureNavigation();
+      if (e.touches.length === 0) pinchReleaseGuard = false;
       return;
     }
     if (isPanning || mobileZoomLocked()){
       e.preventDefault();
-      suppressClickUntil = Date.now() + 360;
+      suppressGestureNavigation();
       if (e.touches.length === 0) isPanning = false;
       return;
     }
@@ -2002,6 +2020,8 @@ body.mobile-presenting.mobile-zoomed #stage{transition:none}
   deck.addEventListener('touchcancel', () => {
     isPinching = false;
     isPanning = false;
+    pinchReleaseGuard = false;
+    suppressGestureNavigation();
     document.body.classList.remove('mobile-zooming');
   }, {passive:true});
 
