@@ -70,15 +70,22 @@ img{display:block}
 }
 .sp-btn:hover{background:rgba(196,154,90,.12);border-color:var(--gold);color:#fff}
 .sp-hint{font-weight:300;font-size:clamp(8px,.6vw,11px);letter-spacing:.16em;text-transform:uppercase;color:var(--stone);opacity:.7;margin-top:clamp(18px,2.6vh,30px)}
+.sp-device-note{font-weight:300;font-size:clamp(8px,.62vw,11px);line-height:1.55;letter-spacing:.1em;text-transform:uppercase;color:var(--paper-dim);max-width:560px;margin-top:14px;opacity:.72}
 
 /* ════════ DECK + STAGE ════════ */
-#deck{position:fixed;inset:0;display:none;background:#0d0b08}
+#deck{position:fixed;inset:0;display:none;background:#0d0b08;touch-action:manipulation;overscroll-behavior:none}
 #deck.active{display:block}
 #stage{
   position:absolute;left:50%;top:50%;
   width:var(--DW);height:var(--DH);
-  transform:translate(-50%,-50%) scale(var(--scale,1));
-  transform-origin:center center;
+  transform:
+    translate(-50%,-50%)
+    translate(var(--pan-x,0px),var(--pan-y,0px))
+    rotate(var(--stage-rotate,0deg))
+    scale(var(--scale,1))
+    scale(var(--zoom,1));
+  transform-origin:var(--zoom-origin-x,960px) var(--zoom-origin-y,540px);
+  will-change:transform;
 }
 
 .slide{
@@ -351,15 +358,31 @@ img{display:block}
 
 /* ════════ PORTRAIT MOBILE FALLBACK (review mode) ════════ */
 @media (max-aspect-ratio:1/1) and (max-width:820px){
-  #stage{position:static;transform:none;width:100%;height:auto}
-  .slide{position:static;opacity:1;pointer-events:auto;min-height:auto;border-bottom:1px solid var(--line)}
-  .slide:not(.active){opacity:1}
-  .s-wrap{position:static;padding:84px 28px 72px}
-  .h-xl{font-size:46px}.h-1{font-size:38px}.h-2{font-size:28px}
-  .beats,.cols,.pf-grid,.impact,.split,.coll.g6,.coll.g4{grid-template-columns:1fr;display:grid}
-  .beats,.split{display:grid}
-  #hud,#slideRail{display:none}
+  body:not(.mobile-presenting) #stage{position:static;transform:none;width:100%;height:auto}
+  body:not(.mobile-presenting) .slide{position:static;opacity:1;pointer-events:auto;min-height:auto;border-bottom:1px solid var(--line)}
+  body:not(.mobile-presenting) .slide:not(.active){opacity:1}
+  body:not(.mobile-presenting) .s-wrap{position:static;padding:84px 28px 72px}
+  body:not(.mobile-presenting) .h-xl{font-size:46px}
+  body:not(.mobile-presenting) .h-1{font-size:38px}
+  body:not(.mobile-presenting) .h-2{font-size:28px}
+  body:not(.mobile-presenting) .beats,
+  body:not(.mobile-presenting) .cols,
+  body:not(.mobile-presenting) .pf-grid,
+  body:not(.mobile-presenting) .impact,
+  body:not(.mobile-presenting) .split,
+  body:not(.mobile-presenting) .coll.g6,
+  body:not(.mobile-presenting) .coll.g4{grid-template-columns:1fr;display:grid}
+  body:not(.mobile-presenting) .beats,
+  body:not(.mobile-presenting) .split{display:grid}
+  body:not(.mobile-presenting) #hud,
+  body:not(.mobile-presenting) #slideRail{display:none}
 }
+
+body.mobile-presenting{overscroll-behavior:none;touch-action:none}
+body.mobile-presenting #deck{touch-action:none}
+body.mobile-presenting #stage{transition:transform .16s ease-out}
+body.mobile-presenting.mobile-zooming #stage,
+body.mobile-presenting.mobile-zoomed #stage{transition:none}
 
 /* Canva source pages are rebuilt as exact, independent raster layers:
    textless background, foreground media, and transparent typography. */
@@ -475,6 +498,7 @@ img{display:block}
 
   <button class="sp-btn" id="beginBtn">Begin Presentation</button>
   <p class="sp-hint">→ / Space advance &nbsp;·&nbsp; ← back &nbsp;·&nbsp; Esc returns here</p>
+  <p class="sp-device-note">Desktop or laptop is recommended for presenting. Mobile opens in fullscreen landscape for quick review.</p>
 </div>
 
 <!-- ════════ DECK ════════ -->
@@ -1491,13 +1515,90 @@ img{display:block}
   if (location.hash) history.replaceState(null, '', location.pathname + location.search);
   let progressive = localStorage.getItem('jj-progressive');
   progressive = progressive === null ? true : progressive === 'true';
+  const coarsePointer = window.matchMedia ? window.matchMedia('(hover: none) and (pointer: coarse)') : null;
+  const ZOOM_MAX = 3.25;
+  let baseScale = 1;
+  let mobileZoom = 1;
+  let mobilePanX = 0;
+  let mobilePanY = 0;
+  let pinchStartDistance = 0;
+  let pinchStartZoom = 1;
+  let panStartX = 0;
+  let panStartY = 0;
+  let panTouchX = 0;
+  let panTouchY = 0;
+  let isPinching = false;
+  let isPanning = false;
+  let suppressClickUntil = 0;
+
+  function clamp(value, min, max){ return Math.max(min, Math.min(max, value)); }
+  function viewportSize(){
+    const vv = window.visualViewport;
+    return { width: vv ? vv.width : window.innerWidth, height: vv ? vv.height : window.innerHeight };
+  }
+  function isMobileLike(){
+    const vp = viewportSize();
+    const coarse = (coarsePointer && coarsePointer.matches) || navigator.maxTouchPoints > 1;
+    return coarse && Math.min(vp.width, vp.height) <= 920;
+  }
+  function isMobilePresenting(){ return document.body.classList.contains('mobile-presenting'); }
+  function isMobilePortrait(){
+    const vp = viewportSize();
+    return isMobilePresenting() && vp.height > vp.width;
+  }
+  function mobileZoomLocked(){ return isMobilePresenting() && mobileZoom > 1.02; }
+  function clampMobilePan(){
+    const vp = viewportSize();
+    const rotated = isMobilePortrait();
+    const visualWidth = (rotated ? 1080 : 1920) * baseScale * mobileZoom;
+    const visualHeight = (rotated ? 1920 : 1080) * baseScale * mobileZoom;
+    const limitX = Math.max(0, (visualWidth - vp.width) / 2);
+    const limitY = Math.max(0, (visualHeight - vp.height) / 2);
+    mobilePanX = clamp(mobilePanX, -limitX, limitX);
+    mobilePanY = clamp(mobilePanY, -limitY, limitY);
+  }
+  function applyMobileZoom(){
+    if (mobileZoom <= 1.02){
+      mobileZoom = 1;
+      mobilePanX = 0;
+      mobilePanY = 0;
+      stage.style.setProperty('--zoom-origin-x', '960px');
+      stage.style.setProperty('--zoom-origin-y', '540px');
+    }
+    clampMobilePan();
+    stage.style.setProperty('--zoom', mobileZoom.toFixed(3));
+    stage.style.setProperty('--pan-x', mobilePanX.toFixed(1) + 'px');
+    stage.style.setProperty('--pan-y', mobilePanY.toFixed(1) + 'px');
+    document.body.classList.toggle('mobile-zoomed', mobileZoomLocked());
+  }
+  function resetMobileZoom(){
+    mobileZoom = 1;
+    mobilePanX = 0;
+    mobilePanY = 0;
+    isPinching = false;
+    isPanning = false;
+    document.body.classList.remove('mobile-zooming','mobile-zoomed');
+    applyMobileZoom();
+  }
+  function prepareMobilePresentation(){
+    document.body.classList.toggle('mobile-presenting', isMobileLike());
+    resetMobileZoom();
+    fitStage();
+  }
 
   /* ════════ STAGE SCALING ════════ */
   function fitStage(){
-    const s = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
-    stage.style.setProperty('--scale', s);
+    const vp = viewportSize();
+    const rotate = isMobilePortrait();
+    baseScale = Math.min(vp.width / (rotate ? 1080 : 1920), vp.height / (rotate ? 1920 : 1080));
+    stage.style.setProperty('--scale', baseScale);
+    stage.style.setProperty('--stage-rotate', rotate ? '90deg' : '0deg');
+    document.body.classList.toggle('mobile-portrait', rotate);
+    applyMobileZoom();
   }
   window.addEventListener('resize', fitStage);
+  window.addEventListener('orientationchange', () => setTimeout(fitStage, 220));
+  if (window.visualViewport) window.visualViewport.addEventListener('resize', fitStage);
   fitStage();
 
   /* ════════ NAV DOTS ════════ */
@@ -1519,6 +1620,7 @@ img{display:block}
     btn.innerHTML = '<span class="rail-num">' + String(i).padStart(2, '0') + '</span><span class="rail-tick"></span>';
     btn.addEventListener('click', e => {
       e.stopPropagation();
+      if (mobileZoomLocked()) return;
       show(i, {dir:i < cur ? 'back' : 'fwd'});
       hideSlideRail();
     });
@@ -1589,6 +1691,7 @@ img{display:block}
   function show(n, opts){
     opts = opts || {};
     n = Math.max(1, Math.min(TOTAL, n));
+    if (n !== cur && mobileZoomLocked()) resetMobileZoom();
     cur = n;
     const section = slides.find(s => +s.dataset.slide === n);
 
@@ -1625,7 +1728,8 @@ img{display:block}
 
   /* ════════ FORWARD / BACKWARD ════════ */
   function fwd(){
-    if (inSplash){ begin(); return; }
+    if (mobileZoomLocked()) return;
+    if (inSplash){ startPresentation(); return; }
     if (cur === MAP_SLIDE){
       if (EcoMap.advance()){ step = EcoMap.step(); updateHash(); }
       else show(cur + 1, {dir:'fwd'});
@@ -1640,6 +1744,7 @@ img{display:block}
     if (cur < TOTAL) show(cur + 1, {dir:'fwd'});
   }
   function bwd(){
+    if (mobileZoomLocked()) return;
     if (inSplash) return;
     if (cur > 1) show(cur - 1, {dir:'back'});
   }
@@ -1677,15 +1782,36 @@ img{display:block}
   }
 
   /* ════════ FULLSCREEN ════════ */
-  function enterFS(){ if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(()=>{}); }
+  async function lockLandscape(){
+    if (!screen.orientation || !screen.orientation.lock) return;
+    try { await screen.orientation.lock('landscape'); } catch (err) {}
+  }
+  function unlockLandscape(){
+    if (screen.orientation && screen.orientation.unlock){
+      try { screen.orientation.unlock(); } catch (err) {}
+    }
+  }
+  async function enterFS(){
+    if (document.documentElement.requestFullscreen){
+      try { await document.documentElement.requestFullscreen({navigationUI:'hide'}); } catch (err) {}
+    }
+    await lockLandscape();
+  }
   function exitFS(){ if (document.exitFullscreen) document.exitFullscreen().catch(()=>{}); }
   exitFsBtn.addEventListener('click', exitFS);
   document.addEventListener('fullscreenchange', () => {
     exitFsBtn.style.display = document.fullscreenElement ? 'block' : 'none';
+    fitStage();
   });
 
   /* ════════ BEGIN / RETURN ════════ */
+  async function startPresentation(){
+    prepareMobilePresentation();
+    await enterFS();
+    begin();
+  }
   function begin(){
+    prepareMobilePresentation();
     inSplash = false;
     splash.classList.add('out');
     setTimeout(() => splash.style.display = 'none', 620);
@@ -1697,6 +1823,9 @@ img{display:block}
   function returnSplash(){
     inSplash = true;
     if (document.fullscreenElement) exitFS();
+    unlockLandscape();
+    resetMobileZoom();
+    document.body.classList.remove('mobile-presenting','mobile-portrait','mobile-zooming','mobile-zoomed');
     splash.style.display = '';
     requestAnimationFrame(() => splash.classList.remove('out'));
     deck.classList.remove('active');
@@ -1708,11 +1837,16 @@ img{display:block}
     history.replaceState(null, '', location.pathname + location.search);
   }
 
-  beginBtn.addEventListener('click', e => { e.stopPropagation(); enterFS(); begin(); });
+  beginBtn.addEventListener('click', e => { e.stopPropagation(); startPresentation(); });
 
   /* ════════ KEYBOARD ════════ */
   document.addEventListener('keydown', e => {
     if (window.EcoMap && window.EcoMap.editing && window.EcoMap.editing()) return; // editor owns the keyboard
+    const navKey = ['ArrowRight','ArrowDown','PageDown',' ','Enter','ArrowLeft','ArrowUp','PageUp','Backspace','Home','End'].includes(e.key);
+    if (mobileZoomLocked() && navKey){
+      e.preventDefault();
+      return;
+    }
     switch (e.key){
       case 'ArrowRight': case 'ArrowDown': case 'PageDown': case ' ': case 'Enter':
         e.preventDefault(); fwd(); break;
@@ -1734,6 +1868,7 @@ img{display:block}
 
   deck.addEventListener('click', e => {
     if (inSplash) return;
+    if (Date.now() < suppressClickUntil || mobileZoomLocked()) return;
     if (window.EcoMap && window.EcoMap.editing()) return; // editor active — no slide nav
     /* ignore clicks on interactive map elements & HUD controls */
     if (e.target.closest('#mapSvg .node, #mapSvg .loc-card, #mapSvg .act-card, #mapSvg .loc-icon, #exitFs, #dots, #slideRail')) return;
@@ -1742,11 +1877,94 @@ img{display:block}
 
   /* ════════ TOUCH SWIPE ════════ */
   let tx = 0, ty = 0;
-  deck.addEventListener('touchstart', e => { tx = e.changedTouches[0].clientX; ty = e.changedTouches[0].clientY; }, {passive:true});
+  function touchDistance(touches){
+    const dx = touches[0].clientX - touches[1].clientX;
+    const dy = touches[0].clientY - touches[1].clientY;
+    return Math.hypot(dx, dy);
+  }
+  function touchCenter(touches){
+    return {
+      x:(touches[0].clientX + touches[1].clientX) / 2,
+      y:(touches[0].clientY + touches[1].clientY) / 2
+    };
+  }
+  function setZoomOriginFromPoint(point){
+    const rect = stage.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
+    const ox = clamp((point.x - rect.left) / rect.width * 1920, 0, 1920);
+    const oy = clamp((point.y - rect.top) / rect.height * 1080, 0, 1080);
+    stage.style.setProperty('--zoom-origin-x', ox.toFixed(1) + 'px');
+    stage.style.setProperty('--zoom-origin-y', oy.toFixed(1) + 'px');
+  }
+  function startPan(touch){
+    isPanning = true;
+    panStartX = mobilePanX;
+    panStartY = mobilePanY;
+    panTouchX = touch.clientX;
+    panTouchY = touch.clientY;
+  }
+  deck.addEventListener('touchstart', e => {
+    if (inSplash) return;
+    if (isMobilePresenting() && e.touches.length === 2){
+      e.preventDefault();
+      isPinching = true;
+      isPanning = false;
+      pinchStartDistance = Math.max(1, touchDistance(e.touches));
+      pinchStartZoom = mobileZoom;
+      setZoomOriginFromPoint(touchCenter(e.touches));
+      document.body.classList.add('mobile-zooming');
+      return;
+    }
+    if (mobileZoomLocked() && e.touches.length === 1){
+      e.preventDefault();
+      startPan(e.touches[0]);
+      return;
+    }
+    tx = e.changedTouches[0].clientX;
+    ty = e.changedTouches[0].clientY;
+  }, {passive:false});
+  deck.addEventListener('touchmove', e => {
+    if (inSplash) return;
+    if (isPinching && e.touches.length >= 2){
+      e.preventDefault();
+      const nextZoom = clamp(pinchStartZoom * (touchDistance(e.touches) / pinchStartDistance), 1, ZOOM_MAX);
+      mobileZoom = nextZoom <= 1.02 ? 1 : nextZoom;
+      applyMobileZoom();
+      return;
+    }
+    if (mobileZoomLocked() && e.touches.length === 1){
+      e.preventDefault();
+      if (!isPanning) startPan(e.touches[0]);
+      mobilePanX = panStartX + (e.touches[0].clientX - panTouchX);
+      mobilePanY = panStartY + (e.touches[0].clientY - panTouchY);
+      applyMobileZoom();
+    }
+  }, {passive:false});
   deck.addEventListener('touchend', e => {
     if (inSplash) return;
+    if (isPinching){
+      e.preventDefault();
+      suppressClickUntil = Date.now() + 360;
+      if (e.touches.length < 2){
+        isPinching = false;
+        document.body.classList.remove('mobile-zooming');
+        if (mobileZoomLocked() && e.touches.length === 1) startPan(e.touches[0]);
+      }
+      return;
+    }
+    if (isPanning || mobileZoomLocked()){
+      e.preventDefault();
+      suppressClickUntil = Date.now() + 360;
+      if (e.touches.length === 0) isPanning = false;
+      return;
+    }
     const dx = e.changedTouches[0].clientX - tx, dy = e.changedTouches[0].clientY - ty;
     if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)){ if (dx < 0) fwd(); else bwd(); }
+  }, {passive:false});
+  deck.addEventListener('touchcancel', () => {
+    isPinching = false;
+    isPanning = false;
+    document.body.classList.remove('mobile-zooming');
   }, {passive:true});
 
   /* ════════════════════════════════════════════════════════════════
