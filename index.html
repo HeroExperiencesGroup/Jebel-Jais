@@ -76,15 +76,13 @@ img{display:block}
 #deck{position:fixed;inset:0;display:none;background:#0d0b08;touch-action:manipulation;overscroll-behavior:none}
 #deck.active{display:block}
 #stage{
-  position:absolute;left:50%;top:50%;
+  position:absolute;left:0;top:0;
   width:var(--DW);height:var(--DH);
   transform:
-    translate(-50%,-50%)
-    translate(var(--pan-x,0px),var(--pan-y,0px))
+    translate(var(--stage-x,0px),var(--stage-y,0px))
     rotate(var(--stage-rotate,0deg))
-    scale(var(--scale,1))
-    scale(var(--zoom,1));
-  transform-origin:var(--zoom-origin-x,960px) var(--zoom-origin-y,540px);
+    scale(var(--stage-scale,1));
+  transform-origin:0 0;
   will-change:transform;
 }
 
@@ -1527,6 +1525,7 @@ body.mobile-presenting.mobile-zoomed #stage{transition:none}
   let panStartY = 0;
   let panTouchX = 0;
   let panTouchY = 0;
+  let pinchAnchor = {x:960,y:540};
   let isPinching = false;
   let isPanning = false;
   let suppressClickUntil = 0;
@@ -1547,6 +1546,45 @@ body.mobile-presenting.mobile-zoomed #stage{transition:none}
     return isMobilePresenting() && vp.height > vp.width;
   }
   function mobileZoomLocked(){ return isMobilePresenting() && mobileZoom > 1.02; }
+  function stagePlacement(zoomValue = mobileZoom, panX = mobilePanX, panY = mobilePanY){
+    const vp = viewportSize();
+    const rotated = isMobilePortrait();
+    const scale = baseScale * zoomValue;
+    const visualWidth = (rotated ? 1080 : 1920) * scale;
+    const visualHeight = (rotated ? 1920 : 1080) * scale;
+    return {
+      x:(vp.width - visualWidth) / 2 + (rotated ? visualWidth : 0) + panX,
+      y:(vp.height - visualHeight) / 2 + panY,
+      scale,
+      rotated
+    };
+  }
+  function screenFromDesign(point, zoomValue = mobileZoom, panX = mobilePanX, panY = mobilePanY){
+    const place = stagePlacement(zoomValue, panX, panY);
+    if (place.rotated){
+      return {
+        x:place.x - point.y * place.scale,
+        y:place.y + point.x * place.scale
+      };
+    }
+    return {
+      x:place.x + point.x * place.scale,
+      y:place.y + point.y * place.scale
+    };
+  }
+  function designFromScreen(point){
+    const place = stagePlacement();
+    if (place.rotated){
+      return {
+        x:clamp((point.y - place.y) / place.scale, 0, 1920),
+        y:clamp((place.x - point.x) / place.scale, 0, 1080)
+      };
+    }
+    return {
+      x:clamp((point.x - place.x) / place.scale, 0, 1920),
+      y:clamp((point.y - place.y) / place.scale, 0, 1080)
+    };
+  }
   function clampMobilePan(){
     const vp = viewportSize();
     const rotated = isMobilePortrait();
@@ -1562,10 +1600,12 @@ body.mobile-presenting.mobile-zoomed #stage{transition:none}
       mobileZoom = 1;
       mobilePanX = 0;
       mobilePanY = 0;
-      stage.style.setProperty('--zoom-origin-x', '960px');
-      stage.style.setProperty('--zoom-origin-y', '540px');
     }
     clampMobilePan();
+    const place = stagePlacement();
+    stage.style.setProperty('--stage-x', place.x.toFixed(1) + 'px');
+    stage.style.setProperty('--stage-y', place.y.toFixed(1) + 'px');
+    stage.style.setProperty('--stage-scale', place.scale.toFixed(6));
     stage.style.setProperty('--zoom', mobileZoom.toFixed(3));
     stage.style.setProperty('--pan-x', mobilePanX.toFixed(1) + 'px');
     stage.style.setProperty('--pan-y', mobilePanY.toFixed(1) + 'px');
@@ -1888,14 +1928,6 @@ body.mobile-presenting.mobile-zoomed #stage{transition:none}
       y:(touches[0].clientY + touches[1].clientY) / 2
     };
   }
-  function setZoomOriginFromPoint(point){
-    const rect = stage.getBoundingClientRect();
-    if (!rect.width || !rect.height) return;
-    const ox = clamp((point.x - rect.left) / rect.width * 1920, 0, 1920);
-    const oy = clamp((point.y - rect.top) / rect.height * 1080, 0, 1080);
-    stage.style.setProperty('--zoom-origin-x', ox.toFixed(1) + 'px');
-    stage.style.setProperty('--zoom-origin-y', oy.toFixed(1) + 'px');
-  }
   function startPan(touch){
     isPanning = true;
     panStartX = mobilePanX;
@@ -1911,7 +1943,7 @@ body.mobile-presenting.mobile-zoomed #stage{transition:none}
       isPanning = false;
       pinchStartDistance = Math.max(1, touchDistance(e.touches));
       pinchStartZoom = mobileZoom;
-      setZoomOriginFromPoint(touchCenter(e.touches));
+      pinchAnchor = designFromScreen(touchCenter(e.touches));
       document.body.classList.add('mobile-zooming');
       return;
     }
@@ -1927,8 +1959,14 @@ body.mobile-presenting.mobile-zoomed #stage{transition:none}
     if (inSplash) return;
     if (isPinching && e.touches.length >= 2){
       e.preventDefault();
+      const center = touchCenter(e.touches);
       const nextZoom = clamp(pinchStartZoom * (touchDistance(e.touches) / pinchStartDistance), 1, ZOOM_MAX);
       mobileZoom = nextZoom <= 1.02 ? 1 : nextZoom;
+      if (mobileZoom > 1){
+        const unpanned = screenFromDesign(pinchAnchor, mobileZoom, 0, 0);
+        mobilePanX = center.x - unpanned.x;
+        mobilePanY = center.y - unpanned.y;
+      }
       applyMobileZoom();
       return;
     }
